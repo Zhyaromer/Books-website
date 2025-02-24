@@ -3,15 +3,13 @@ const xss = require('xss');
 
 // Get all books
 const getAllBooks = (req, res) => {
-    const { genre, language } = req.query;
+    const { genre, language, sorting } = req.query;
+    
     let sql = `
-        SELECT books.id, books.title, books.author_id, books.series_id, 
-       books.genre, books.part_num, books.language, books.description, 
-       books.published_date, books.rating, books.cover_image, 
-       books.page_count, books.views, 
-       authors.name,authors.bio,authors.imgURL
-FROM books
-INNER JOIN authors ON books.author_id = authors.id
+       SELECT books.*, 
+       authors.name, authors.bio, authors.imgURL
+       FROM books
+       INNER JOIN authors ON books.author_id = authors.id
     `;
 
     let conditions = [];
@@ -35,19 +33,37 @@ INNER JOIN authors ON books.author_id = authors.id
             sql += ' WHERE ' + conditions.join(' AND ');
         }
 
+        switch (sorting) {
+            case 'views':
+                sql += ' ORDER BY books.views DESC';
+                break;
+            case 'newest':
+                sql += ' ORDER BY books.created_at DESC';
+                break;
+            case 'page_count':
+                sql += ' ORDER BY books.page_count DESC';
+                break;
+            case 'year':
+                sql += ' ORDER BY books.published_date DESC';
+                break;
+            default:
+                sql += ' ORDER BY books.created_at DESC';
+        }
+
         db.query(sql, values, (err, result) => {
             if (err) {
-                console.log(err);
                 return res.status(500).json({ message: 'Internal Server Error' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'No books found' });
             }
 
             return res.status(200).json(result);
         });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-
 
 module.exports = getAllBooks;
