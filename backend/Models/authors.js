@@ -2,11 +2,13 @@ const db = require("../config/SQL/sqlconfig");
 
 const authors = () => {
     const sql = `
-   CREATE TABLE IF NOT EXISTS authors (
+    CREATE TABLE IF NOT EXISTS authors (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     bio TEXT,
     imgURL TEXT,
+    views INT DEFAULT 0,
+    language VARCHAR(50) CHECK (language IN ('Kurdish', 'English')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`
 
