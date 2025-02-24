@@ -1,4 +1,4 @@
-const db = require("../config/sql/sqlConfig");
+const db = require("../config/SQL/sqlconfig");
 
 const user_reads = () => {
     const sql = `
