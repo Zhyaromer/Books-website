@@ -16,17 +16,13 @@ const login = (req, res, next) => {
             console.log("Invalid credentials");
             return res.status(401).json({ message: "Unauthorized" });
         }
-        
-        req.logIn(user, (err) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ message: "Internal Server Error" });
-            }
 
-            const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: "7d" },)
-            res.setHeader("Authorization", `Bearer ${token}`);
+        const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: "7d" });
 
-            return res.status(200).json({ message: "Login successful", userId: user.id });
+        return res.status(200).json({
+            message: "Login successful",
+            token,
+            userId: user.id
         });
     })(req, res, next);
 };
