@@ -4,7 +4,7 @@ const xss = require('xss');
 const getTrendingBooks = (req, res) => {
     try {
         const sql = `
-        SELECT books.*, 
+        SELECT  books.id, books.title,books.author_id,books.genre,books.language,books.page_count,books.cover_image, 
         authors.name, authors.bio, authors.imgURL
         FROM books
         INNER JOIN authors ON books.author_id = authors.id

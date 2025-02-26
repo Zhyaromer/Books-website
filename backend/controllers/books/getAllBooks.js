@@ -4,12 +4,10 @@ const xss = require('xss');
 // Get all books
 const getAllBooks = (req, res) => {
     const { genre, language, sorting } = req.query;
-    
+
     let sql = `
-       SELECT books.*, 
-       authors.name, authors.bio, authors.imgURL
-       FROM books
-       INNER JOIN authors ON books.author_id = authors.id
+       select books.id, books.title,books.author_id,books.genre,books.language,books.page_count,books.cover_image,authors.name,authors.imgURL 
+       FROM BOOKS inner join authors on books.author_id = authors.id	
     `;
 
     let conditions = [];

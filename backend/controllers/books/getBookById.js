@@ -24,60 +24,72 @@ const getBookById = (req, res) => {
         `;
 
         const sql2 = `
-        SELECT 
-        books.id, books.title, books.author_id, 
-        books.genre, books.part_num, books.description, 
-        books.cover_image, 
-        authors.name, authors.imgURL, 
-        book_series.series_title, book_series.state
-        FROM books
-        INNER JOIN authors ON books.author_id = authors.id
-        LEFT JOIN book_series ON books.series_id = book_series.id
-        WHERE books.series_id = (SELECT series_id FROM books WHERE id = ?) 
+        select books.id, books.title,books.author_id,books.genre,books.language,books.page_count,books.cover_image,authors.name,authors.imgURL 
+        FROM BOOKS inner join authors on books.author_id = authors.id where books.series_id = ?
         AND books.id != ?
         ORDER BY books.part_num
         `;
 
-        const queryPromise = (sql, values) => {
-            return new Promise((resolve, reject) => {
-                db.query(sql, values, (err, result) => {
-                    if (err) reject(err);
-                    else resolve(result);
-                });
-            });
-        };
+        const sql3 = `
+        select * from book_series where id = ?
+        `;
 
-        queryPromise(sql1, [sanitizedId])
-            .then(bookDetails => {
-                if (!bookDetails.length) {
-                    return res.status(404).json({ message: 'Book not found' });
+        const sql4 = `
+        SELECT 
+        books.id,books.language,books.page_count, books.title, books.author_id, 
+        books.genre, books.part_num,
+        books.cover_image, 
+        authors.name, authors.imgURL
+        FROM books
+        INNER JOIN authors ON books.author_id = authors.id
+        WHERE books.id != ? AND books.genre = ? AND books.language = ?
+        AND books.id >= (SELECT FLOOR(MAX(id) * RAND()) FROM books)
+        LIMIT 6
+        `;
+
+
+        db.query(sql1, [sanitizedId], (err, bookDetails) => {
+            if (err) {
+                return res.status(500).json({ message: 'Internal Server Error' });
+            }
+
+            if (bookDetails.length === 0) {
+                return res.status(404).json({ message: 'Book not found' });
+            }
+
+            const book = bookDetails[0];
+
+            db.query(sql2, [book?.series_id, sanitizedId], (err, seriesBooks) => {
+                if (err) {
+                    return res.status(500).json({ message: 'Internal Server Error' });
                 }
 
-                const book = bookDetails[0]; 
-                const { genre, language } = book;
+                if (seriesBooks.length === 0) {
+                    return res.status(404).json({ message: 'No series books found' });
+                }
 
-                return Promise.all([
-                    queryPromise(sql2, [sanitizedId, sanitizedId]),
-                    queryPromise(`
-                    SELECT 
-                    books.id, books.title, books.author_id, 
-                    books.genre, books.part_num, books.description, 
-                    books.cover_image, 
-                    authors.name, authors.imgURL
-                    FROM books
-                    INNER JOIN authors ON books.author_id = authors.id
-                    WHERE books.id != ? AND books.genre = ? AND books.language = ?
-                    AND books.id >= (SELECT FLOOR(MAX(id) * RAND()) FROM books)
-                    LIMIT 6
-                    `, [sanitizedId, genre, language])
-                ]).then(([seriesBooks, similarBooks]) => {
-                    res.json({ book, seriesBooks, similarBooks });
+                db.query(sql3, [book?.series_id], (err, series) => {
+                    if (err) {
+                        return res.status(500).json({ message: 'Internal Server Error' });
+                    }
+
+                    if (series.length === 0) {
+                        return res.status(404).json({ message: 'No series found' });
+                    }
+                    db.query(sql4, [sanitizedId, book?.genre, book?.language], (err, similarBooks) => {
+                        if (err) {
+                            return res.status(500).json({ message: 'Internal Server Error' });
+                        }
+
+                        if (similarBooks.length === 0) {
+                            return res.status(404).json({ message: 'No similar books found' });
+                        }
+                        return res.status(200).json({ book, series, seriesBooks, similarBooks });
+                    });
                 });
-            })
-            .catch(error => {
-                console.log(error);
-                res.status(500).json({ message: 'Internal Server Error' });
+
             });
+        });
 
     } catch (error) {
         console.log(error);
