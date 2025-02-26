@@ -7,11 +7,11 @@ const booksRoutes = require('./routes/books/booksRoutes');
 const authorsRoutes = require('./routes/authors/authorsRoutes');
 const authRoutes = require('./routes/auth/authRoutes');
 const session = require('express-session');
+const passport = require("passport");
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(bodyParser.json());
-
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -23,6 +23,9 @@ app.use(session({
     sameSite: "strict"
   }
 }));
+passport.initialize();
+app.use(passport.session());
+
 
 app.use('/books', booksRoutes);
 app.use('/authors', authorsRoutes);
