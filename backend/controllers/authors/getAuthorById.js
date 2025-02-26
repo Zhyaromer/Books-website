@@ -15,7 +15,7 @@ const getAuthorById = async (req, res) => {
         `
 
         const sql2 = `
-        select * from books where author_id = ?
+        select id, title,author_id,genre,language,page_count,cover_image from books where author_id = ?
         `
 
         db.query(sql1, [sanitizedId], (err, author) => {

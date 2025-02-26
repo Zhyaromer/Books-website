@@ -3,8 +3,9 @@ const db = require("../config/SQL/sqlconfig");
 const users = () => {
     const sql = `
     CREATE TABLE IF NOT EXISTS users (
-         id int auto_increment PRIMARY KEY,
+    id int auto_increment PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
+    name varchar(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     coverImgURL TEXT,

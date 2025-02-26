@@ -64,26 +64,16 @@ const getBookById = (req, res) => {
                     return res.status(500).json({ message: 'Internal Server Error' });
                 }
 
-                if (seriesBooks.length === 0) {
-                    return res.status(404).json({ message: 'No series books found' });
-                }
-
                 db.query(sql3, [book?.series_id], (err, series) => {
                     if (err) {
                         return res.status(500).json({ message: 'Internal Server Error' });
                     }
 
-                    if (series.length === 0) {
-                        return res.status(404).json({ message: 'No series found' });
-                    }
                     db.query(sql4, [sanitizedId, book?.genre, book?.language], (err, similarBooks) => {
                         if (err) {
                             return res.status(500).json({ message: 'Internal Server Error' });
                         }
 
-                        if (similarBooks.length === 0) {
-                            return res.status(404).json({ message: 'No similar books found' });
-                        }
                         return res.status(200).json({ book, series, seriesBooks, similarBooks });
                     });
                 });
