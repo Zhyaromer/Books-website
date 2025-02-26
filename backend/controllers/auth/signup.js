@@ -15,9 +15,12 @@ const signup = async (req, res) => {
     if (!sanUsername || !sanName || !sanEmail || !sanPassword) {
         return res.status(400).json({ error: "All fields are required" });
     }
-    if (password.length < 8) {
-        return res.status(400).json({ error: "Password must be at least 8 characters long" });
+
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({ error: "Password must contain at least one uppercase letter, one number, and one special character and at least 8 characters" });
     }
+
     if (!validateEmail(email)) {
         return res.status(400).json({ error: "Invalid email format" });
     }
@@ -26,7 +29,7 @@ const signup = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(sanPassword, salt);
 
-        const isUserExist = `SELECT * FROM users WHERE email = ? OR username = ?`;
+        const isUserExist = `SELECT email, username, id FROM users WHERE email = ? OR username = ?`;
         db.query(isUserExist, [sanEmail, sanUsername], (err, result) => {
             if (err) {
                 return res.status(500).json({ error: "Internal server error" });

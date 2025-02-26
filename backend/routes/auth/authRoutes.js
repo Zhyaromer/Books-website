@@ -9,6 +9,7 @@ const changeusername = require('../../controllers/auth/changeusername');
 const verifyToken = require('../../Middleware/auth');
 const changeemail = require('../../controllers/auth/changeemail');
 const deleteaccount = require('../../controllers/auth/deleteaccount');
+const changepassword = require('../../controllers/auth/changepassword');
 
 router.post('/signup', signup);
 router.post('/login', login);
@@ -19,5 +20,6 @@ router.post('/updateUserInfo',verifyToken, updateUserInfo);
 router.post('/changeusername',verifyToken, changeusername);
 router.post('/changeemail',verifyToken, changeemail);
 router.post('/deleteaccount',verifyToken, deleteaccount);
+router.post('/changepassword',verifyToken, changepassword);
 
 module.exports = router;

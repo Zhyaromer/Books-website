@@ -4,10 +4,14 @@ const xss = require('xss');
 const changeusername = async (req, res) => {
     const { username } = req.body;
     const sanUserName = xss(username).trim();
-    const userId = req.user.id;
+    const userId = req?.user?.id;
 
     if (!sanUserName) {
         return res.status(400).json({ error: "username is required" });
+    }
+
+    if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
     }
 
     try {

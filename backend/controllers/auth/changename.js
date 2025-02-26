@@ -4,7 +4,11 @@ const xss = require('xss');
 const updateUserInfo = async (req, res) => {
     const { name } = req.body;
     const sanName = xss(name).trim();
-    const userId = req.user.id;
+    const userId = req?.user?.id;
+
+    if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
 
     if (!sanName) {
         return res.status(400).json({ error: "Name is required" });

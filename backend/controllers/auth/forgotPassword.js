@@ -1,9 +1,7 @@
-const passport = require("../../config/Passport/passport.js");
 const xss = require("xss");
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const db = require('../../config/SQL/sqlconfig');
 
 const forgotPassword = async (req, res) => {
     const { email } = req.body;
@@ -13,7 +11,7 @@ const forgotPassword = async (req, res) => {
     }
 
     try {
-        const sql = `SELECT * FROM users WHERE email = ?`;
+        const sql = `SELECT id FROM users WHERE email = ?`;
         db.query(sql, [sanEmail], (err, result) => {
             if (err) {
                 return res.status(500).json({ error: "Internal server error" });
@@ -58,7 +56,12 @@ const resetPassword = async (req, res) => {
             return res.status(400).json({ error: "Token and password are required" });
         }
 
-        const [rows] = await db.promise().query("SELECT * FROM users WHERE passwordResetToken = ?", [sanToken]);
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({ error: "Password must contain at least one uppercase letter, one number, and one special character and at least 8 characters" });
+        }
+
+        const [rows] = await db.promise().query("SELECT password_hash, passwordResetDate, passwordResetToken, id FROM users WHERE passwordResetToken = ?", [sanToken]);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: "Invalid or expired token" });

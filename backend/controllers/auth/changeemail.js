@@ -5,7 +5,11 @@ const validateEmail = require('../../utils/checkEmailFormat');
 const changeemail = async (req, res) => {
     const { email } = req.body;
     const sanEmail = xss(email).trim();
-    const userId = req.user.id;
+    const userId = req?.user?.id;
+
+    if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
 
     if (!sanEmail) {
         return res.status(400).json({ error: "email is required" });

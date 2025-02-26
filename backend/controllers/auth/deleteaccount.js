@@ -1,7 +1,11 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const deleteaccount = async (req, res) => {
-    const userId = req.user.id;
+    const userId = req?.user?.id;
+
+    if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
 
     try {
         const [result] = await db.promise().query("DELETE FROM users WHERE id = ?", [userId]);
