@@ -1,4 +1,4 @@
-require("dotenv").config(); 
+require("dotenv").config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -11,6 +11,18 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    httpOnly: false,
+    secure: false,
+    sameSite: "strict"
+  }
+}));
 
 app.use('/books', booksRoutes);
 app.use('/authors', authorsRoutes);
