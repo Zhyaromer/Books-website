@@ -1,6 +1,7 @@
 const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 const bcrypt = require('bcrypt');
+const validateEmail = require('../../utils/checkEmailFormat');
 
 // Create a new account
 const signup = async (req, res) => {
@@ -16,6 +17,9 @@ const signup = async (req, res) => {
     }
     if (password.length < 8) {
         return res.status(400).json({ error: "Password must be at least 8 characters long" });
+    }
+    if (!validateEmail(email)) {
+        return res.status(400).json({ error: "Invalid email format" });
     }
 
     try {
