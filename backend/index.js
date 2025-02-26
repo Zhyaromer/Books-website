@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const booksRoutes = require('./routes/books/booksRoutes');
 const authorsRoutes = require('./routes/authors/authorsRoutes');
 const authRoutes = require('./routes/auth/authRoutes');
+const session = require('express-session');
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
