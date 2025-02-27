@@ -3,8 +3,10 @@ require("dotenv").config();
 
 const verifyToken = (req, res, next) => {
     const authHeader = req?.headers?.authorization;
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "Unauthorized - No token provided" });
+         req.user = null; 
+        return next();
     }
 
     const token = authHeader.split(" ")[1];

@@ -9,12 +9,13 @@ const login = (req, res, next) => {
 
     passport.authenticate("local", (err, user, info) => {
         if (err) {
-            console.error(err);
+            console.error("Authentication Error:", err);
             return res.status(500).json({ message: "Internal Server Error" });
         }
+    
         if (!user) {
-            console.log("Invalid credentials");
-            return res.status(401).json({ message: "Unauthorized" });
+            console.log("Authentication Failed:", info);
+            return res.status(401).json({ message: "Unauthorized", info });
         }
 
         const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: "7d" });

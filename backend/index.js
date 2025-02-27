@@ -16,7 +16,6 @@ passport.initialize();
 
 app.use(verifyToken); 
 
-
 app.use('/books', booksRoutes);
 app.use('/authors', authorsRoutes);
 app.use('/auth', authRoutes);
