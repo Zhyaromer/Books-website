@@ -2,6 +2,7 @@ const xss = require("xss");
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const db = require('../../config/SQL/sqlconfig');
+const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
 
 const forgotPassword = async (req, res) => {
     const { email } = req.body;
@@ -25,7 +26,6 @@ const forgotPassword = async (req, res) => {
             const token = crypto.randomBytes(20).toString("hex");
             const resetLink = `http://localhost:3000/reset-password/${token}`;
 
-            console.log(resetLink);
             const date = Date.now() + 1800000;
 
             const sql = `UPDATE users SET passsowrdResetToken = ?, passwordResetDate = ? WHERE id = ?`;
@@ -38,6 +38,7 @@ const forgotPassword = async (req, res) => {
                     return res.status(500).json({ error: "Internal server error" });
                 }
 
+                sendEmail.passwordReset(user.email, { name: user.username, resetLink });
                 return res.status(200).json({ message: "Password reset link sent to your email" });
             })
         })
@@ -89,8 +90,9 @@ const resetPassword = async (req, res) => {
             return res.status(500).json({ error: "Failed to update password" });
         }
 
-        return res.status(200).json({ message: "Password reset successful" });
+        sendEmail.changePassword(user.email, { name: user.username });
 
+        return res.status(200).json({ message: "Password reset successful" });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Internal server error" });

@@ -2,6 +2,7 @@ const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 const bcrypt = require('bcrypt');
 const validateEmail = require('../../utils/checkEmailFormat');
+const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
 
 // Create a new account
 const signup = async (req, res) => {
@@ -48,6 +49,13 @@ const signup = async (req, res) => {
                 if (err) {
                     return res.status(500).json({ error: "Internal server error" });
                 }
+
+                sendEmail.signup(sanEmail, { name: 'John Doe' }).then (() => {
+                    console.log('Email sent successfully');
+                }).catch((error) => {
+                    console.error('Error sending email:', error);
+                });
+
                 return res.status(201).json({ message: "User created successfully" });
             });
         });

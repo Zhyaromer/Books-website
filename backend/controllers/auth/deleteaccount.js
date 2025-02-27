@@ -1,4 +1,5 @@
 const db = require('../../config/SQL/sqlconfig');
+const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
 
 const deleteaccount = async (req, res) => {
     const userId = req?.user?.id;
@@ -8,12 +9,19 @@ const deleteaccount = async (req, res) => {
     }
 
     try {
+        const [user] = await db.promise().query("SELECT username, email FROM users WHERE id = ?", [userId]);
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
         const [result] = await db.promise().query("DELETE FROM users WHERE id = ?", [userId]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: "User not found" });
         }
 
+        sendEmail.deleteAccount(user[0].email,{name : user[0].username});
         return res.status(200).json({ message: "Account deleted successfully" });
     } catch (error) {
         console.error("Error deleting account:", error);

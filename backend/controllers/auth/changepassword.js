@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const db = require('../../config/SQL/sqlconfig');
+const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
 
 const changePassword = async (req, res) => {
     const { oldPassword, newPassword, confirmPassword } = req.body;
@@ -25,7 +26,7 @@ const changePassword = async (req, res) => {
     }
 
     try {
-        const [[user]] = await db.promise().query("SELECT password_hash FROM users WHERE id = ?", [userId]);
+        const [[user]] = await db.promise().query("SELECT password_hash,username FROM users WHERE id = ?", [userId]);
 
         if (!user) {
             return res.status(404).json({ error: "User not found" });
@@ -50,6 +51,7 @@ const changePassword = async (req, res) => {
             return res.status(400).json({ error: "Failed to update password" });
         }
 
+        sendEmail.changePassword(user.email, { name: user.username });
         return res.status(200).json({ message: "Password changed successfully" });
     } catch (error) {
         console.error("Error changing password:", error);

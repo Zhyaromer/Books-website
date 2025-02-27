@@ -1,6 +1,7 @@
 const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 const validateEmail = require('../../utils/checkEmailFormat');
+const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
 
 const changeemail = async (req, res) => {
     const { email } = req.body;
@@ -8,15 +9,15 @@ const changeemail = async (req, res) => {
     const userId = req?.user?.id;
 
     if (!userId) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return res.status(401).json({ error: " ڕێگەپێنەدراوە" });
     }
 
     if (!sanEmail) {
-        return res.status(400).json({ error: "email is required" });
+        return res.status(400).json({ error: "ئیمەیل داواکراوە" });
     }
 
     if (!validateEmail(email)) {
-        return res.status(400).json({ error: "Invalid email format" });
+        return res.status(400).json({ error: "ئیمەیڵەکەت دروست نیە" });
     }
 
     try {
@@ -25,30 +26,30 @@ const changeemail = async (req, res) => {
         const user = updateEmail[0];
 
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: "هیچ ئەندامێک نەدۆزرایەوە" });
         }
 
         if (user.email === sanEmail) {
-            return res.status(400).json({ error: "New email cannot be the same as the old email" });
+            return res.status(400).json({ error: "ئیمەیلی نوێ نابێت هەمان ئیمەیلی کۆن بێت" });
         }
 
         const [checkEmail] = await db.promise().query("SELECT email FROM users WHERE email = ?", [sanEmail]);
 
         if (checkEmail.length > 0) {
-            return res.status(400).json({ error: "email already exists, please choose another one" });
+            return res.status(400).json({ error: "ئەم ئیمەیلە پێشتر بەکار هاتووە، تکایە یەکێکی تر هەڵبژێرە" });
         }
 
         const [updateResult] = await db.promise().query("UPDATE users SET email = ? WHERE id = ?", [sanEmail, userId]);
 
         if (updateResult.affectedRows === 0) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: "هیچ ئەندامێک نەدۆزرایەوە" });
         }
 
-        return res.status(200).json({ message: "email updated successfully" });
+        sendEmail.changeemail(sanEmail,{ name: user.username, email: sanEmail });
+        return res.status(200).json({ message: "ئیمەیڵەکەت تازە کرایەوە" });
     } catch (error) {
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ error: "کێشەیەک ڕویدا تکایە هەوڵ بدەوە" });
     }
-  
 }
 
 module.exports =  changeemail ;

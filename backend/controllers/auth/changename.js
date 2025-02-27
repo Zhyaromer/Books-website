@@ -1,5 +1,6 @@
 const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
+const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
 
 const updateUserInfo = async (req, res) => {
     const { name } = req.body;
@@ -29,6 +30,7 @@ const updateUserInfo = async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
+        sendEmail.changeName(user.email, { name: sanName });
         return res.status(200).json({ message: "Name updated successfully" });
     } catch (error) {
         return res.status(500).json({ error: "Internal server error" });
