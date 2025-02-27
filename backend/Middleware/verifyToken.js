@@ -1,18 +1,18 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config(); 
+require("dotenv").config();
 
 const verifyToken = (req, res, next) => {
     const authHeader = req?.headers?.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-         req.user = null; 
+        req.user = null;
         return next();
     }
 
     const token = authHeader.split(" ")[1];
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
         req.user = decoded;
         next();
     } catch (error) {

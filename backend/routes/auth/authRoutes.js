@@ -9,6 +9,9 @@ const changeemail = require('../../controllers/auth/changeemail');
 const deleteaccount = require('../../controllers/auth/deleteaccount');
 const changepassword = require('../../controllers/auth/changepassword');
 const checkauth = require('../../Middleware/checkauth');
+const  refreshtoken = require('../../controllers/auth/refreshtoken');
+
+router.get('/refreshtoken', refreshtoken);
 
 router.post('/signup', signup);
 router.post('/login', login);

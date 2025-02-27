@@ -18,7 +18,10 @@ const login = (req, res, next) => {
             return res.status(401).json({ message: "Unauthorized", info });
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: "7d" });
+        const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: "15m" });
+        const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN, { expiresIn: "20d" });
+
+        res.cookie("refreshToken", refreshToken, { httpOnly: false, secure: false, sameSite: "none" }); //false untill production
 
         return res.status(200).json({
             message: "Login successful",
