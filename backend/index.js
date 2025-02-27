@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const booksRoutes = require('./routes/books/booksRoutes');
 const authorsRoutes = require('./routes/authors/authorsRoutes');
 const authRoutes = require('./routes/auth/authRoutes');
+const userRoutes = require('./routes/user/userRoutes');
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
@@ -19,6 +20,7 @@ app.use(verifyToken);
 app.use('/books', booksRoutes);
 app.use('/authors', authorsRoutes);
 app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

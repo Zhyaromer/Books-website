@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const checkauth = require('../../Middleware/checkauth');
 const signup = require('../../controllers/auth/signup');
 const login = require('../../controllers/auth/login');
 const { forgotPassword, resetPassword } = require('../../controllers/auth/forgotPassword');
@@ -8,7 +9,6 @@ const changeusername = require('../../controllers/auth/changeusername');
 const changeemail = require('../../controllers/auth/changeemail');
 const deleteaccount = require('../../controllers/auth/deleteaccount');
 const changepassword = require('../../controllers/auth/changepassword');
-const checkauth = require('../../Middleware/checkauth');
 const  refreshtoken = require('../../controllers/auth/refreshtoken');
 
 router.get('/refreshtoken', refreshtoken);

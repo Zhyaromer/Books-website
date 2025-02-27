@@ -47,6 +47,15 @@ const getBookById = (req, res) => {
         LIMIT 6
         `;
 
+        const sql5 = `
+        SELECT 
+        SELECT reviews.*, books.title, users.username,users.coverImgURL 
+        FROM reviews 
+        INNER JOIN books ON books.id = reviews.book_id 
+        INNER JOIN users ON users.id = reviews.user_id 
+        WHERE reviews.book_id = ?
+        `;
+
 
         db.query(sql1, [sanitizedId], (err, bookDetails) => {
             if (err) {
@@ -74,7 +83,13 @@ const getBookById = (req, res) => {
                             return res.status(500).json({ message: 'Internal Server Error' });
                         }
 
-                        return res.status(200).json({ book, series, seriesBooks, similarBooks });
+                        db.query(sql5, [sanitizedId], (err, reviews) => {
+                            if (err) {
+                                return res.status(500).json({ message: 'Internal Server Error' });
+                            }
+
+                            return res.status(200).json({ book, series, seriesBooks, similarBooks, reviews });
+                        });
                     });
                 });
 
