@@ -8,11 +8,11 @@ const updateUserInfo = async (req, res) => {
     const userId = req?.user?.id;
 
     if (!userId) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return res.status(401).json({ error: "ڕێگەپێنەدراوە" });
     }
 
     if (!sanName) {
-        return res.status(400).json({ error: "Name is required" });
+        return res.status(400).json({ error: "ناوەکەت داواکراوە" });
     }
 
     try {
@@ -21,21 +21,20 @@ const updateUserInfo = async (req, res) => {
         const user = updateName[0];
 
         if (user.name === sanName) {
-            return res.status(400).json({ error: "New name cannot be the same as the old name" });
+            return res.status(400).json({ error: "ناوی نوێ نابێت هەمان ناوی کۆن بێت" });
         }
 
         const [updateResult] = await db.promise().query("UPDATE users SET name = ? WHERE id = ?", [sanName, userId]);
 
         if (updateResult.affectedRows === 0) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: "هیچ ئەندامێک نەدۆزرایەوە" });
         }
 
         sendEmail.changeName(user.email, { name: sanName });
-        return res.status(200).json({ message: "Name updated successfully" });
+        return res.status(200).json({ message: "ناوەکەی تازە کرایەوە" });
     } catch (error) {
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ error: "کێشەیەک ڕویدا تکایە هەوڵ بدەوە" });
     }
-  
 }
 
 module.exports =  updateUserInfo ;

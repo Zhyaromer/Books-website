@@ -52,4 +52,4 @@ const changeemail = async (req, res) => {
     }
 }
 
-module.exports =  changeemail ;
+module.exports =  changeemail;
