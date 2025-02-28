@@ -14,5 +14,6 @@ router.get('/getBooksMainPage', getBooksMainPage);
 router.get('/getTrendingBooks', getTrendingBooks);
 router.get('/getRandomBooks', getRandomBooks);
 router.get('/getBookQuotes', getBookQuotes);
+router.get('/getnwewestbooks', getnwewestbooks);
 
 module.exports = router;

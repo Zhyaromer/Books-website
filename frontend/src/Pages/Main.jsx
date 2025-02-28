@@ -5,12 +5,24 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Main = () => {
+    const [sliderbooks, setsliderbooks] = useState([]);
     const [kurdishbooks, setkurdishbooks] = useState([]);
     const [englishbooks, setenglishbooks] = useState([]);
     const [trendingbooks, settrendingbooks] = useState([]);
     const [romancebooks, setromancebooks] = useState([]);
 
     useEffect(() => {
+        const sliderBooks = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/books/getnwewestbooks");
+                setsliderbooks(response.data);
+                console.log(response.data);
+                console.log("sliderbooks");
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
         const kurdishBooks = async () => {
             try {
                 const response = await axios.get("http://localhost:3000/books/getBooksMainPage/?language=kurdish");
@@ -47,6 +59,7 @@ const Main = () => {
             }
         };
 
+        sliderBooks();
         kurdishBooks();
         EnglishBooks();
         TrendingBooks();
@@ -56,7 +69,7 @@ const Main = () => {
     return (
         <div>
             <BookstoreNavigation />
-            <BookSlider />
+            <BookSlider data={sliderbooks} />
             <BookCollection data={kurdishbooks} text="نوێترین کتێبە کوردیەکان" path="/kurdish" />
             <BookCollection data={englishbooks} text="نوێترین کتێبە ئینگلیزیەکان" path="/english" />
             <BookCollection data={trendingbooks} text="کتێبی تریندینگ" path="/trending" />
