@@ -11,7 +11,10 @@ const authRoutes = require('./routes/auth/authRoutes');
 const userRoutes = require('./routes/user/userRoutes');
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+app.use(cors( {
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(bodyParser.json());
 passport.initialize();
 

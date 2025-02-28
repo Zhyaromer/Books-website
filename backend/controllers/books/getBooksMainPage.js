@@ -5,8 +5,8 @@ const getBooksMainPage = (req, res) => {
     const { genre, language} = req.query;
     
     let sql = `
-       SELECT books.id, books.title,books.author_id,books.genre,books.language,books.page_count,books.cover_image, 
-       authors.name, authors.bio, authors.imgURL
+       SELECT books.id, books.title,books.author_id,books.genre,books.cover_image, 
+       authors.name
        FROM books
        INNER JOIN authors ON books.author_id = authors.id
     `;

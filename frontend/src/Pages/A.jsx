@@ -85,7 +85,6 @@ const BookstoreNavigation = () => {
                 { name: 'هەموو نووسەرەکان', href: '#' },
                 { name: 'نووسەری کوردی', href: '#' },
                 { name: 'نووسەر ئینگلیزی', href: '#' },
-                { name: 'نووسەری بیانی', href: '#' },
             ]
         },
         { name: 'وتە', href: '#' },
