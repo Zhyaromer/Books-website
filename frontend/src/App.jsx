@@ -4,6 +4,7 @@ import BookstoreNavigation from "./Pages/A";
 import BookSlider from "./Pages/B";
 import BookCollection from "./Pages/C";
 import Main from "./Pages/Main";
+import MinimalAuthorCard from "./Pages/D";
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/slider" element={<BookSlider />} />
         <Route path="/col" element={<BookCollection />} />
         <Route path="/m" element={<Main />} />
+        <Route path="/d" element={<MinimalAuthorCard />} />
       </Routes>
     </Router>
   )

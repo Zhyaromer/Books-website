@@ -4,7 +4,7 @@ const xss = require('xss');
 const getFamousAuthors = (req, res) => {
     try {
         const sql = `
-         SELECT id,name,imgURL FROM authors ORDER BY authors.views DESC LIMIT 6
+         SELECT id,name,imgURL FROM authors ORDER BY authors.views DESC LIMIT 5
         `;
 
         db.query(sql, (err, result) => {

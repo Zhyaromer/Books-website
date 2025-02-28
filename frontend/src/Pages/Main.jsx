@@ -1,6 +1,9 @@
 import BookstoreNavigation from "./A";
 import BookSlider from "./B";
 import BookCollection from "./C";
+import MultipleAuthorsCard from "./D";
+import Footer from "./Footer";
+import Quotes from "./Quotes";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -10,14 +13,14 @@ const Main = () => {
     const [englishbooks, setenglishbooks] = useState([]);
     const [trendingbooks, settrendingbooks] = useState([]);
     const [romancebooks, setromancebooks] = useState([]);
+    const [famousauthors, setfamousauthors] = useState([]);
+    const [getquotes, setquotes] = useState([]);
 
     useEffect(() => {
         const sliderBooks = async () => {
             try {
                 const response = await axios.get("http://localhost:3000/books/getnwewestbooks");
                 setsliderbooks(response.data);
-                console.log(response.data);
-                console.log("sliderbooks");
             } catch (error) {
                 console.error(error);
             }
@@ -59,11 +62,40 @@ const Main = () => {
             }
         };
 
+        const famousAuthors = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/authors/getfamousauthors");
+                setfamousauthors(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        const getQuotes = async () => {
+            try {
+                const response = await axios.get("http://localhost:3000/books/getBookQuotes");
+                console.log("API Response:", response.data); // Debugging
+        
+                if (Array.isArray(response.data)) {
+                    setquotes(response.data);  // ✅ Set the whole array
+                } else {
+                    console.error("Expected an array but got:", response.data);
+                    setquotes([]);  // Safe fallback
+                }
+                
+            } catch (error) {
+                console.error("Error fetching quotes:", error);
+                setquotes([]);  // Prevent crashes
+            }
+        };
+
         sliderBooks();
         kurdishBooks();
         EnglishBooks();
         TrendingBooks();
         RomanceBooks();
+        famousAuthors();
+        getQuotes();
     }, []);
 
     return (
@@ -74,6 +106,9 @@ const Main = () => {
             <BookCollection data={englishbooks} text="نوێترین کتێبە ئینگلیزیەکان" path="/english" />
             <BookCollection data={trendingbooks} text="کتێبی تریندینگ" path="/trending" />
             <BookCollection data={romancebooks} text="کتێبی ڕۆمانس" path="/romance" />
+            <Quotes quotes={getquotes} />
+            <MultipleAuthorsCard data={famousauthors} />
+            <Footer />
         </div>
     );
 };

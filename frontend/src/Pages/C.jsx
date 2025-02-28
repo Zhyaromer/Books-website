@@ -20,7 +20,7 @@ const BookCollection = ({ data, text, path }) => {
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-8 px-8 pb-6 md:pb-0">
                 {data?.map((book, index) => (
                     <div
-                        key={book.id}
+                        key={book?.id}
                         className={`group w-42 h-72 md:w-[100%] md:h-full flex flex-col ${index >= 2 ? "mt-14" : ""} md:mt-0 `}
                     >
                         <div className="cursor-pointer relative z-40 h-[250px] md:h-[420px] shadow-xl rounded-lg mb-6 md:mb-4 transition-all duration-300 group-hover:shadow-2xl transform hover:translate-y-1">

@@ -1,5 +1,4 @@
 const db = require('../../config/SQL/sqlconfig');
-const xss = require('xss');
 
 const getBookQuotes = (req, res) => {
 
@@ -11,6 +10,7 @@ const getBookQuotes = (req, res) => {
        FROM books
        INNER JOIN authors ON books.author_id = authors.id
        left join quotes on books.id = quotes.book_id
+       where quotes.quote is not null
        ORDER BY RAND() LIMIT 1
     `;
 
