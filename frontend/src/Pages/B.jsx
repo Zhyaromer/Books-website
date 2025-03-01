@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Book, Globe, Tag } from 'lucide-react';
 import PropTypes from "prop-types";
 
 const BookSlider = ({ data }) => {
-
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedBook, setSelectedBook] = useState(data?.[0] || {});
 
@@ -99,16 +100,16 @@ const BookSlider = ({ data }) => {
             />
           </div>
           <div className="md:w-2/3">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">{selectedBook.title}</h2>
-            <p className="text-lg text-gray-600 mb-1">by {selectedBook.name}</p>
-            <p className="text-gray-500 mb-4">Published in {new Date(selectedBook.published_date).getFullYear()}</p>
+            <h2 onClick={() => navigate(`/book/${selectedBook.id}`)} className="text-2xl font-bold text-gray-800 mb-2 cursor-pointer">{selectedBook.title}</h2>
+            <p onClick={() => navigate(`/authors/${selectedBook.author_id}`)} className="text-lg text-gray-600 mb-1 cursor-pointer">{selectedBook.name}</p>
+            <p className="text-gray-500 mb-4">بڵاوکراوەتەوە لە {new Date(selectedBook.published_date).getFullYear()}</p>
 
             <div className="hidden md:flex gap-4 mb-4">
-              <div className="flex items-center">
+              <div onClick={() => navigate(`/genres/${selectedBook.genre}`)} className="flex items-center cursor-pointer">
                 <Tag size={16} className="text-blue-600 mr-1" />
                 <span className="text-sm text-gray-700">{selectedBook.genre}</span>
               </div>
-              <div className="flex items-center">
+              <div onClick={() => navigate(`/languages/${selectedBook.language}`)} className="flex items-center cursor-pointer">
                 <Globe size={16} className="text-green-600 mr-1" />
                 <span className="text-sm text-gray-700">{selectedBook.language}</span>
               </div>
@@ -121,7 +122,7 @@ const BookSlider = ({ data }) => {
             <p className="text-gray-700">{selectedBook.description}</p>
 
             <div className="mt-6">
-              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3">
+              <button onClick={() => navigate(`/book/${selectedBook.id}`)} className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3">
                 بینینی زیاتر
               </button>
             </div>

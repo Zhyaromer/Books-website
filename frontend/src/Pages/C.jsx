@@ -1,53 +1,61 @@
 import PropTypes from "prop-types";
 
 const BookCollection = ({ data, text, path }) => {
+
     return (
-        <div className="py-12 bg-gradient-to-b from-indigo-50 to-white">
-            <div className="flex pb-4 md:mb-8 flex-row-reverse items-center justify-between px-8">
-                <div>
-                    <h1 className="text-lg md:text-4xl font-bold text-indigo-900">{text}</h1>
+        <div className="pt-6 md:pt-12 bg-gradient-to-b from-indigo-50 to-white w-full">
+            <div className="flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-4 md:px-8">
+                <div >
+                    <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}</h1>
                 </div>
                 <div>
                     <p
                         onClick={() => (window.location.href = path)}
-                        className="text-sm md:text-lg font-bold text-indigo-500 cursor-pointer"
+                        className="text-sm md:text-base lg:text-lg font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"
                     >
                         بینینی هەمووی
                     </p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-8 px-8 pb-6 md:pb-0">
-                {data?.map((book, index) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-8 px-4 md:px-8 pb-6 ">
+                {data?.map((book) => (
                     <div
                         key={book?.id}
-                        className={`group w-42 h-72 md:w-[100%] md:h-full flex flex-col ${index >= 2 ? "mt-14" : ""} md:mt-0 `}
+                        className="group flex flex-col h-full"
                     >
-                        <div className="cursor-pointer relative z-40 h-[250px] md:h-[420px] shadow-xl rounded-lg mb-6 md:mb-4 transition-all duration-300 group-hover:shadow-2xl transform hover:translate-y-1">
+                        <div
+                            className="relative z-10 h-[300px] lg:h-[420px] md:h-[350px] shadow-md rounded-lg mb-2 md:mb-4 
+                            transition-all duration-500 group-hover:shadow-xl transform group-hover:-translate-y-1 cursor-pointer"
+                            onClick={() => (window.location.href = `/book/${book.id}`)}
+                        >
                             <img
                                 src={book.cover_image}
                                 alt={`Cover of ${book.title}`}
-                                className="h-[250px] min-h-[250px] md:w-full md:h-full md:min-h-full object-cover"
+                                className="w-full h-full object-fill transition-transform duration-500 group-hover:scale-105"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            <div className="absolute w-full h-[300px] lg:h-[420px] md:h-[350px] inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
 
-                            <div className="absolute z-50 -bottom-3 right-[50%] transform translate-x-1/2 bg-purple-400 flex items-center justify-center">
-                                <p className="text-sm text-white px-4 py-1">{book.genre}</p>
+                            <div className="absolute z-20 bottom-0 right-0 left-0 flex justify-center transform translate-y-1/2">
+                                <p className="text-xs sm:text-sm text-white px-2 py-1 bg-purple-500 rounded-full max-w-max shadow-lg">
+                                    {book.genre}
+                                </p>
                             </div>
                         </div>
 
-                        <div className="text-center">
-                            <h2 className="cursor-pointer text-base md:text-xl font-bold text-gray-800 mb-2 group-hover:text-indigo-700 transition-colors duration-300">
-                                <span className="block sm:hidden">
-                                    {book?.title?.length > 15 ? `${book.title.slice(0, 15)}...` : book.title}
-                                </span>
-                                <span className="hidden sm:block">
-                                    {book?.title?.length > 25 ? `${book.title.slice(0, 25)}...` : book.title}
-                                </span>
+                        <div className="text-center mt-4">
+                            <h2 className="cursor-pointer text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-800 md:mb-2 
+                                group-hover:text-indigo-700 transition-colors duration-300 line-clamp-2 "
+                                onClick={() => (window.location.href = `/book/${book.id}`)}
+                            >
+                                {book?.title?.length > 10 ? `${book.title.slice(0, 10)}...` : book.title}
                             </h2>
 
                             <div className="flex items-center justify-center">
-                                <span className="text-sm md:text-md cursor-pointer text-indigo-800 font-medium">-{book.name}-</span>
+                                <span onClick={() => (window.location.href = `/authors/${book.author_id}`)} className="text-xs sm:text-sm md:text-base cursor-pointer text-indigo-800 font-medium hover:text-indigo-600 transition-colors">
+                                    -{book.name}-
+                                </span>
                             </div>
                         </div>
                     </div>
