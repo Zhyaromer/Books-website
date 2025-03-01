@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Selection from "../Components/my-ui/Selection";
 import MultipleSelection from "@/Components/my-ui/MultipleSelection";
-import { sortOptions, genreOptions, languageOptions } from "@/Helpers/Options";
+import { sortOptions, genreOptions, languageOptions } from "../Helpers/options";
 
 const Books = () => {
     const [Sort, setSort] = useState();
@@ -24,40 +24,52 @@ const Books = () => {
                 console.error('Error fetching books:', error);
             }
         };
-    
+
         fetchBooks();
-    }, [selectedGenres, Sort,language]);
+    }, [selectedGenres, Sort, language]);
 
     return (
         <>
+            <BookstoreNavigation />
+            <div className="space-y-6 px-4 sm:px-6 lg:px-8 py-6 pt-20 md:pt-32">
+                <div dir="rtl" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="w-full">
+                        <MultipleSelection
+                            options={genreOptions}
+                            label="چەشنەکان"
+                            placeholder="چەشنێک هەڵبژێرە"
+                            onChange={(value) => setSelectedGenres(value)}
+                            className="w-full h-[42px]"
+                        />
+                    </div>
+                    <div className="w-full">
+                        <Selection
+                            options={languageOptions}
+                            label="زمان"
+                            placeholder="زمانێک هەڵبژێرە"
+                            value={language}
+                            onChange={(value) => setLanguage(value)}
+                            className="w-full h-[42px]"
+                        />
+                    </div>
+                    <div className="w-full">
+                        <Selection
+                            options={sortOptions}
+                            label="ڕیزبەندی"
+                            placeholder="ڕیزبەندیەک هەڵبژێرە"
+                            value={Sort}
+                            onChange={(value) => setSort(value)}
+                            className="w-full h-[42px]"
+                        />
+                    </div>
+                </div>
+            </div>
 
+            <BookCollection data={books} text="هەموو فیلمەکان" path="/Books" />
 
-            <MultipleSelection
-                options={genreOptions}
-                label="Genre"
-                placeholder="Genre"
-                onChange={(value) => setSelectedGenres(value)}
-            />
-
-            <Selection
-                options={languageOptions}
-                label="Language"
-                placeholder="Language"
-                value={language}
-                onChange={(value) => setLanguage(value)}
-            />
-
-            <Selection
-                options={sortOptions}
-                label="Sort By"
-                placeholder="Sort By"
-                value={Sort}
-                onChange={(value) => setSort(value)}
-            />
-
-           <BookCollection data={books} text="Book Collection" path="/Books" />
+            <Footer />
         </>
-    )
+    );
 }
 
 export default Books

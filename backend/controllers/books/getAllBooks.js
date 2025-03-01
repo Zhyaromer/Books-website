@@ -8,7 +8,7 @@ const getAllBooks = (req, res) => {
 
     let sql = `
        SELECT books.id, books.title, books.author_id, books.genre, books.language, 
-              books.page_count, books.cover_image, authors.name, authors.imgURL 
+       books.page_count, books.cover_image, authors.name, authors.imgURL 
        FROM books 
        INNER JOIN authors ON books.author_id = authors.id	
     `;
@@ -17,16 +17,15 @@ const getAllBooks = (req, res) => {
     let values = [];
 
     let sanitizedGenres = [];
+    if (genre) {
+        const genreArray = genre.split(',').map(g => g.trim());
+        sanitizedGenres = genreArray.map(g => xss(g));
 
-   if (genre) {
-    const genreArray = genre.split(',').map(g => g.trim());
-    sanitizedGenres = genreArray.map(g => xss(g));
-    
-    if (sanitizedGenres.length > 0) {
-        conditions.push(`books.genre IN (${sanitizedGenres.map(() => '?').join(', ')})`);
-        values.push(...sanitizedGenres);
+        if (sanitizedGenres.length > 0) {
+            conditions.push(`books.genre IN (${sanitizedGenres.map(() => '?').join(', ')})`);
+            values.push(...sanitizedGenres);
+        }
     }
-}
 
     if (language && language !== undefined && language !== 'all') {
         const sanitizedLanguage = xss(language);

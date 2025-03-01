@@ -71,9 +71,9 @@ const MultipleSelection = ({ options, label, placeholder,onChange  }) => {
     }, []);
 
     return (
-        <div className="space-y-2">
+        <div dir='rtl' className="space-y-2">
             <label className="text-sm font-medium text-gray-700">{label}</label>
-            <div className="relative">
+            <div className="relative z-50">
                 <div
                     className={`flex flex-wrap items-center gap-1 p-2 border rounded-md ${isDropdownOpen ? 'border-blue-500 ring-2 ring-blue-100' : 'border-gray-300'
                         }`}

@@ -3,13 +3,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const Selection = ({ options, label, placeholder, value, onChange }) => {
     return (
-        <div className="space-y-2">
+        <div dir='rtl' className="space-y-2">
             <label className="text-sm font-medium text-gray-700">{label}</label>
             <Select value={value} onValueChange={onChange}>
-                <SelectTrigger className="w-full border-gray-300 hover:border-blue-300 transition-all">
+                <SelectTrigger dir='rtl' className="w-full border-gray-300 hover:border-blue-300 transition-all">
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent dir='rtl'>
                     {options.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                             {option.label}
