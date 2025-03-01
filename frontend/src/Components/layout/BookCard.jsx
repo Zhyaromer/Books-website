@@ -18,7 +18,7 @@ const BookCollection = ({ data, text, path }) => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-8 px-4 md:px-8 pb-6 ">
+            <div dir="rtl" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-8 px-4 md:px-8 pb-6 ">
                 {data?.map((book) => (
                     <div
                         key={book?.id}

@@ -1,9 +1,9 @@
-import BookstoreNavigation from "./A";
-import BookSlider from "./B";
-import BookCollection from "./C";
-import MultipleAuthorsCard from "./D";
-import Footer from "./Footer";
-import Quotes from "./Quotes";
+import BookstoreNavigation from "../Components/layout/Navigation";
+import BookSlider from "../Components/layout/BookSlider";
+import BookCollection from "../Components/layout/BookCard";
+import MultipleAuthorsCard from "../Components/layout/AuthorsCard";
+import Footer from "../Components/layout/Footer";
+import Quotes from "../Components/layout/QuotesCards";
 import { useState, useEffect } from "react";
 import axios from "axios";
 

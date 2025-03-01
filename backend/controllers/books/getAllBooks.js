@@ -4,6 +4,7 @@ const xss = require('xss');
 // Get all books
 const getAllBooks = (req, res) => {
     const { genre, language, sorting } = req.query;
+    console.log(req.query.sorting);
 
     let sql = `
        select books.id, books.title,books.author_id,books.genre,books.language,books.page_count,books.cover_image,authors.name,authors.imgURL 
@@ -17,7 +18,7 @@ const getAllBooks = (req, res) => {
     const sanitizedLanguage = language ? xss(language) : null;
 
     try {
-        if (sanitizedGenre) {
+        if (sanitizedGenre && sanitizedGenre !== "") {
             conditions.push('books.genre = ?');
             values.push(sanitizedGenre);
         }
@@ -38,8 +39,11 @@ const getAllBooks = (req, res) => {
             case 'newest':
                 sql += ' ORDER BY books.created_at DESC';
                 break;
-            case 'page_count':
+            case 'maost page_count':
                 sql += ' ORDER BY books.page_count DESC';
+                break;
+            case 'lowest page_count':
+                sql += ' ORDER BY books.page_count ASC';
                 break;
             case 'year':
                 sql += ' ORDER BY books.published_date DESC';
@@ -56,6 +60,8 @@ const getAllBooks = (req, res) => {
             if (result.length === 0) {
                 return res.status(404).json({ message: 'No books found' });
             }
+
+            console.log(result);
 
             return res.status(200).json(result);
         });
