@@ -18,8 +18,9 @@ const sortOptions = [
 ];
 
 const languageOptions = [
-    { value: "kurdish", label: "کوردی" },
-    { value: "english", label: "ئینگلیزی" }
+    { value: "all", label: "هەمووی" },
+    { value: "Kurdish", label: "کوردی" },
+    { value: "English", label: "ئینگلیزی" }
 ];
 
 export { genreOptions, sortOptions, languageOptions };

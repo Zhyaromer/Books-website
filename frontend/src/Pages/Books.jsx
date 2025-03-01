@@ -10,26 +10,42 @@ import { sortOptions, genreOptions, languageOptions } from "@/Helpers/Options";
 const Books = () => {
     const [Sort, setSort] = useState();
     const [selectedGenres, setSelectedGenres] = useState([]);
+    const [language, setLanguage] = useState(languageOptions?.value || "");
     const [books, setBooks] = useState([]);
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                console.log(Sort);
+                console.log(language);
                 const genreParams = selectedGenres.map(genre => genre.value).join(',');
-                const response = await axios.get(`http://localhost:3000/books/getAllBooks?genre=${genreParams}&sorting=${Sort}`);
+                const response = await axios.get(`http://localhost:3000/books/getAllBooks?genre=${genreParams}&sorting=${Sort}&language=${language}`);
                 setBooks(response.data);
-               console.log(response.data);
             } catch (error) {
                 console.error('Error fetching books:', error);
             }
         };
     
         fetchBooks();
-    }, [selectedGenres, Sort]);
+    }, [selectedGenres, Sort,language]);
 
     return (
         <>
+
+
+            <MultipleSelection
+                options={genreOptions}
+                label="Genre"
+                placeholder="Genre"
+                onChange={(value) => setSelectedGenres(value)}
+            />
+
+            <Selection
+                options={languageOptions}
+                label="Language"
+                placeholder="Language"
+                value={language}
+                onChange={(value) => setLanguage(value)}
+            />
 
             <Selection
                 options={sortOptions}
@@ -37,13 +53,6 @@ const Books = () => {
                 placeholder="Sort By"
                 value={Sort}
                 onChange={(value) => setSort(value)}
-            />
-
-            <MultipleSelection
-                options={genreOptions}
-                label="Genre"
-                placeholder="Genre"
-                onChange={(value) => setSelectedGenres(value)}
             />
 
            <BookCollection data={books} text="Book Collection" path="/Books" />
