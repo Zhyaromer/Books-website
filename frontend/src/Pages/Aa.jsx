@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { FaStar, FaStarHalfAlt, FaRegStar, FaBookmark, FaShare, FaHeart } from 'react-icons/fa';
+import { useParams} from 'react-router-dom';
+import { FaStar, FaStarHalfAlt, FaRegStar, FaBookmark, FaShare } from 'react-icons/fa';
+import axios from 'axios';
+import BookCollection from '../Components/layout/BookCard';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -9,9 +11,7 @@ const BookDetail = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [showReviewForm, setShowReviewForm] = useState(false);
 
-  // Mock data - replace with actual API call
   useEffect(() => {
-    // Simulate API fetch
     setTimeout(() => {
       setBook({
         id: 1,
@@ -36,14 +36,38 @@ const BookDetail = () => {
           { id: 3, user: "LiteraryExplorer", rating: 5, comment: "One of the most thought-provoking books I've read this year.", date: "2023-03-10" },
         ],
         relatedBooks: [
-          { id: 2, title: "How To Stop Time", author: "Matt Haig", coverImage: "https://images-na.ssl-images-amazon.com/images/I/71Vb7oaX0jL.jpg", rating: 4.3 },
-          { id: 3, title: "The Humans", author: "Matt Haig", coverImage: "https://images-na.ssl-images-amazon.com/images/I/81zqkBmRuKL.jpg", rating: 4.2 },
-          { id: 4, title: "Reasons to Stay Alive", author: "Matt Haig", coverImage: "https://images-na.ssl-images-amazon.com/images/I/71ckGQGQNYL.jpg", rating: 4.7 },
+          { id: 2, title: "How To Stop Time", author: "Matt Haig", coverImage: "https://images-na.ssl-images-amazon.com/images/I/81YzHKeWq7L.jpg", rating: 4.3 },
+          { id: 3, title: "The Humans", author: "Matt Haig", coverImage: "https://images-na.ssl-images-amazon.com/images/I/81YzHKeWq7L.jpg", rating: 4.2 },
+          { id: 4, title: "Reasons to Stay Alive", author: "Matt Haig", coverImage: "https://images-na.ssl-images-amazon.com/images/I/81YzHKeWq7L.jpg", rating: 4.7 },
         ]
       });
       setLoading(false);
     }, 1000);
   }, [id]);
+
+  const [fetchBook, setFetchBook] = useState([]);
+  const [series, setSeries] = useState([]);
+  const [booksSeries, setBooksSeries] = useState([]);
+  const [similarBooks, setSimilarBooks] = useState([]);
+
+  useEffect(() => {
+    const fetchBook = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/books/getBookById/${id}`);
+       setFetchBook(response.data.book);
+       setSeries(response.data.series);
+       setBooksSeries(response.data.seriesBooks);
+       setSimilarBooks(response.data.similarBooks);
+       console.log(response.data.similarBooks);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    };
+
+    fetchBook();
+  }, [id]);
+
 
   const renderStars = (rating) => {
     const stars = [];
@@ -81,8 +105,8 @@ const BookDetail = () => {
             <div className="md:w-1/3 mb-8 md:mb-0">
               <div className="relative">
                 <img
-                  src={book.coverImage}
-                  alt={book.title}
+                  src={fetchBook.cover_image}
+                  alt={fetchBook.title}
                   className="w-64 h-auto mx-auto rounded-lg shadow-2xl transform hover:scale-105 transition-transform duration-300"
                 />
               </div>
@@ -92,11 +116,11 @@ const BookDetail = () => {
             <div className="md:w-2/3 md:pl-12">
               <div className="flex items-center mb-2">
                 <span className="text-xs bg-blue-700 bg-opacity-50 px-2 py-1 rounded-full mr-2">
-                  {book.categories[0]}
+                  {fetchBook.genre}
                 </span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-bold mb-2">{book.title}</h1>
-              <p className="text-xl mb-4">نووسەر: <span className="font-semibold">{book.author}</span></p>
+              <h1 className="text-3xl md:text-5xl font-bold mb-2">{fetchBook.title}</h1>
+              <p className="text-xl mb-4">نووسەر: <span className="font-semibold">{fetchBook.name}</span></p>
 
               <div className="flex flex-wrap gap-3 mb-6">
                 <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
@@ -112,16 +136,20 @@ const BookDetail = () => {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-300">لاپەڕەکان</p>
-                  <p className="font-semibold">{book.pages}</p>
+                  <p className="text-gray-300">ژمارەی لاپەڕە</p>
+                  <p className="font-semibold">{fetchBook.page_count}</p>
                 </div>
                 <div>
-                  <p className="text-gray-300">بڵاوکەرەوە</p>
-                  <p className="font-semibold">{book.publisher}</p>
+                  <p className="text-gray-300">کاتی بڵاوکردنەوە</p>
+                  <p className="font-semibold">{new Date(fetchBook.published_date).toLocaleDateString()}</p>
                 </div>
                 <div>
                   <p className="text-gray-300">زمان</p>
-                  <p className="font-semibold">{book.language}</p>
+                  <p className="font-semibold">{fetchBook.language}</p>
+                </div>
+                <div>
+                  <p className="text-gray-300">بینەر</p>
+                  <p className="font-semibold">{fetchBook.views}</p>
                 </div>
               </div>
             </div>
@@ -163,7 +191,7 @@ const BookDetail = () => {
           <div className="p-6">
             {activeTab === 'description' && (
               <div className="prose max-w-none">
-                <p className="text-lg leading-relaxed">{book.description}</p>
+                <p className="text-lg leading-relaxed">{fetchBook.description}</p>
               </div>
             )}
 
@@ -174,39 +202,35 @@ const BookDetail = () => {
                   <table className="w-full">
                     <tbody>
                       <tr className="border-b">
-                        <td className="py-3 text-gray-600">ناونیشان</td>
-                        <td className="py-3 font-medium">{book.title}</td>
+                        <td className="py-3 text-gray-600">ناوی کتێب</td>
+                        <td className="py-3 font-medium">{fetchBook.title}</td>
                       </tr>
                       <tr className="border-b">
-                        <td className="py-3 text-gray-600">نووسەر</td>
-                        <td className="py-3 font-medium">{book.author}</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="py-3 text-gray-600">زمان</td>
-                        <td className="py-3 font-medium">{book.language}</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="py-3 text-gray-600">ژمارەی لاپەڕەکان</td>
-                        <td className="py-3 font-medium">{book.pages}</td>
+                        <td className="py-3 text-gray-600">وتە</td>
+                        <td className="py-3 font-medium">{fetchBook.quote || "بەردەست نیە"}</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-4">وردەکاری بڵاوکردنەوە</h3>
+                <div className={series.length > 0 ? '' : 'hidden'}>
+                  <h3 className="text-xl font-semibold mb-4">وردەکاری زنجیرە کتێب</h3>
                   <table className="w-full">
                     <tbody>
                       <tr className="border-b">
-                        <td className="py-3 text-gray-600">بڵاوکەرەوە</td>
-                        <td className="py-3 font-medium">{book.publisher}</td>
+                        <td className="py-3 text-gray-600">ناوی زنجیرە</td>
+                        <td className="py-3 font-medium">{series[0]?.series_title}</td>
                       </tr>
                       <tr className="border-b">
-                        <td className="py-3 text-gray-600">بەرواری بڵاوکردنەوە</td>
-                        <td className="py-3 font-medium">{book.publishDate}</td>
+                        <td className="py-3 text-gray-600">ڕیزبەندی ئەم کتێبە لە زنجیرەکە</td>
+                        <td className="py-3 font-medium">{fetchBook.part_num} یەم</td>
                       </tr>
                       <tr className="border-b">
-                        <td className="py-3 text-gray-600">ISBN</td>
-                        <td className="py-3 font-medium">{book.isbn}</td>
+                        <td className="py-3 text-gray-600">بەشەکانی زنجیرەکە</td>
+                        <td className="py-3 font-medium">{booksSeries?.length + 1} بەش</td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">باری زنجیرە</td>
+                        <td className="py-3 font-medium">{series[0]?.state}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -218,20 +242,17 @@ const BookDetail = () => {
               <div className="flex flex-col md:flex-row gap-8">
                 <div className="md:w-1/4">
                   <img
-                    src="https://images.gr-assets.com/authors/1488569446p8/76360.jpg"
-                    alt={book.author}
-                    className="w-full h-auto rounded-lg shadow-md"
+                    src={fetchBook.imgURL}
+                    alt={fetchBook.name}
+                    className="w-[300px] h-[250px] rounded-lg shadow-md"
                   />
                 </div>
                 <div className="md:w-3/4">
-                  <h3 className="text-2xl font-bold mb-4">{book.author}</h3>
-                  <p className="text-lg leading-relaxed mb-6">{book.authorBio}</p>
-                  <p className="text-lg leading-relaxed mb-6">
-                    Matt Haig is the number one bestselling author of Reasons to Stay Alive, Notes on a Nervous Planet and seven highly acclaimed novels for adults, including The Midnight Library, which has sold over two million copies worldwide.
-                  </p>
+                  <h3 className="text-2xl font-bold mb-4">{fetchBook.name}</h3>
+                  <p className="text-lg leading-relaxed mb-6">{fetchBook.bio}</p>
                   <div className="flex gap-3">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
-                     view author
+                    <button onClick={() => (window.location.href = `/author/${fetchBook.author_id}`)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                     بینینی نوسەر
                     </button>
                   </div>
                 </div>
@@ -268,15 +289,15 @@ const BookDetail = () => {
                           </button>
                         </div>
                       </div>
-                      
+
                       <div className="p-6">
                         <form className="space-y-6">
                           <div className="bg-gray-50 p-4 rounded-xl">
                             <div className="flex items-center gap-4 mb-4">
-                              <img 
-                                src={book.coverImage} 
-                                alt={book.title} 
-                                className="w-16 h-24 object-cover rounded-md shadow-md" 
+                              <img
+                                src={book.coverImage}
+                                alt={book.title}
+                                className="w-16 h-24 object-cover rounded-md shadow-md"
                               />
                               <div>
                                 <h5 className="font-bold text-lg">{book.title}</h5>
@@ -284,7 +305,7 @@ const BookDetail = () => {
                               </div>
                             </div>
                           </div>
-                          
+
                           <div>
                             <label className="block text-gray-700 font-medium mb-3">هەڵسەنگاندنت</label>
                             <div className="flex gap-3 text-3xl justify-center bg-gray-50 py-4 rounded-xl">
@@ -299,7 +320,7 @@ const BookDetail = () => {
                               ))}
                             </div>
                           </div>
-                          
+
                           <div>
                             <label className="block text-gray-700 font-medium mb-3">بۆچوونت</label>
                             <textarea
@@ -370,7 +391,7 @@ const BookDetail = () => {
 
                       <div className="flex items-center gap-3 text-sm">
                         <div className="relative">
-                          <button 
+                          <button
                             className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-2 rounded-lg transition-colors"
                             onClick={() => {
                               // Here you would toggle the dropdown menu
@@ -383,7 +404,7 @@ const BookDetail = () => {
                               <circle cx="12" cy="18" r="2" fill="currentColor" />
                             </svg>
                           </button>
-                          
+
                           {/* Dropdown menu - would be controlled by state */}
                           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10" style={{ display: 'none' }}>
                             <button className="w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 flex items-center gap-2">
@@ -400,8 +421,8 @@ const BookDetail = () => {
                             </button>
                           </div>
                         </div>
-                        
-                        <button 
+
+                        <button
                           className="flex items-center justify-center gap-2 bg-gray-50 hover:bg-gray-100 text-gray-700 px-3 py-2 rounded-lg transition-colors"
                           onClick={() => {
                             // Here you would set a state to show the report modal
@@ -419,7 +440,6 @@ const BookDetail = () => {
                 </div>
 
                 {/* Report Modal */}
-                {/* This would be controlled by state, for example: showReportModal && ( ... ) */}
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" style={{ display: 'none' }}>
                   <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
                     <div className="p-6 border-b border-gray-200">
@@ -432,38 +452,38 @@ const BookDetail = () => {
                         </button>
                       </div>
                     </div>
-                    
+
                     <div className="p-6">
                       <p className="text-gray-600 mb-4">تکایە هۆکاری ڕاپۆرتکردنی ئەم هەڵسەنگاندنە دیاری بکە:</p>
-                      
+
                       <div className="space-y-3">
                         <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                           <input type="radio" name="report-reason" className="w-4 h-4 text-blue-600" />
                           <span className="mr-3">ناوەڕۆکی نەشیاو</span>
                         </label>
-                        
+
                         <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                           <input type="radio" name="report-reason" className="w-4 h-4 text-blue-600" />
                           <span className="mr-3">سپۆیلەری بێ ئاگاداری</span>
                         </label>
-                        
+
                         <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                           <input type="radio" name="report-reason" className="w-4 h-4 text-blue-600" />
                           <span className="mr-3">زانیاری هەڵە</span>
                         </label>
-                        
+
                         <label className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                           <input type="radio" name="report-reason" className="w-4 h-4 text-blue-600" />
                           <span className="mr-3">هۆکاری تر</span>
                         </label>
                       </div>
-                      
+
                       <textarea
                         className="w-full px-4 py-3 border border-gray-200 rounded-lg mt-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                         rows="3"
                         placeholder="ڕوونکردنەوەی زیاتر (ئارەزوومەندانە)"
                       ></textarea>
-                      
+
                       <div className="flex gap-3 mt-6">
                         <button className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
                           ناردنی ڕاپۆرت
@@ -476,7 +496,6 @@ const BookDetail = () => {
                   </div>
                 </div>
 
-                {/* Load More Button */}
                 <div className="text-center">
                   <button className="inline-flex items-center gap-2 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
                     <span>هەڵسەنگاندنی زیاتر ببینە</span>
@@ -492,92 +511,18 @@ const BookDetail = () => {
       </div>
 
       {/* Related Books */}
-      <div className="bg-gray-100 py-12">
+      <div className={`bg-gray-100 py-12 ${booksSeries.length === 0 ? 'hidden' : ''}`}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold mb-8">کتێبی پەیوەندیدار</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {book.relatedBooks.map(relatedBook => (
-              <div key={relatedBook.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                <div className="h-64 overflow-hidden">
-                  <img
-                    src={relatedBook.coverImage}
-                    alt={relatedBook.title}
-                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-1 hover:text-blue-600 transition-colors duration-200">
-                    {relatedBook.title}
-                  </h3>
-                  <p className="text-gray-600 mb-2">نووسەر: {relatedBook.author}</p>
-                  <div className="flex items-center">
-                    <div className="flex mr-2">
-                      {renderStars(relatedBook.rating)}
-                    </div>
-                    <span className="text-sm text-gray-500">{relatedBook.rating}</span>
-                  </div>
-                  <div className="mt-4">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors duration-200 w-full">
-                      بینینی وردەکاری
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h2 className="text-3xl font-bold">بەشەکانی تری {series[0]?.series_title} </h2>
+          <BookCollection data={booksSeries} text="هەموو فیلمەکان" path="/Bookdetails" />
         </div>
       </div>
 
       {/* Similar Books */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-3xl font-bold mb-8">کتێبی هاوشێوە</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[1, 2, 3, 4, 5, 6].map(item => (
-            <div key={item} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-              <div className="h-48 overflow-hidden">
-                <img
-                  src={`https://source.unsplash.com/random/200x300?book&sig=${item}`}
-                  alt="Book cover"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-3">
-                <h3 className="font-medium text-sm truncate">ناونیشانی کتێب</h3>
-                <p className="text-xs text-gray-600 mb-1">ناوی نووسەر</p>
-                <div className="flex items-center">
-                  <div className="flex text-xs mr-1">
-                    <FaStar className="text-yellow-400" />
-                    <FaStar className="text-yellow-400" />
-                    <FaStar className="text-yellow-400" />
-                    <FaStar className="text-yellow-400" />
-                    <FaRegStar className="text-yellow-400" />
-                  </div>
-                  <span className="text-xs text-gray-500">4.0</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Newsletter */}
-      <div className="bg-blue-900 text-white py-16">
+      <div className={`bg-gray-100 py-12 ${similarBooks.length === 0 ? 'hidden' : ''}`}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">بەردەوام بە</h2>
-            <p className="text-lg mb-8">بەشداری بکە لە نیوزلێتەرەکەمان بۆ پێشنیاری کتێب، چاوپێکەوتنی نووسەران و لیستی خوێندنەوە.</p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                placeholder="ئیمەیڵەکەت"
-                className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-bold transition-colors duration-200">
-                بەشداری بکە
-              </button>
-            </div>
-            <p className="text-sm mt-4 text-blue-200">ڕێز لە تایبەتمەندیت دەگرین. دەتوانیت هەر کاتێک بتەوێت بەشداریت هەڵبوەشێنیتەوە.</p>
-          </div>
+          <h2 className="text-3xl font-bold">هاوشێوەی ئەم کتێبە</h2>
+          <BookCollection data={similarBooks} text="هەموو فیلمەکان" path="/Bookdetails" />
         </div>
       </div>
     </div>

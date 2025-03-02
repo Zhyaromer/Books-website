@@ -39,7 +39,7 @@ const Books = () => {
                             label="چەشنەکان"
                             placeholder="چەشنێک هەڵبژێرە"
                             onChange={(value) => setSelectedGenres(value)}
-                            className="w-full h-[42px]"
+                            className="w-full"
                         />
                     </div>
                     <div className="w-full">

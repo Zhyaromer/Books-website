@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 const BookCollection = ({ data, text, path }) => {
     return (
         <div className="pt-6 md:pt-12 bg-gradient-to-b from-indigo-50 to-white w-full">
-            <div className="flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-4 md:px-8">
+            <div className={`flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-4 md:px-8 ${path == "/Bookdetails" ? 'hidden' : ''}`}>
                 <div>
                     <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}{`${data?.length ? ` (${data?.length})` : ''}`}</h1>
                 </div>
@@ -27,7 +27,7 @@ const BookCollection = ({ data, text, path }) => {
                             <div
                                 className="relative z-10 h-[300px] lg:h-[420px] md:h-[350px] shadow-md rounded-lg mb-2 md:mb-4 
                                 transition-all duration-500 group-hover:shadow-xl transform group-hover:-translate-y-1 cursor-pointer"
-                                onClick={() => (window.location.href = `/book/${book.id}`)}
+                                onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                             >
                                 <img
                                     src={book.cover_image}
