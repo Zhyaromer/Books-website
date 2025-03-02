@@ -66,7 +66,6 @@ const Books = () => {
             </div>
 
             <BookCollection data={books} text="هەموو فیلمەکان" path="/Books" />
-
             <Footer />
         </>
     );

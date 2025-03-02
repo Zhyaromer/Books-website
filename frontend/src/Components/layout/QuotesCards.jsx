@@ -20,7 +20,7 @@ const Quotes = ({ quotes }) => {
             <div className="p-8">
                 <div className="text-gray-500 text-sm mb-1">لە کتێبی</div>
                 <h2 
-                    onClick={() => (window.location.href = `/book/${selectedQuote.books_id}`)} 
+                    onClick={() => (window.location.href = `/booksDetail/${selectedQuote.books_id}`)} 
                     className="cursor-pointer text-xl font-bold text-gray-800 mb-2"
                 >
                     {selectedQuote.title}

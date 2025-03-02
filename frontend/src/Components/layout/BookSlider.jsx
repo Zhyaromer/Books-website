@@ -122,7 +122,7 @@ const BookSlider = ({ data }) => {
             <p className="text-gray-700">{selectedBook.description}</p>
 
             <div className="mt-6">
-              <button onClick={() => navigate(`/book/${selectedBook.id}`)} className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3">
+              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3">
                 بینینی زیاتر
               </button>
             </div>

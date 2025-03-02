@@ -47,7 +47,7 @@ const BookCollection = ({ data, text, path }) => {
                             <div className="text-center mt-4">
                                 <h2 className="cursor-pointer text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-800 md:mb-2 
                                     group-hover:text-indigo-700 transition-colors duration-300 line-clamp-2 "
-                                    onClick={() => (window.location.href = `/book/${book.id}`)}
+                                    onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                                 >
                                     {book?.title?.length > 10 ? `${book.title.slice(0, 10)}...` : book.title}
                                 </h2>
