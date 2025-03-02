@@ -4,7 +4,6 @@ const xss = require('xss');
 // Get book by ID
 const getBookById = (req, res) => {
     const { id } = req.params;
-    console.log(id);
     if (!id) {
         return res.status(400).json({ message: 'Missing book ID' });
     }

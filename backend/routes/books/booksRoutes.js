@@ -7,6 +7,7 @@ const getTrendingBooks = require('../../controllers/books/getTrendingBooks');
 const getRandomBooks = require('../../controllers/books/getRandomBooks');
 const getBookQuotes = require('../../controllers/books/getBookQuotes');
 const getnwewestbooks = require('../../controllers/books/getnwewestbooks');
+const incrementBookView =  require('../../controllers/books/incrementbookview');
 
 router.get('/getAllBooks', getAllBooks);
 router.get('/getBookById/:id', getBookById);
@@ -15,5 +16,6 @@ router.get('/getTrendingBooks', getTrendingBooks);
 router.get('/getRandomBooks', getRandomBooks);
 router.get('/getBookQuotes', getBookQuotes);
 router.get('/getnwewestbooks', getnwewestbooks);
+router.get('/incrementbookview/:id', incrementBookView);
 
 module.exports = router;

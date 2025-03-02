@@ -17,6 +17,15 @@ const BookDetail = () => {
   const [similarBooks, setSimilarBooks] = useState([]);
 
   useEffect(() => {
+
+    const incrementViewCount = async () => {
+      try {
+        await axios.get(`http://localhost:3000/books/incrementbookview/${id}`);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     const fetchBook = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/books/getBookById/${id}`);
@@ -32,6 +41,7 @@ const BookDetail = () => {
       }
     };
 
+    incrementViewCount();
     fetchBook();
   }, [id]);
 
