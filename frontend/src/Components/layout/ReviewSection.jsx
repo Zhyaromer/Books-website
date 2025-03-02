@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { MoreVertical, Star, Edit, Trash, Flag, AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Dialog,
@@ -85,9 +85,7 @@ const ReviewSection = () => {
   const [reportMessage, setReportMessage] = useState("");
   const [editMode, setEditMode] = useState(false);
 
-  // Slider state
   const [currentSlide, setCurrentSlide] = useState(0);
-  const sliderRef = useRef(null);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === reviews.length - 1 ? 0 : prev + 1));
@@ -151,7 +149,6 @@ const ReviewSection = () => {
   };
 
   const handleReport = () => {
-    // Handle report logic here
     setReportMessage("");
     setIsReportOpen(false);
   };
@@ -195,14 +192,16 @@ const ReviewSection = () => {
   };
 
   return (
-    <div dir="rtl" className="w-full max-w-4xl mx-auto p-4 font-sans">
+    <div dir="rtl" className="w-full max-w-4xl mx-auto p-0 md:p-4 font-sans">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">هەڵسەنگاندنەکان</h2>
-        <Button onClick={() => {
-          setEditMode(false);
-          setNewReview({ message: "", rating: 0, hasSpoiler: false });
-          setIsAddReviewOpen(true);
-        }}>
+        <h2 className="text-base md:text-2xl font-bold">هەڵسەنگاندنەکان</h2>
+        <Button 
+          className="bg-indigo-500 hover:bg-indigo-600 text-white text-xs px-2 md:px-6 md:text-lg"
+          onClick={() => {
+            setEditMode(false);
+            setNewReview({ message: "", rating: 0, hasSpoiler: false });
+            setIsAddReviewOpen(true);
+          }}>
           زیادکردنی هەڵسەنگاندن
         </Button>
       </div>
@@ -267,7 +266,7 @@ const ReviewSection = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => toggleSpoilerReveal(review.id)}
-                          className="bg-white dark:bg-gray-700"
+                          className="bg-indigo-500 hover:bg-indigo-600 text-white hover:text-white"
                         >
                           پیشاندانی هەڵسەنگاندن
                         </Button>
@@ -294,25 +293,23 @@ const ReviewSection = () => {
             ))}
           </div>
 
-          {/* Slider Navigation Controls */}
           <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-between pointer-events-none">
             <button
               onClick={prevSlide}
-              className="pointer-events-auto bg-white/80 dark:bg-gray-800/80 rounded-full p-2 shadow-md ml-2"
+              className="pointer-events-auto bg-white/80 text-indigo-600 rounded-full p-2 shadow-md ml-2"
             >
               <ChevronRight className="h-6 w-6" />
             </button>
 
             <button
               onClick={nextSlide}
-              className="pointer-events-auto bg-white/80 dark:bg-gray-800/80 rounded-full p-2 shadow-md mr-2"
+              className="pointer-events-auto bg-white/80 text-indigo-600 rounded-full p-2 shadow-md mr-2"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
           </div>
         </div>
 
-        {/* Fixed positioned dots with better styling */}
         <div className="absolute bottom-0 left-0 right-0 transform translate-y-6">
           <div className="flex items-center justify-center gap-2">
             {reviews.map((_, index) => (
@@ -330,7 +327,6 @@ const ReviewSection = () => {
         </div>
       </div>
 
-      {/* Add/Edit Review Dialog */}
       <Dialog open={isAddReviewOpen} onOpenChange={setIsAddReviewOpen}>
         <DialogContent>
           <div className="flex justify-end pt-10 text-right">
@@ -388,14 +384,13 @@ const ReviewSection = () => {
             <Button variant="outline" onClick={() => setIsAddReviewOpen(false)}>
               پاشگەزبوونەوە
             </Button>
-            <Button onClick={handleAddReview}>
+            <Button className="bg-indigo-500 hover:bg-indigo-600 text-white" onClick={handleAddReview}>
               {editMode ? "نوێکردنەوە" : "ناردن"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Report Dialog */}
       <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
         <DialogContent>
           <DialogHeader>

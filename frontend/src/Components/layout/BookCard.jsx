@@ -7,7 +7,7 @@ const BookCollection = ({ data, text, path }) => {
                 <div>
                     <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}{`${data?.length ? ` (${data?.length})` : ''}`}</h1>
                 </div>
-                <div className={`${path == "/Books" ? 'hidden' : ''}`}>
+                <div className={`${path == "/Books" || path == "/trending" ? 'hidden' : ''}`}>
                     <p
                         onClick={() => (window.location.href = path)}
                         className="text-sm md:text-base lg:text-lg font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"

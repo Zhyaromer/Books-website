@@ -102,10 +102,10 @@ const Main = () => {
         <div>
             <BookstoreNavigation />
             <BookSlider data={sliderbooks} />
-            <BookCollection data={kurdishbooks} text="نوێترین کتێبە کوردیەکان" path="/kurdish" />
-            <BookCollection data={englishbooks} text="نوێترین کتێبە ئینگلیزیەکان" path="/english" />
+            <BookCollection data={kurdishbooks} text="نوێترین کتێبە کوردیەکان" path="/books?language=Kurdish" />
+            <BookCollection data={englishbooks} text="نوێترین کتێبە ئینگلیزیەکان" path="/books?language=English" />
             <BookCollection data={trendingbooks} text="کتێبی تریندینگ" path="/trending" />
-            <BookCollection data={romancebooks} text="کتێبی ڕۆمانس" path="/romance" />
+            <BookCollection data={romancebooks} text="کتێبی ڕۆمانس" path="/books?genre=ڕۆمانس" />
             <Quotes quotes={getquotes} />
             <MultipleAuthorsCard data={famousauthors} />
             <Footer />

@@ -1,15 +1,21 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { X, ChevronDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const MultipleSelection = ({ options, label, placeholder,onChange  }) => {
-    const [selectedItems, setSelectedItems] = useState([]);
+const MultipleSelection = ({ options, label, placeholder, onChange, value }) => {
+    const [selectedItems, setSelectedItems] = useState(value || []);
     const [inputValue, setInputValue] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const inputRef = useRef(null);
     const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        if (value && Array.isArray(value)) {
+            setSelectedItems(value);
+        }
+    }, [value]);
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
@@ -56,7 +62,7 @@ const MultipleSelection = ({ options, label, placeholder,onChange  }) => {
         option.label.toLowerCase().includes(inputValue.toLowerCase())
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target) &&
                 inputRef.current && !inputRef.current.contains(event.target)) {
@@ -163,7 +169,8 @@ MultipleSelection.propTypes = {
     ).isRequired,
     label: PropTypes.string.isRequired,
     placeholder: PropTypes.string,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    value: PropTypes.array
 };
 
 export default MultipleSelection;

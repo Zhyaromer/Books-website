@@ -60,7 +60,7 @@ const BookDetail = () => {
         <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white py-12">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row items-center">
-              <div className="md:w-1/3 mb-8 md:mb-0">
+              <div className="w-2/3 lg:w-1/3 mb-8 md:mb-0">
                 <div className="relative">
                   <img
                     src={fetchBook.cover_image}
@@ -121,30 +121,30 @@ const BookDetail = () => {
           </div>
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="container mx-auto px-0 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="flex border-b">
               <button
                 onClick={() => setActiveTab('description')}
-                className={`px-6 py-4 text-lg font-bold ${activeTab === 'description' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-4 py-4 text-base font-bold ${activeTab === 'description' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 وەسف
               </button>
               <button
                 onClick={() => setActiveTab('details')}
-                className={`px-6 py-4 text-lg font-bold ${activeTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-4 py-4 text-base font-bold ${activeTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 وردەکاری
               </button>
               <button
                 onClick={() => setActiveTab('author')}
-                className={`px-6 py-4 text-lg font-bold ${activeTab === 'author' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-4 py-4 text-base font-bold ${activeTab === 'author' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 نووسەر
               </button>
               <button
                 onClick={() => setActiveTab('reviews')}
-                className={`px-6 py-4 text-lg font-bold ${activeTab === 'reviews' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-4 py-4 text-base font-bold ${activeTab === 'reviews' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 هەڵسەنگاندنەکان
               </button>
@@ -232,14 +232,14 @@ const BookDetail = () => {
 
         <div className={`bg-gray-100 py-12 ${booksSeries.length === 0 ? 'hidden' : ''}`}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold">بەشەکانی تری {series[0]?.series_title} </h2>
+            <h2 className="text-xl md:text-3xl font-bold">بەشەکانی تری {series[0]?.series_title} </h2>
             <BookCollection data={booksSeries} text="هەموو فیلمەکان" path="/Bookdetails" />
           </div>
         </div>
 
         <div className={`bg-gray-100 py-12 ${similarBooks.length === 0 ? 'hidden' : ''}`}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold">هاوشێوەی ئەم کتێبە</h2>
+            <h2 className="text-xl md:text-3xl font-bold">هاوشێوەی ئەم کتێبە</h2>
             <BookCollection data={similarBooks} text="هەموو فیلمەکان" path="/Bookdetails" />
           </div>
         </div>
