@@ -5,7 +5,7 @@ const BookCollection = ({ data, text, path }) => {
         <div className="pt-6 md:pt-12 bg-gradient-to-b from-indigo-50 to-white w-full">
             <div className={`flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-4 md:px-8 ${path == "/Bookdetails" ? 'hidden' : ''}`}>
                 <div>
-                    <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}{`${data?.length ? ` (${data?.length})` : ''}`}</h1>
+                    <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}{path == "/Books" ? (`${data?.length ? ` (${data?.length})` : ''}`) : ''}</h1>
                 </div>
                 <div className={`${path == "/Books" || path == "/trending" ? 'hidden' : ''}`}>
                     <p

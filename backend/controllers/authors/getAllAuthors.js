@@ -6,7 +6,7 @@ const getAllAuthors = (req, res) => {
     const { language, sorting } = req.query;
 
     let sql = `
-       SELECT id,name,imgURL FROM authors
+       SELECT id,name,imgURL,bio FROM authors
     `;
 
     let conditions = [];
