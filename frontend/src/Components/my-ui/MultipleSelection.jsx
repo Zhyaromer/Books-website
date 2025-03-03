@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { X, ChevronDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,14 +26,14 @@ const MultipleSelection = ({ options, label, placeholder, onChange, value }) => 
         if (!selectedItems.find(i => i.value === item.value)) {
             const newSelectedItems = [...selectedItems, item];
             setSelectedItems(newSelectedItems);
-            onChange(newSelectedItems); 
+            onChange(newSelectedItems);
         }
     };
 
     const handleRemoveItem = (itemValue) => {
         const newSelectedItems = selectedItems.filter(item => item.value !== itemValue);
         setSelectedItems(newSelectedItems);
-        onChange(newSelectedItems); 
+        onChange(newSelectedItems);
     };
 
     const handleKeyDown = (e) => {
@@ -87,13 +87,13 @@ const MultipleSelection = ({ options, label, placeholder, onChange, value }) => 
                 >
                     {selectedItems.map(item => (
                         <Badge
+                            onClick={() => handleRemoveItem(item.value)}
                             key={item.value}
-                            className="bg-blue-100 text-blue-800 flex items-center gap-1 py-1 px-2"
+                            className=" bg-indigo-500 cursor-pointer text-white hover:bg-indigo-700 transform transition-colors duration-300 flex items-center gap-1 py-1 px-2"
                         >
                             {item.label}
                             <X
-                                className="h-3 w-3 cursor-pointer hover:text-blue-500"
-                                onClick={() => handleRemoveItem(item.value)}
+                                className="h-3 w-3"
                             />
                         </Badge>
                     ))}

@@ -84,9 +84,9 @@ const BookstoreNavigation = () => {
             dropdownOpen: booksDropdownOpen,
             setDropdownOpen: setBooksDropdownOpen,
             dropdownItems: [
-                { name: 'هەموو نووسەرەکان', href: '#' },
-                { name: 'نووسەری کوردی', href: '#' },
-                { name: 'نووسەر ئینگلیزی', href: '#' },
+                { name: 'هەموو نووسەرەکان', href: '/authors' },
+                { name: 'نووسەری کوردی', href: '/authors?language=Kurdish' },
+                { name: 'نووسەر ئینگلیزی', href: '/authors?language=English' },
             ]
         },
         { name: 'وتە', href: '#' },

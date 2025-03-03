@@ -66,8 +66,6 @@ const Books = () => {
                     `http://localhost:3000/books/getAllBooks?genre=${genreParams}&sorting=${Sort || ''}&language=${foundLanguage?.value || languageParam || ''}`
                 );
 
-                console.log("API Response:", response.status);
-
                 if (response.status === 200) {
                     setBooks(response.data);
                 }

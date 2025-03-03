@@ -4,6 +4,7 @@ const xss = require('xss');
 // Get all authors
 const getAllAuthors = (req, res) => {
     const { language, sorting } = req.query;
+    console.log(sorting);
 
     let sql = `
        SELECT id,name,imgURL,bio FROM authors
@@ -16,8 +17,8 @@ const getAllAuthors = (req, res) => {
 
     try {
 
-        if (sanitizedLanguage) {
-            conditions.push('authors.language = ?');
+        if (sanitizedLanguage && sanitizedLanguage !== 'all') {
+            conditions.push('language = ?');
             values.push(sanitizedLanguage);
         }
 
@@ -26,10 +27,10 @@ const getAllAuthors = (req, res) => {
         }
 
         if(sorting === 'views'){
-            sql += ' ORDER BY authors.views DESC';
+            sql += ' ORDER BY views DESC';
         }
         else{
-            sql += ' ORDER BY authors.created_at DESC';
+            sql += ' ORDER BY created_at DESC';
         }
 
         db.query(sql, values, (err, result) => {

@@ -23,4 +23,9 @@ const languageOptions = [
     { value: "English", label: "ئینگلیزی" }
 ];
 
-export { genreOptions, sortOptions, languageOptions };
+const sortOptionsAuthors = [
+    { value: "newest", label: "تازەترین" },
+    { value: "views", label: "زۆرترین بینەر" },
+];
+
+export { genreOptions, sortOptions, languageOptions, sortOptionsAuthors };
