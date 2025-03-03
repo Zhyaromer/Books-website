@@ -22,11 +22,11 @@ const Books = () => {
     useEffect(() => {
         if (genreQuery) {
             const genreValues = genreQuery.split(',');
-            
+
             const matchedGenres = genreValues.map(genreValue => {
                 return genreOptions.find(option => option.value === genreValue);
-            }).filter(Boolean); 
-            
+            }).filter(Boolean);
+
             if (matchedGenres.length > 0) {
                 setSelectedGenres(matchedGenres);
             }
@@ -35,16 +35,16 @@ const Books = () => {
 
     const handleGenreChange = (value) => {
         setSelectedGenres(value);
-        
+
         const newParams = new URLSearchParams(location.search);
-        
+
         if (value.length > 0) {
             const genreString = value.map(genre => genre.value).join(',');
             newParams.set('genre', genreString);
         } else {
             newParams.delete('genre');
         }
-        
+
         navigate({
             pathname: location.pathname,
             search: newParams.toString()
@@ -58,24 +58,31 @@ const Books = () => {
                     ? selectedGenres.map(genre => genre.value).join(',')
                     : genreQuery || '';
 
-                console.log("Genre params for API call:", genreParams);
-                console.log("Current selected genres:", selectedGenres);
-
                 const languageParam = language || languageQuery || '';
                 const foundLanguage = languageOptions.find(option => option.value === languageParam);
                 setLanguage(foundLanguage?.value);
-                
+
                 const response = await axios.get(
                     `http://localhost:3000/books/getAllBooks?genre=${genreParams}&sorting=${Sort || ''}&language=${foundLanguage?.value || languageParam || ''}`
                 );
-                setBooks(response.data);
+
+                console.log("API Response:", response.status);
+
+                if (response.status === 200) {
+                    setBooks(response.data);
+                }
             } catch (error) {
+                if (error.response.status === 404) {
+                    setBooks([]);
+                }
                 console.error('Error fetching books:', error);
             }
         };
 
         fetchBooks();
     }, [selectedGenres, Sort, language, genreQuery]);
+
+    console.log("Selected books:", books);
 
     return (
         <>

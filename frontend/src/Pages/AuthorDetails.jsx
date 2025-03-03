@@ -1,7 +1,4 @@
-import React from 'react';
-
 const AuthorPage = () => {
-  // Sample author data - you can replace with your own data
   const author = {
     name: "Jane Austen",
     image: "/api/placeholder/300/300",
@@ -41,7 +38,6 @@ const AuthorPage = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto py-8 px-4">
-        {/* Author header section */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
           <div className="md:flex">
             <div className="md:w-1/3">
@@ -81,7 +77,6 @@ const AuthorPage = () => {
           </div>
         </div>
         
-        {/* Books section */}
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Books by {author.name}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

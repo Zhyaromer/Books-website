@@ -21,12 +21,17 @@ const getAllBooks = (req, res) => {
         sanitizedGenres = genreArray.map(g => xss(g));
 
         if (sanitizedGenres.length > 0) {
-            conditions.push(`books.genre IN (${sanitizedGenres.map(() => '?').join(', ')})`);
-            values.push(...sanitizedGenres);
+            if (sanitizedGenres.length === 1) {
+                conditions.push(`books.genre = ?`);
+                values.push(sanitizedGenres[0]);
+            } else {
+                conditions.push(`books.genre IN (${sanitizedGenres.map(() => '?').join(', ')})`);
+                values.push(...sanitizedGenres);
+            }
         }
     }
 
-    if (language && language !== undefined && language !== 'all') {
+    if (language && language !== undefined && language !== 'all' && language.trim() !== '') {
         const sanitizedLanguage = xss(language);
         conditions.push('books.language = ?');
         values.push(sanitizedLanguage);
@@ -61,7 +66,7 @@ const getAllBooks = (req, res) => {
             return res.status(500).json({ message: 'Internal Server Error' });
         }
 
-        if (result.length === 0) {
+        if (!result || result.length === 0) {
             return res.status(404).json({ message: 'No books found' });
         }
 

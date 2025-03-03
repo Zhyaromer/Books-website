@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 
 const BookCollection = ({ data, text, path }) => {
+    console.log(data);
     return (
         <div className="pt-6 md:pt-12 bg-gradient-to-b from-indigo-50 to-white w-full">
             <div className={`flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-4 md:px-8 ${path == "/Bookdetails" ? 'hidden' : ''}`}>
@@ -61,7 +62,7 @@ const BookCollection = ({ data, text, path }) => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-center text-sm md:text-base font-bold text-gray-700">هیچ کتێبێک نەدۆزرایەوە نییە</p>
+                    <p className="text-center text-sm md:text-base font-bold text-gray-700 md:pb-56">هیچ کتێبێک نەدۆزرایەوە نییە</p>
                 )}
             </div>
         </div>
