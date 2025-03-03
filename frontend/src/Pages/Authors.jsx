@@ -5,7 +5,7 @@ import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import Selection from "../Components/my-ui/Selection";
 import { sortOptionsAuthors, languageOptions } from "../Helpers/options";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Authors = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -13,14 +13,13 @@ const Authors = () => {
   const [language, setLanguage] = useState(languageOptions?.value || "");
   const [Sort, setSort] = useState();
   const location = useLocation();
-  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const languageQuery = queryParams.get("language");
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoaded(true);
-    }, 100);
+    }, 50);
 
     return () => clearTimeout(timer);
   }, []);

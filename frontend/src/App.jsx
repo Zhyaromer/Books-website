@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Main from "./Pages/Main";
 import Books from "./Pages/Books";
 import BookDetail from "./Pages/BookDetails";
-import ReviewSection from "./Components/layout/ReviewSection";
 import Authors from "./Pages/Authors";
+import AuthorDetails from "./Pages/AuthorDetails";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
         <Route path="/books" element={<Books />} />
         <Route path="/booksDetail/:id" element={<BookDetail />} />
         <Route path="/authors" element={<Authors />} />
-        <Route path="/test" element={<ReviewSection />} />
+        <Route path="/AuthorDetails/:id" element={<AuthorDetails />} />
       </Routes>
     </Router>
   );
