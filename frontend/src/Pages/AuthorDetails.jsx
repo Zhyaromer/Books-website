@@ -3,38 +3,60 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
+import LoadingUi from '../Components/my-ui/Loading';
 
 const AuthorDetails = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [author, setAuthor] = useState([]);
-  const [books, setBooks] = useState({});
+  const [books, setBooks] = useState([]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const fetchAuthor = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/authors/getAuthorById/${id}`);
-        setAuthor(response.data.author[0]);
-        setBooks(response.data.books);
-        setLoading(false);
+        setLoading(true);
+        const response = await axios.get(`http://localhost:3000/authors/getAuthorById/${id}`, { signal });
+        
+        if (response.data && response.data.author && response.data.books) {
+          setAuthor(response.data.author[0] || null);
+          setBooks(response.data.books || []);
+        } else {
+          setAuthor(null);
+          setBooks([]);
+        }
       } catch (error) {
-        console.error(error);
-        setLoading(false);
+        if (error.name !== 'CanceledError') {
+          console.error(error);
+          setAuthor(null);
+          setBooks([]);
+        }
       } finally {
         setLoading(false);
       }
     };
 
+    const incrementViewCount = async () => {
+      try {
+        await axios.get(`http://localhost:3000/authors/incrementauthorview/${id}`);
+      } catch (error) {
+        console.error('Failed to increment view count', error);
+      }
+    }
+
     fetchAuthor();
+    incrementViewCount();
+
+    return () => {
+      controller.abort();
+    };
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <LoadingUi />
   }
 
   return (

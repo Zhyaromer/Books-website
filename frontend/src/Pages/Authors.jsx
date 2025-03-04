@@ -25,13 +25,15 @@ const Authors = () => {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
     const fetchAuthors = async () => {
       try {
         const languageParam = language || languageQuery || '';
         const foundLanguage = languageOptions.find(option => option.value === languageParam);
         setLanguage(foundLanguage?.value);
 
-        const response = await axios.get(`http://localhost:3000/authors/getallauthors?language=${foundLanguage?.value || languageParam || ''}&sorting=${Sort || ''}`);
+        const response = await axios.get(`http://localhost:3000/authors/getallauthors?language=${foundLanguage?.value || languageParam || ''}&sorting=${Sort || ''}`, { signal });
         setAuthors(response.data);
         console.log(response.data);
       } catch (error) {
@@ -40,6 +42,10 @@ const Authors = () => {
     }
 
     fetchAuthors();
+
+    return () => {
+      controller.abort();
+    };
   }, [isLoaded, authors, language, Sort]);
 
   return (
