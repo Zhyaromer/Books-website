@@ -26,7 +26,7 @@ const Quotes = ({ quotes }) => {
                     {selectedQuote.title}
                 </h2>
                 <div 
-                    onClick={() => (window.location.href = `/author/${selectedQuote.author_id}`)} 
+                    onClick={() => (window.location.href = `/AuthorDetails/${selectedQuote.author_id}`)} 
                     className="cursor-pointer text-gray-500 text-sm mb-4"
                 >
                     لەلایەن {selectedQuote.name}
