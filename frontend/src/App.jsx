@@ -7,6 +7,8 @@ import Authors from "./Pages/Authors";
 import AuthorDetails from "./Pages/AuthorDetails";
 import Quotes from "./Pages/Quotes";
 import Suggestions from "./Pages/Suggestions";
+import NewsPage from "./Pages/NewsPage";
+import NewsDetails from "./Pages/NewsDetails";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/AuthorDetails/:id" element={<AuthorDetails />} />
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/suggestions" element={<Suggestions />} />
+        <Route path="/news" element={<NewsPage />} />
+        <Route path="/newsdetails/:id" element={<NewsDetails />} />
       </Routes>
     </Router>
   );
