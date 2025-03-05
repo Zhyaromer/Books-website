@@ -35,16 +35,16 @@ const BookCollection = ({ data, text, path }) => {
                                     alt={`Cover of ${book.title}`}
                                     className="w-full h-full object-fill transition-transform duration-500 group-hover:scale-105"
                                 />
-                                
+
                                 <div className="absolute w-full h-[300px] lg:h-[420px] md:h-[350px] inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
-    
+
                                 <div className="absolute z-20 bottom-0 right-0 left-0 flex justify-center transform translate-y-1/2">
                                     <p className="text-xs sm:text-sm text-white px-2 py-1 bg-purple-500 rounded-full max-w-max shadow-lg">
                                         {book.genre}
                                     </p>
                                 </div>
                             </div>
-    
+
                             <div className="text-center mt-4">
                                 <h2 className="cursor-pointer text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-800 md:mb-2 
                                     group-hover:text-indigo-700 transition-colors duration-300 line-clamp-2 "
@@ -52,7 +52,7 @@ const BookCollection = ({ data, text, path }) => {
                                 >
                                     {book?.title?.length > 10 ? `${book.title.slice(0, 10)}...` : book.title}
                                 </h2>
-    
+
                                 <div className="flex items-center justify-center">
                                     <span onClick={() => (window.location.href = `/authors/${book.author_id}`)} className="text-xs sm:text-sm md:text-base cursor-pointer text-indigo-800 font-medium hover:text-indigo-600 transition-colors">
                                         -{book.name}-

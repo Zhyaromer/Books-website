@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const addReadBook = require('../../controllers/user/addReadBook');
 const addReview = require('../../controllers/user/addReview');
-const addSaveBook = require('../../controllers/user/addSaveBook');
+const addsaveBook = require('../../controllers/user/addsaveBook');
 const checkauth = require('../../Middleware/checkauth');
 const getReadBooks = require('../../controllers/user/getReadBooks');
 const getSavedBooks = require('../../controllers/user/getSavedBooks');
@@ -15,7 +15,7 @@ router.get('/getUserComments', checkauth, getUserComments);
 
 router.post('/addReadBook', checkauth, addReadBook);
 router.post('/addReview', checkauth, addReview);
-router.post('/addSaveBook', checkauth, addSaveBook);
+router.post('/addSaveBook', checkauth, addsaveBook);
 
 router.delete('/removeReview', checkauth, removeReview);
 

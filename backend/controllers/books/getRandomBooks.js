@@ -1,7 +1,7 @@
 const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 
-// Get all books
+// Get Random books
 const getRandomBooks = (req, res) => {
     const { genre, language } = req.query;
 
@@ -33,7 +33,7 @@ const getRandomBooks = (req, res) => {
             sql += ' WHERE ' + conditions.join(' AND ');
         }
 
-        sql += `ORDER BY RAND() LIMIT 10`;
+        sql += `ORDER BY RAND() LIMIT 6`;
 
         db.query(sql, values, (err, result) => {
             if (err) {

@@ -56,6 +56,38 @@ const BookstoreNavigation = () => {
         setShowSearchResults(query.length > 0);
     };
 
+    const handleNavigation = (href) => {
+        if (href !== '#') {
+            window.location.href = href;
+        }
+    };
+
+    const handleDropdownToggle = (e, navItem, index) => {
+        e.stopPropagation();
+        setHomeDropdownOpen(false);
+        setBooksDropdownOpen(false);
+        setBestSellerDropdownOpen(false);
+        setShowSearchResults(false);
+    
+        if (navItem.hasDropdown) {
+            switch(index) {
+                case 0:
+                    setHomeDropdownOpen(!homeDropdownOpen);
+                    break;
+                case 1:
+                    setBooksDropdownOpen(!booksDropdownOpen);
+                    break;
+                case 5:
+                    setBestSellerDropdownOpen(!bestSellerDropdownOpen);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            handleNavigation(navItem.href);
+        }
+    };
+
     const navLinks = [
         {
             name: 'کتێب',
@@ -89,9 +121,9 @@ const BookstoreNavigation = () => {
                 { name: 'نووسەر ئینگلیزی', href: '/authors?language=English' },
             ]
         },
-        { name: 'وتە', href: '#' },
-        { name: 'هەواڵ', href: '#' },
-        { name: 'پێشنیاری ئێمە', href: '#' },
+        { name: 'وتە', href: '/quotes' },
+        { name: 'هەواڵ', href: '/news' },
+        { name: 'پێشنیاری ئێمە', href: '/suggestions' },
         {
             name: 'زیاتر',
             href: '#',
@@ -115,22 +147,6 @@ const BookstoreNavigation = () => {
             { icon: null ,name: 'تۆمارکردن', href: '/signup' }
         ];
 
-    const handleDropdownToggle = (e, index) => {
-        e.stopPropagation();
-        setHomeDropdownOpen(false);
-        setBooksDropdownOpen(false);
-        setBestSellerDropdownOpen(false);
-        setShowSearchResults(false);
-
-        if (index === 0) {
-            setHomeDropdownOpen(!homeDropdownOpen);
-        } else if (index === 1) {
-            setBooksDropdownOpen(!booksDropdownOpen);
-        } else if (index === 5) {
-            setBestSellerDropdownOpen(!bestSellerDropdownOpen);
-        }
-    };
-
     const handleUserDropdownToggle = (e) => {
         e.stopPropagation();
         setUserDropdownOpen(!userDropdownOpen);
@@ -141,7 +157,6 @@ const BookstoreNavigation = () => {
         setShowSearchResults(false);
         setSearchQuery('');
     };
-
     return (
         <nav dir="rtl" className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-sm shadow-md' : 'bg-white'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -159,7 +174,7 @@ const BookstoreNavigation = () => {
                                 <div key={link.name} className="relative dropdown-container">
                                     <div
                                         className="flex items-center cursor-pointer text-gray-700 hover:text-indigo-600 transition-colors px-3 py-2 text-sm font-medium"
-                                        onClick={link.hasDropdown ? (e) => handleDropdownToggle(e, index) : undefined}
+                                        onClick={(e) => handleDropdownToggle(e, link, index)}
                                     >
                                         <span>{link.name}</span>
                                         {link.hasDropdown && <ChevronDown className="h-4 w-4 mr-1" />}
@@ -204,7 +219,7 @@ const BookstoreNavigation = () => {
                                                 <div key={link.name}>
                                                     <div
                                                         className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
-                                                        onClick={link.hasDropdown ? (e) => handleDropdownToggle(e, index) : undefined}
+                                                        onClick={(e) => handleDropdownToggle(e, link, index)}
                                                     >
                                                         <a href={link.hasDropdown ? undefined : link.href} className="block w-full">
                                                             {link.name}
@@ -435,7 +450,7 @@ const BookstoreNavigation = () => {
                             <div key={link.name}>
                                 <div
                                     className="flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
-                                    onClick={link.hasDropdown ? (e) => handleDropdownToggle(e, index) : undefined}
+                                    onClick={(e) => handleDropdownToggle(e, link, index)}
                                 >
                                     <a href={link.hasDropdown ? undefined : link.href}>
                                         {link.name}
