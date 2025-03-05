@@ -1,0 +1,9 @@
+[build]
+cmd = "npm install && cd my-app && npm install && npm run build && cd ../books-website && npm install"
+
+[start]
+cmd = "cd books-website && node index.js"
+
+[environment]
+NODE_VERSION = "20"
+PORT = "3000"
