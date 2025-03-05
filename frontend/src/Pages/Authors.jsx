@@ -3,18 +3,32 @@ import AuthorCard from "../Components/layout/AuthordetailsCard";
 import axios from "axios";
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
-import Selection from "../Components/my-ui/Selection";
 import { sortOptionsAuthors, languageOptions } from "../Helpers/options";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import Pagination from "../Components/my-ui/Pagination";
+import FilterSection from "../Components/my-ui/FilterSection";
 
 const Authors = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [authors, setAuthors] = useState([]);
   const [language, setLanguage] = useState(languageOptions?.value || "");
   const [Sort, setSort] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalAuthors, setTotalAuthors] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const authorsPerPage = 12;
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const languageQuery = queryParams.get("language");
+  const pageQuery = queryParams.get("page");
+
+  useEffect(() => {
+    if (pageQuery) {
+      setCurrentPage(parseInt(pageQuery));
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -24,20 +38,59 @@ const Authors = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    const newParams = new URLSearchParams(location.search);
+    newParams.set('page', newPage.toString());
+    navigate({
+      pathname: location.pathname,
+      search: newParams.toString()
+    }, { replace: true });
+  };
+
+  const handleLanguageChange = (value) => {
+    setLanguage(value);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (value) => {
+    setSort(value);
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
     const fetchAuthors = async () => {
+      setLoading(true);
       try {
         const languageParam = language || languageQuery || '';
         const foundLanguage = languageOptions.find(option => option.value === languageParam);
         setLanguage(foundLanguage?.value);
 
-        const response = await axios.get(`http://localhost:3000/authors/getallauthors?language=${foundLanguage?.value || languageParam || ''}&sorting=${Sort || ''}`, { signal });
-        setAuthors(response.data);
-        console.log(response.data);
+        const response = await axios.get(
+          `http://localhost:3000/authors/getallauthors?language=${foundLanguage?.value || languageParam || ''}&sorting=${Sort || ''}&page=${currentPage}&limit=${authorsPerPage}`,
+          { signal }
+        );
+
+        if (response.data.authors) {
+          setAuthors(response.data.authors);
+          setTotalAuthors(response.data.total);
+          setTotalPages(Math.ceil(response.data.total / authorsPerPage));
+        } else {
+          setAuthors(response.data);
+          setTotalAuthors(response.data.length);
+          setTotalPages(Math.ceil(response.data.length / authorsPerPage));
+        }
       } catch (error) {
-        console.error(error);
+        if (!axios.isCancel(error)) {
+          console.error(error);
+          setAuthors([]);
+          setTotalAuthors(0);
+          setTotalPages(1);
+        }
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -46,56 +99,57 @@ const Authors = () => {
     return () => {
       controller.abort();
     };
-  }, [isLoaded, authors, language, Sort]);
+  }, [isLoaded, language, Sort, currentPage]);
 
   return (
     <div>
       <BookstoreNavigation />
-
-      <div className="relative z-30 space-y-6 px-4 sm:px-6 lg:px-8 py-6 pt-20 md:pt-32">
-        <div dir="rtl" className="grid grid-cols-1 sm:grid-cols-2 px-0 md:px-64 gap-4">
-          <div className="w-full">
-            <Selection
-              options={languageOptions}
-              label="زمانی نووسەر"
-              placeholder="زمانێک هەڵبژێرە"
-              value={language}
-              onChange={(value) => setLanguage(value)}
-              className="w-full h-[42px]"
-            />
-          </div>
-          <div className="w-full">
-            <Selection
-              options={sortOptionsAuthors}
-              label="ڕیزبەندی"
-              placeholder="ڕیزبەندیەک هەڵبژێرە"
-              value={Sort}
-              onChange={(value) => setSort(value)}
-              className="w-full h-[42px]"
-            />
-          </div>
-        </div>
-      </div>
+      <FilterSection 
+        showGenre={false}
+        languageOptions={languageOptions}
+        language={language}
+        onLanguageChange={handleLanguageChange}
+        sortOptions={sortOptionsAuthors}
+        sort={Sort}
+        onSortChange={handleSortChange}
+        languageLabel="زمانی نووسەر"
+        className="grid grid-cols-1 sm:grid-cols-2 px-0 md:px-64 gap-4"
+      />
 
       <div dir="rtl" className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 overflow-hidden">
         <div className="container mx-auto py-12 px-4 relative z-10">
-          <h1 className="text-3xl font-bold text-slate-600 dark:text-slate-300 pb-10">{language === 'Kurdish' ? 'نووسەرە کوردیەکان' : language === 'English' ? 'نووسەرە ئینگلیزیەکان' : 'نووسەرەکان'} {`(${authors.length})`}</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {authors.map((author, index) => (
-              <div
-                key={author.id}
-                className={`transition-all duration-700 ease-out ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ transitionDelay: `${150 * index}ms` }}
-              >
-                <AuthorCard
-                  name={author.name}
-                  imageUrl={author.imgURL}
-                  bio={author.bio}
-                  id={author.id}
-                />
+          <h1 className="text-3xl font-bold text-slate-600 dark:text-slate-300 pb-10">
+            {language === 'Kurdish' ? 'نووسەرە کوردیەکان' : language === 'English' ? 'نووسەرە ئینگلیزیەکان' : 'نووسەرەکان'} {`(${totalAuthors})`}
+          </h1>
+          {loading ? (
+            <div className="flex justify-center items-center min-h-[200px]">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {authors.map((author, index) => (
+                  <div
+                    key={author.id}
+                    className={`transition-all duration-700 ease-out ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                    style={{ transitionDelay: `${150 * index}ms` }}
+                  >
+                    <AuthorCard
+                      name={author.name}
+                      imageUrl={author.imgURL}
+                      bio={author.bio}
+                      id={author.id}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </>
+          )}
         </div>
       </div>
       <Footer />

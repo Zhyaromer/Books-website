@@ -3,7 +3,14 @@ const xss = require('xss');
 
 // Get all books
 const getAllBooks = (req, res) => {
-    const { genre, language, sorting } = req.query;
+    const { genre, language, sorting, page = 1, limit = 12 } = req.query;
+    const offset = (page - 1) * limit;
+
+    let countSql = `
+        SELECT COUNT(*) as total
+        FROM books 
+        INNER JOIN authors ON books.author_id = authors.id
+    `;
 
     let sql = `
        SELECT books.id, books.title, books.author_id, books.genre, books.language, 
@@ -38,7 +45,9 @@ const getAllBooks = (req, res) => {
     }
 
     if (conditions.length > 0) {
-        sql += ' WHERE ' + conditions.join(' AND ');
+        const whereClause = ' WHERE ' + conditions.join(' AND ');
+        sql += whereClause;
+        countSql += whereClause;
     }
 
     switch (sorting) {
@@ -61,16 +70,40 @@ const getAllBooks = (req, res) => {
             sql += ' ORDER BY books.created_at DESC';
     }
 
-    db.query(sql, values, (err, result) => {
-        if (err) {
+    sql += ' LIMIT ? OFFSET ?';
+    const paginationValues = [...values, parseInt(limit), parseInt(offset)];
+
+    db.query(countSql, values, (countErr, countResult) => {
+        if (countErr) {
+            console.error('Count query error:', countErr);
             return res.status(500).json({ message: 'Internal Server Error' });
         }
 
-        if (!result || result.length === 0) {
-            return res.status(404).json({ message: 'No books found' });
-        }
+        const total = countResult[0].total;
 
-        return res.status(200).json(result);
+        db.query(sql, paginationValues, (err, result) => {
+            if (err) {
+                console.error('Main query error:', err);
+                return res.status(500).json({ message: 'Internal Server Error' });
+            }
+
+            if (!result || result.length === 0) {
+                return res.status(404).json({ 
+                    message: 'No books found',
+                    books: [],
+                    total: 0,
+                    currentPage: parseInt(page),
+                    totalPages: 0
+                });
+            }
+
+            return res.status(200).json({
+                books: result,
+                total: total,
+                currentPage: parseInt(page),
+                totalPages: Math.ceil(total / limit)
+            });
+        });
     });
 };
 

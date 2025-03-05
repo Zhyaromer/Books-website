@@ -28,4 +28,24 @@ const sortOptionsAuthors = [
     { value: "views", label: "زۆرترین بینەر" },
 ];
 
-export { genreOptions, sortOptions, languageOptions, sortOptionsAuthors };
+const sortOptionsNews = [
+    { value: "newest", label: "تازەترین" },
+    { value: "views", label: "زۆرترین بینەر" },
+    { value: "oldest", label: "کۆنترین" }
+];
+
+const categoryOptions = [
+    { value: "all", label: "هەمووی" },
+    { value: "books", label: "کتێب" },
+    { value: "authors", label: "نووسەر" },
+    { value: "events", label: "بۆنەکان" }
+];
+
+export { 
+    genreOptions, 
+    sortOptions, 
+    languageOptions, 
+    sortOptionsAuthors,
+    sortOptionsNews,
+    categoryOptions
+};
