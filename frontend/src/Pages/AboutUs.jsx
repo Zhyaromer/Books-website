@@ -21,18 +21,11 @@ const AboutUs = () => {
     }
   ];
 
-  const stats = [
-    { number: "1000+", label: "کتێب" },
-    { number: "100+", label: "نووسەر" },
-    { number: "50+", label: "هەواڵ" },
-    { number: "2+", label: "ساڵی ئەزموون" }
-  ];
-
   return (
     <div>
       <BookstoreNavigation />
       <div className="pt-20 md:pt-24">
-        <div className="relative bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16 md:py-24 px-4 md:px-6">
+        <div className="relative bg-gradient-to-r from-blue-900 to-indigo-900 text-white py-16 md:py-24 px-4 md:px-6">
           <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
           <div className="container mx-auto text-center relative z-10">
             <h1 className="text-3xl md:text-5xl font-bold mb-4 md:mb-6">کتێبخانەی کوردی</h1>
@@ -70,7 +63,7 @@ const AboutUs = () => {
                   key={index}
                   className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"
                 >
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-4">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 mb-4">
                     {feature.icon}
                   </div>
                   <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-900">{feature.title}</h3>
@@ -87,12 +80,12 @@ const AboutUs = () => {
             <div className="max-w-3xl mx-auto">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 <div className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <BookOpen className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                  <BookOpen className="w-8 h-8 text-indigo-600 mx-auto mb-4" />
                   <h3 className="text-lg md:text-xl font-semibold mb-2">ناساندنی کتێب</h3>
                   <p className="text-sm md:text-base text-gray-600">ناساندنی کتێبە کوردییەکان بە خوێنەران و هاندانیان بۆ خوێندنەوە</p>
                 </div>
                 <div className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <Library className="w-8 h-8 text-blue-600 mx-auto mb-4" />
+                  <Library className="w-8 h-8 text-indigo-600 mx-auto mb-4" />
                   <h3 className="text-lg md:text-xl font-semibold mb-2">پاراستنی کەلتوور</h3>
                   <p className="text-sm md:text-base text-gray-600">بەڵگەکردن و پاراستنی مێژووی کتێبە کوردییەکان</p>
                 </div>

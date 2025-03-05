@@ -11,7 +11,7 @@ const MultipleAuthorsCard = ({ data }) => {
                 {data.map((author, index) => (
                     <div
                         key={author.id}
-                        onClick={() => (window.location.href = `/author/${author.id}`)}
+                        onClick={() => (window.location.href = `/AuthorDetails/${author.id}`)}
                         className={`group relative overflow-hidden rounded-lg sm:rounded-xl shadow-md sm:shadow-lg transition-all duration-300 hover:shadow-xl sm:hover:shadow-2xl 
                         ${index === 0 ? 'col-span-2 row-span-2 h-[300px] md:h-full' : ''}`}
                     >

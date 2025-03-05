@@ -72,12 +72,12 @@ const BookDetail = () => {
 
               <div className="md:w-2/3 md:pl-12">
                 <div className="flex items-center mb-2">
-                  <span className="text-xs bg-blue-700 bg-opacity-50 px-2 py-1 rounded-full mr-2">
+                  <span onClick={() => location.href = `/books?genre=${fetchBook.genre}`} className="text-xs bg-blue-700 bg-opacity-50 px-2 py-1 rounded-full mr-2 cursor-pointer">
                     {fetchBook.genre}
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-5xl font-bold mb-2">{fetchBook.title}</h1>
-                <p className="text-xl mb-4">نووسەر: <span className="font-semibold">{fetchBook.name}</span></p>
+                <p onClick={() => location.href = `/AuthorDetails/${fetchBook.author_id}`} className="text-xl mb-4 cursor-pointer">نووسەر: <span className="font-semibold">{fetchBook.name}</span></p>
 
                 <div className="flex flex-wrap gap-3 mb-6">
                   <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
@@ -109,7 +109,7 @@ const BookDetail = () => {
                   </div>
                   <div>
                     <p className="text-gray-300">زمان</p>
-                    <p className="font-semibold">{fetchBook.language}</p>
+                    <p onClick={() => location.href = `/books?language=${fetchBook.language}`} className="font-semibold cursor-pointer">{fetchBook.language}</p>
                   </div>
                   <div>
                     <p className="text-gray-300">بینەر</p>
@@ -126,27 +126,27 @@ const BookDetail = () => {
             <div className="flex border-b">
               <button
                 onClick={() => setActiveTab('description')}
-                className={`px-4 py-4 text-base font-bold ${activeTab === 'description' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-4 py-4 text-sm font-bold ${activeTab === 'description' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
-                وەسف
+                کورتە
               </button>
               <button
                 onClick={() => setActiveTab('details')}
-                className={`px-4 py-4 text-base font-bold ${activeTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-4 py-4 text-sm font-bold ${activeTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 وردەکاری
               </button>
               <button
                 onClick={() => setActiveTab('author')}
-                className={`px-4 py-4 text-base font-bold ${activeTab === 'author' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-4 py-4 text-sm font-bold ${activeTab === 'author' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
                 نووسەر
               </button>
               <button
                 onClick={() => setActiveTab('reviews')}
-                className={`px-4 py-4 text-base font-bold ${activeTab === 'reviews' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`px-4 py-4 text-sm font-bold ${activeTab === 'reviews' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
               >
-                هەڵسەنگاندنەکان
+                هەڵسەنگاندن
               </button>
             </div>
 
@@ -213,7 +213,7 @@ const BookDetail = () => {
                     <h3 className="text-2xl font-bold mb-4">{fetchBook.name}</h3>
                     <p className="text-lg leading-relaxed mb-6">{fetchBook.bio}</p>
                     <div className="flex gap-3">
-                      <button onClick={() => (window.location.href = `/author/${fetchBook.author_id}`)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                      <button onClick={() => (window.location.href = `/AuthorDetails/${fetchBook.author_id}`)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
                         بینینی نوسەر
                       </button>
                     </div>

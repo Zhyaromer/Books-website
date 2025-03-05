@@ -131,8 +131,8 @@ const BookstoreNavigation = () => {
             dropdownOpen: bestSellerDropdownOpen,
             setDropdownOpen: setBestSellerDropdownOpen,
             dropdownItems: [
-                { name: 'دەربارە', href: '#' },
-                { name: 'پەیوەندی کردن', href: '#' },
+                { name: 'دەربارە', href: '/about' },
+                { name: 'پەیوەندی کردن', href: '/contact' },
             ]
         },
     ];

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AuthorCard from "../Components/layout/AuthorCard";
+import AuthorCard from "../Components/layout/AuthordetailsCard";
 import axios from "axios";
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";

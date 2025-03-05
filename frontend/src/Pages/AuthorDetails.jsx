@@ -91,7 +91,7 @@ const AuthorDetails = () => {
                   </div>
                   <div>
                     <p className="text-sm text-white">زمان</p>
-                    <p className="font-medium">{author.language}</p>
+                    <p onClick={() => navigate(`/authors?language=${author.language}`)} className="font-medium cursor-pointer">{author.language}</p>
                   </div>
                 </div>
 

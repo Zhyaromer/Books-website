@@ -10,6 +10,7 @@ import Suggestions from "./Pages/Suggestions";
 import NewsPage from "./Pages/NewsPage";
 import NewsDetails from "./Pages/NewsDetails";
 import About from "./Pages/AboutUs";
+import ContactUs from "./Pages/ContactUs";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/news" element={<NewsPage />} />
         <Route path="/newsdetails/:id" element={<NewsDetails />} />
         <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<ContactUs />} />
       </Routes>
     </Router>
   );

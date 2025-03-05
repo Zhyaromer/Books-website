@@ -100,16 +100,16 @@ const BookSlider = ({ data }) => {
             />
           </div>
           <div className="md:w-2/3">
-            <h2 onClick={() => navigate(`/book/${selectedBook.id}`)} className="text-2xl font-bold text-gray-800 mb-2 cursor-pointer">{selectedBook.title}</h2>
-            <p onClick={() => navigate(`/authors/${selectedBook.author_id}`)} className="text-lg text-gray-600 mb-1 cursor-pointer">{selectedBook.name}</p>
+            <h2 onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="text-2xl font-bold text-gray-800 mb-2 cursor-pointer">{selectedBook.title}</h2>
+            <p onClick={() => navigate(`/AuthorDetails/${selectedBook.author_id}`)} className="text-lg text-gray-600 mb-1 cursor-pointer">{selectedBook.name}</p>
             <p className="text-gray-500 mb-4">بڵاوکراوەتەوە لە {new Date(selectedBook.published_date).getFullYear()}</p>
 
             <div className="hidden md:flex gap-4 mb-4">
-              <div onClick={() => navigate(`/genres/${selectedBook.genre}`)} className="flex items-center cursor-pointer">
+              <div onClick={() => navigate(`/books?genre=${selectedBook.genre}`)} className="flex items-center cursor-pointer">
                 <Tag size={16} className="text-blue-600 mr-1" />
                 <span className="text-sm text-gray-700">{selectedBook.genre}</span>
               </div>
-              <div onClick={() => navigate(`/languages/${selectedBook.language}`)} className="flex items-center cursor-pointer">
+              <div onClick={() => navigate(`/books?language=${selectedBook.language}`)} className="flex items-center cursor-pointer">
                 <Globe size={16} className="text-green-600 mr-1" />
                 <span className="text-sm text-gray-700">{selectedBook.language}</span>
               </div>

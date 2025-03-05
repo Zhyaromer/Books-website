@@ -54,7 +54,7 @@ const BookCollection = ({ data, text, path }) => {
                                 </h2>
 
                                 <div className="flex items-center justify-center">
-                                    <span onClick={() => (window.location.href = `/authors/${book.author_id}`)} className="text-xs sm:text-sm md:text-base cursor-pointer text-indigo-800 font-medium hover:text-indigo-600 transition-colors">
+                                    <span onClick={() => (window.location.href = `/AuthorDetails/${book.author_id}`)} className="text-xs sm:text-sm md:text-base cursor-pointer text-indigo-800 font-medium hover:text-indigo-600 transition-colors">
                                         -{book.name}-
                                     </span>
                                 </div>

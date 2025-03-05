@@ -14,11 +14,11 @@ const Footer = () => {
                     <div className="flex flex-col items-center md:col-span-1">
                         <h3 className="text-xl font-semibold mb-4">بەشەکان</h3>
                         <ul className="space-y-2">
-                            <li><a href="#" className="text-gray-300 hover:text-white transition">کتێبەکان</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-white transition">نووسەرەکان</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-white transition">وتە</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-white transition">هەوڵ</a></li>
-                            <li><a href="#" className="text-gray-300 hover:text-white transition">پێشنیاری ئێمە</a></li>
+                            <li><a href="/books" className="text-gray-300 hover:text-white transition">کتێبەکان</a></li>
+                            <li><a href="/authors" className="text-gray-300 hover:text-white transition">نووسەرەکان</a></li>
+                            <li><a href="/quotes" className="text-gray-300 hover:text-white transition">وتە</a></li>
+                            <li><a href="/news" className="text-gray-300 hover:text-white transition">هەوڵ</a></li>
+                            <li><a href="/suggestions" className="text-gray-300 hover:text-white transition">پێشنیاری ئێمە</a></li>
                         </ul>
                     </div>
 

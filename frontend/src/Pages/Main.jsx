@@ -1,7 +1,7 @@
 import BookstoreNavigation from "../Components/layout/Navigation";
 import BookSlider from "../Components/layout/BookSlider";
 import BookCollection from "../Components/layout/BookCard";
-import MultipleAuthorsCard from "../Components/layout/AuthorsCard";
+import MultipleAuthorsCard from "../Components/layout/AuthorsCardLanding";
 import Footer from "../Components/layout/Footer";
 import Quotes from "../Components/layout/QuotesCards";
 import { useState, useEffect } from "react";
