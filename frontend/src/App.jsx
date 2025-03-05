@@ -9,6 +9,7 @@ import Quotes from "./Pages/Quotes";
 import Suggestions from "./Pages/Suggestions";
 import NewsPage from "./Pages/NewsPage";
 import NewsDetails from "./Pages/NewsDetails";
+import About from "./Pages/AboutUs";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/news" element={<NewsPage />} />
         <Route path="/newsdetails/:id" element={<NewsDetails />} />
+        <Route path="/about" element={<About />} />
       </Routes>
     </Router>
   );

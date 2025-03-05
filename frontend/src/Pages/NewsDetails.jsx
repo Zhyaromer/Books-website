@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
@@ -9,7 +9,6 @@ import LatestNewsCard from '../Components/layout/LatestNewsCard';
 
 const NewsDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [news, setNews] = useState(null);
   const [latestNews, setLatestNews] = useState([]);
   const [loading, setLoading] = useState(true);
