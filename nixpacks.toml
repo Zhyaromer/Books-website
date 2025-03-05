@@ -1,9 +1,9 @@
 [build]
-cmd = "npm install && cd my-app && npm install && npm run build && cd ../books-website && npm install"
+# Specify the frontend directory and build commands for Vite
+app_dir = "frontend"
+build_cmd = "npm install && npm run build"  # Install dependencies and build the frontend
 
-[start]
-cmd = "cd books-website && node index.js"
-
-[environment]
-NODE_VERSION = "20"
-PORT = "3000"
+[backend]
+# Specify the backend directory and build commands for Express
+app_dir = "backend"
+build_cmd = "npm install && npm run start"  # Install dependencies and start the backend
