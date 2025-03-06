@@ -12,6 +12,7 @@ import NewsDetails from "./Pages/NewsDetails";
 import About from "./Pages/AboutUs";
 import ContactUs from "./Pages/ContactUs";
 import BookSeriesPage from "./Pages/BookSeriesPage";
+import BookSeriesBooks from "./Pages/BookSeriesBooks";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/bookseries" element={<BookSeriesPage />} />
+        <Route path="/seriesbooks/:id" element={<BookSeriesBooks />} />
       </Routes>
     </Router>
   );

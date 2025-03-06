@@ -9,7 +9,7 @@ const SeriesCard = ({ series }) => {
     return (
         <Card
             className="group cursor-pointer relative overflow-hidden h-48 md:h-56"
-            onClick={() => navigate(`/series/${series.id}`)}
+            onClick={() => navigate(`/seriesbooks/${series.id}`)}
         >
             <div className="absolute inset-0">
                 <img
