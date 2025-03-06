@@ -97,6 +97,7 @@ const BookstoreNavigation = () => {
             setDropdownOpen: setHomeDropdownOpen,
             dropdownItems: [
                 { name: 'هەموو کتێبەکان', href: `/books` },
+                { name: 'زنجیرە کتێب', href: '/bookseries' },
                 { name: 'کتێبی کوردی', href: '/books?language=Kurdish' },
                 { name: 'کتێبی ئینگلیزی', href: '/books?language=English' },
                 { name: 'کتێبی ڕۆمانسی', href: '/books?genre=ڕۆمانس' },

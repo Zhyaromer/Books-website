@@ -4,17 +4,23 @@ const bcrypt = require('bcrypt');
 const validateEmail = require('../../utils/checkEmailFormat');
 const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
 
-// Create a new account
 const signup = async (req, res) => {
-    const { username, name, email, password } = req.body;
+    const { username, name, email, password, conformPassword } = req.body;
+    console.log(req.body);
 
     const sanUsername = xss(username);
     const sanName = xss(name);
     const sanEmail = xss(email);
     const sanPassword = xss(password);
+    const sanConformPassword = xss(conformPassword);
 
     if (!sanUsername || !sanName || !sanEmail || !sanPassword) {
+
         return res.status(400).json({ error: "All fields are required" });
+    }
+
+    if (sanPassword !== sanConformPassword) {
+        return res.status(400).json({ error: "Passwords do not match" });
     }
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -29,7 +35,7 @@ const signup = async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(sanPassword, salt);
-
+       
         const isUserExist = `SELECT email, username, id FROM users WHERE email = ? OR username = ?`;
         db.query(isUserExist, [sanEmail, sanUsername], (err, result) => {
             if (err) {
@@ -50,7 +56,7 @@ const signup = async (req, res) => {
                     return res.status(500).json({ error: "Internal server error" });
                 }
 
-                sendEmail.signup(sanEmail, { name: 'John Doe' }).then (() => {
+                sendEmail.signup(sanEmail, { name: 'John Doe' }).then(() => {
                     console.log('Email sent successfully');
                 }).catch((error) => {
                     console.error('Error sending email:', error);
