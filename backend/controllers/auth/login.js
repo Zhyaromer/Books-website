@@ -12,16 +12,21 @@ const login = (req, res, next) => {
             console.error("Authentication Error:", err);
             return res.status(500).json({ message: "Internal Server Error" });
         }
-    
+
         if (!user) {
             console.log("Authentication Failed:", info);
             return res.status(401).json({ message: "Unauthorized", info });
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: "15m" });
-        const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN, { expiresIn: "20d" });
+        const token = jwt.sign({ id: user.id }, process.env.ACCESS_TOKEN, { expiresIn: "10s" });
+        const refreshToken = jwt.sign({ id: user.id }, process.env.REFRESH_TOKEN, { expiresIn: "3m" });
 
-        res.cookie("refreshToken", refreshToken, { httpOnly: false, secure: false, sameSite: "none" }); //false untill production
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,   
+            secure: false,    
+            sameSite: "lax",
+            maxAge: 3 * 60 * 1000  
+        });
 
         return res.status(200).json({
             message: "Login successful",

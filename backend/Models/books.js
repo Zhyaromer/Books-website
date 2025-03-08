@@ -3,7 +3,7 @@ const db = require("../config/SQL/sqlconfig");
 const books = () => {
     const sql = `
     CREATE TABLE IF NOT EXISTS books (
-         id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     author_id INT,
     series_id INT,

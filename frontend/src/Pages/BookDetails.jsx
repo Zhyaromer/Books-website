@@ -6,6 +6,7 @@ import BookCollection from '../Components/layout/BookCard';
 import ReviewSection from '../Components/layout/ReviewSection';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
+import { axiosInstance } from "../context/AxiosInstance";
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -17,7 +18,6 @@ const BookDetail = () => {
   const [similarBooks, setSimilarBooks] = useState([]);
 
   useEffect(() => {
-
     const incrementViewCount = async () => {
       try {
         await axios.get(`http://localhost:3000/books/incrementbookview/${id}`);
@@ -44,6 +44,15 @@ const BookDetail = () => {
     incrementViewCount();
     fetchBook();
   }, [id]);
+
+  const addBooktoRead = async () => {
+    try {
+      const res = await axiosInstance.post(`/user/addReadBook/${id}`);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   if (loading) {
     return (
@@ -80,7 +89,7 @@ const BookDetail = () => {
                 <p onClick={() => location.href = `/AuthorDetails/${fetchBook.author_id}`} className="text-xl mb-4 cursor-pointer">نووسەر: <span className="font-semibold">{fetchBook.name}</span></p>
 
                 <div className="flex flex-wrap gap-3 mb-6">
-                  <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
+                  <button onClick={() => addBooktoRead()} className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
                     خوێندراوە
                   </button>
                   <button className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-900 text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">

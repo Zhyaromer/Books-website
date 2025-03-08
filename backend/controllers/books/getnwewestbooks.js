@@ -10,7 +10,6 @@ const getnwewestbooks = (req, res) => {
 
     try {
         db.query(sql, (err, result) => {
-            console.log("here");
             if (err) {
                 return res.status(500).json({ message: 'Internal Server Error' });
             }

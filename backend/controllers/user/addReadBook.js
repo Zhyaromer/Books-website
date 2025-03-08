@@ -1,7 +1,9 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const addReadBook = async (req, res) => {
-    const { book_id } = req.body;
+    const { book_id } = req.params;
+    console.log(book_id);
+    console.log(req?.user);
     const user_id = req?.user?.id;
 
     if (!user_id || !book_id) {

@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const passport = require("passport");
+const cookieParser = require('cookie-parser');
 const verifyToken = require('./Middleware/verifyToken');
 const bodyParser = require('body-parser');
 const booksRoutes = require('./routes/books/booksRoutes');
@@ -17,14 +18,15 @@ app.use(cors( {
   origin: 'http://localhost:5173',
   credentials: true
 }));
+
 app.use(bodyParser.json());
 passport.initialize();
+app.use(cookieParser());
 
-app.use(verifyToken); 
+app.use('/auth', authRoutes);
 
 app.use('/books', booksRoutes);
 app.use('/authors', authorsRoutes);
-app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/news', newsRoutes);
 app.use('/bookseries', bookSeriesRoutes);

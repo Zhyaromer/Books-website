@@ -242,7 +242,7 @@ const SignUp = () => {
                             <p className="text-gray-600 text-sm">
                                 پێشتر هەژمارت هەیە؟{" "}
 
-                                <a href="#" className="text-blue-600 hover:underline">
+                                <a href="/login" className="text-blue-600 hover:underline">
                                     چوونە ژوورەوە
                                 </a>
                             </p>

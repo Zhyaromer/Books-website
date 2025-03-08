@@ -24,6 +24,8 @@ const AboutUs = () => {
   return (
     <div>
       <BookstoreNavigation />
+
+
       <div className="pt-20 md:pt-24">
         <div className="relative bg-gradient-to-r from-blue-900 to-indigo-900 text-white py-16 md:py-24 px-4 md:px-6">
           <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />

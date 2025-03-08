@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 
 const Quotes = ({ quotes }) => {
-    console.log("Quotes prop:", quotes);
     const [selectedQuote, setSelectedQuote] = useState(null);
 
     useEffect(() => {

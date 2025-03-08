@@ -3,21 +3,23 @@ const router = express.Router();
 const addReadBook = require('../../controllers/user/addReadBook');
 const addReview = require('../../controllers/user/addReview');
 const addsaveBook = require('../../controllers/user/addsaveBook');
-const checkauth = require('../../Middleware/checkauth');
+const verifyToken = require('../../Middleware/verifyToken');
 const getReadBooks = require('../../controllers/user/getReadBooks');
 const getSavedBooks = require('../../controllers/user/getSavedBooks');
 const getUserComments = require('../../controllers/user/getUserComments');
 const removeReview = require('../../controllers/user/removeReview');
 
-router.get('/getReadBooks', checkauth, getReadBooks);
-router.get('/getSavedBooks', checkauth, getSavedBooks);
-router.get('/getUserComments', checkauth, getUserComments);
+router.use(verifyToken);
 
-router.post('/addReadBook', checkauth, addReadBook);
-router.post('/addReview', checkauth, addReview);
-router.post('/addSaveBook', checkauth, addsaveBook);
+router.get('/getReadBooks', getReadBooks);
+router.get('/getSavedBooks', getSavedBooks);
+router.get('/getUserComments', getUserComments);
 
-router.delete('/removeReview', checkauth, removeReview);
+router.post('/addReadBook/:book_id', addReadBook);
+router.post('/addReview', addReview);
+router.post('/addSaveBook', addsaveBook);
+
+router.delete('/removeReview', removeReview);
 
 
 module.exports = router;    

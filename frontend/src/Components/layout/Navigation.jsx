@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Search, Book, User, ChevronDown, Settings, LogOut } from 'lucide-react';
+import { useCheckAuth, logout } from "../../context/AxiosInstance";
 
 const BookstoreNavigation = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +12,13 @@ const BookstoreNavigation = () => {
     const [booksDropdownOpen, setBooksDropdownOpen] = useState(false);
     const [bestSellerDropdownOpen, setBestSellerDropdownOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-    const [isLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    const { isAuthenticated, setIsAuthenticated } = useCheckAuth();
+
+    useEffect(() => {
+        setIsLoggedIn(isAuthenticated);
+    }, [isAuthenticated]);
 
     const mockBookResults = [
         { id: 1, title: 'مەم و زین', author: 'ئەحمەدی خانی', cover: 'book1.jpg' },
@@ -68,9 +75,9 @@ const BookstoreNavigation = () => {
         setBooksDropdownOpen(false);
         setBestSellerDropdownOpen(false);
         setShowSearchResults(false);
-    
+
         if (navItem.hasDropdown) {
-            switch(index) {
+            switch (index) {
                 case 0:
                     setHomeDropdownOpen(!homeDropdownOpen);
                     break;
@@ -85,6 +92,16 @@ const BookstoreNavigation = () => {
             }
         } else {
             handleNavigation(navItem.href);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout(setIsAuthenticated);
+            setIsLoggedIn(false);
+            window.location.href = '/';
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -140,13 +157,14 @@ const BookstoreNavigation = () => {
 
     const userDropdownItems = isLoggedIn
         ? [
-            {icon: <Settings className="h-4 w-4 ml-2" />, name: 'ڕێکخستنەکان', href: '/settings'  },
-            {icon: <LogOut className="h-4 w-4 ml-2" /> ,name: 'چوونەدەرەوە', href: '/logout' }
+            { icon: <Settings className="h-4 w-4 ml-2" />, name: 'ڕێکخستنەکان', onClick: () => { window.location.href = '/profile'; } },
+            { icon: <LogOut className="h-4 w-4 ml-2" />, name: 'چوونەدەرەوە', onClick: handleLogout },
         ]
         : [
-            { icon: null, name: 'چوونەژوورەوە', href: '/login' },
-            { icon: null ,name: 'تۆمارکردن', href: '/signup' }
+            { icon: null, name: 'چوونەژوورەوە', onClick: () => { window.location.href = '/login'; } },
+            { icon: null, name: 'تۆمارکردن', onClick: () => { window.location.href = '/signup'; } },
         ];
+
 
     const handleUserDropdownToggle = (e) => {
         e.stopPropagation();
@@ -252,7 +270,7 @@ const BookstoreNavigation = () => {
 
                     <div className="hidden sm:flex items-center space-x-reverse space-x-6">
                         <div className="relative search-container">
-                        <div className="flex">
+                            <div className="flex">
                                 <input
                                     type="text"
                                     placeholder="گەڕان بۆ کتێب..."
@@ -328,22 +346,22 @@ const BookstoreNavigation = () => {
                                 onClick={handleUserDropdownToggle}
                                 className="text-gray-700 hover:text-indigo-600 p-1 rounded-full hover:bg-gray-100"
                             >
-                                <User className="h-6 w-6" />
+                                <User className={`h-6 w-6 ${isLoggedIn ? 'text-indigo-600' : 'text-red-500'}`} />
                             </button>
 
                             {userDropdownOpen && (
                                 <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                                     <div className="py-1" role="menu" aria-orientation="vertical">
                                         {userDropdownItems.map((item) => (
-                                            <a
+                                            <p
                                                 key={item.name}
-                                                href={item.href}
+                                                onClick={item.onClick}
                                                 className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
                                                 role="menuitem"
                                             >
                                                 {item.icon}
                                                 {item.name}
-                                            </a>
+                                            </p>
                                         ))}
                                     </div>
                                 </div>
@@ -484,7 +502,7 @@ const BookstoreNavigation = () => {
                                         <Settings className="h-4 w-4 ml-2" />
                                         ڕێکخستنەکان
                                     </a>
-                                    <a href="/logout" className="flex items-center px-3 py-1 text-sm text-gray-600 hover:text-indigo-600">
+                                    <a href="/logout" className="flex items-center px-3 py-1 text-sm text-red-600 hover:text-indigo-600">
                                         <LogOut className="h-4 w-4 ml-2" />
                                         چوونەدەرەوە
                                     </a>

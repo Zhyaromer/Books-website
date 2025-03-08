@@ -11,6 +11,7 @@ passport.use(
         try {
             db.query('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
                 if (err) {
+                    console.error(err);
                     return done(err,false , { message: 'Internal Server Error' });
                 }
                 if (!user[0]) {

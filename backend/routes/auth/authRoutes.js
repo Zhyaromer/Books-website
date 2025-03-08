@@ -9,9 +9,15 @@ const changeusername = require('../../controllers/auth/changeusername');
 const changeemail = require('../../controllers/auth/changeemail');
 const deleteaccount = require('../../controllers/auth/deleteaccount');
 const changepassword = require('../../controllers/auth/changepassword');
-const  refreshtoken = require('../../controllers/auth/refreshtoken');
+const refreshtoken = require('../../controllers/auth/refreshtoken');
+const verifyAuth = require('../../controllers/auth/CheckUserState');
+const logout = require('../../controllers/auth/logout');
+
+;
 
 router.get('/refreshtoken', refreshtoken);
+router.get('/verifyAuth', verifyAuth);
+router.get('/logout', logout);
 
 router.post('/signup', signup);
 router.post('/login', login);

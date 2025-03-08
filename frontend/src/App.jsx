@@ -1,5 +1,6 @@
 import "./index.css";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import Main from "./Pages/Main";
 import Books from "./Pages/Books";
 import BookDetail from "./Pages/BookDetails";
@@ -14,6 +15,7 @@ import ContactUs from "./Pages/ContactUs";
 import BookSeriesPage from "./Pages/BookSeriesPage";
 import BookSeriesBooks from "./Pages/BookSeriesBooks";
 import Signup from "./Pages/Signup";
+import KurdishLoginForm from "./Pages/Login";
 
 function App() {
   return (
@@ -25,14 +27,15 @@ function App() {
         <Route path="/authors" element={<Authors />} />
         <Route path="/AuthorDetails/:id" element={<AuthorDetails />} />
         <Route path="/quotes" element={<Quotes />} />
-        <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/news" element={<NewsPage />} />
+        <Route path="/suggestions" element={<Suggestions />} />
         <Route path="/newsdetails/:id" element={<NewsDetails />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/bookseries" element={<BookSeriesPage />} />
         <Route path="/seriesbooks/:id" element={<BookSeriesBooks />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<KurdishLoginForm />} />
       </Routes>
     </Router>
   );

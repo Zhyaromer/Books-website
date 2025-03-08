@@ -3,7 +3,7 @@ const db = require("../config/SQL/sqlconfig");
 const reviews = () => {
     const sql = `
     CREATE TABLE IF NOT EXISTS reviews (
-     id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     book_id INT,
     rating INT CHECK (rating BETWEEN 1 AND 5),

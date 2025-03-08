@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Footer from '../Components/layout/Footer';
 import QuotesCards from '../Components/layout/QuotesCards';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import LoadingUi from '../Components/my-ui/Loading';
+import {axiosInstance} from "../context/AxiosInstance";
 
 const Quotes = () => {
     const [quotes, setQuotes] = useState([]);
@@ -15,7 +15,7 @@ const Quotes = () => {
 
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:3000/books/getBookQuotes', { signal });
+            const response = await axiosInstance.get('/books/getBookQuotes', { signal });
             if (response.data && response.status === 200) {
                 setQuotes(response.data);
             } else {
@@ -36,7 +36,20 @@ const Quotes = () => {
     };
 
     useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const res = await axiosInstance.get('/auth/verifyAuth');
+                console.log(res.status);
+                if (res.status === 200 && res.data.isAuthenticated) {
+                    console.log(res.data.isAuthenticated);
+                }
+            } catch (error) {
+                console.log("error");
+                console.error(error);
+            }
+        }
         fetchQuotes();
+        checkAuth();
     }, []);
 
     if (loading) {
