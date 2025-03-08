@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaBookmark, FaShare } from 'react-icons/fa';
+import { FaBookmark, FaRegBookmark, FaShare } from 'react-icons/fa';
 import axios from 'axios';
 import BookCollection from '../Components/layout/BookCard';
 import ReviewSection from '../Components/layout/ReviewSection';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
 import { axiosInstance } from "../context/AxiosInstance";
-import { FaCheck, FaCheckCircle } from 'react-icons/fa';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -18,6 +17,7 @@ const BookDetail = () => {
   const [booksSeries, setBooksSeries] = useState([]);
   const [similarBooks, setSimilarBooks] = useState([]);
   const [hasRead, setHasRead] = useState(false);
+  const [hasSaved, setHasSaved] = useState(false);
 
   useEffect(() => {
     const incrementViewCount = async () => {
@@ -56,15 +56,38 @@ const BookDetail = () => {
       }
     }
 
+    const booksavesCheck = async () => {
+      try {
+        const response = await axiosInstance.get(`/user/booksSaveCheck?book_id=${id}`);
+        if (response.data.success) {
+          setHasSaved(true);
+        } else {
+          setHasSaved(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     incrementViewCount();
     fetchBook();
     bookreadsCheck();
+    booksavesCheck();
   }, [id]);
 
   const addBooktoRead = async () => {
     try {
       await axiosInstance.post(`/user/addReadBook/${id}`);
       setHasRead(!hasRead);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const addBooktoSave = async () => {
+    try {
+      await axiosInstance.post(`/user/addSaveBook/${id}`);
+      setHasSaved(!hasSaved);
     } catch (error) {
       console.log(error);
     }
@@ -119,13 +142,17 @@ const BookDetail = () => {
                       </div>
                     </div>
                   </button>
-                  <button className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-900 text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
+                  <button onClick={() => addBooktoSave()} className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-900 text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
                     <div className="flex flex-row items-center">
                       <div>
-                        زیادکردن بۆ لیستی خوێندنەوە
+                        بینینی دواتر
                       </div>
                       <div>
-                        <FaBookmark className="mr-2" />
+                        {hasSaved ?
+                          <FaBookmark className="mr-2" />
+                          :
+                          <FaRegBookmark className="mr-2" />
+                        }
                       </div>
                     </div>
                   </button>
