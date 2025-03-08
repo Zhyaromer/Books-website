@@ -12,7 +12,7 @@ const refreshtoken = (req, res) => {
             return res.status(403).json({ message: "Forbidden - Invalid token" });
         }
 
-        const accessToken = jwt.sign({ id: decoded.id }, process.env.ACCESS_TOKEN, { expiresIn: "10s" });
+        const accessToken = jwt.sign({ id: decoded.id }, process.env.ACCESS_TOKEN, { expiresIn: "10m" });
 
         res.status(200).json({ accessToken });
     });

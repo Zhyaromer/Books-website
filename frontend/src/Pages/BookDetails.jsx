@@ -7,6 +7,7 @@ import ReviewSection from '../Components/layout/ReviewSection';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
 import { axiosInstance } from "../context/AxiosInstance";
+import { FaCheck, FaCheckCircle } from 'react-icons/fa';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ const BookDetail = () => {
   const [series, setSeries] = useState([]);
   const [booksSeries, setBooksSeries] = useState([]);
   const [similarBooks, setSimilarBooks] = useState([]);
+  const [hasRead, setHasRead] = useState(false);
 
   useEffect(() => {
     const incrementViewCount = async () => {
@@ -41,14 +43,28 @@ const BookDetail = () => {
       }
     };
 
+    const bookreadsCheck = async () => {
+      try {
+        const response = await axiosInstance.get(`/user/bookreadsCheck?book_id=${id}`);
+        if (response.data.success) {
+          setHasRead(true);
+        } else {
+          setHasRead(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     incrementViewCount();
     fetchBook();
+    bookreadsCheck();
   }, [id]);
 
   const addBooktoRead = async () => {
     try {
-      const res = await axiosInstance.post(`/user/addReadBook/${id}`);
-      console.log(res.data);
+      await axiosInstance.post(`/user/addReadBook/${id}`);
+      setHasRead(!hasRead);
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +106,18 @@ const BookDetail = () => {
 
                 <div className="flex flex-wrap gap-3 mb-6">
                   <button onClick={() => addBooktoRead()} className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
-                    خوێندراوە
+                    <div className="flex items-center gap-2">
+                      <div>
+                        {hasRead ?
+                          <svg className='h-4 w-4' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#63E6BE" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" /></svg>
+                          :
+                          <svg className='h-4 w-4' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" /></svg>
+                        }
+                      </div>
+                      <div>
+                        <span>خوێندراوەتەوە </span>
+                      </div>
+                    </div>
                   </button>
                   <button className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-900 text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
                     <div className="flex flex-row items-center">
@@ -252,9 +279,9 @@ const BookDetail = () => {
             <BookCollection data={similarBooks} text="هەموو فیلمەکان" path="/Bookdetails" />
           </div>
         </div>
-      </div>
+      </div >
       <Footer />
-    </div>
+    </div >
   );
 };
 

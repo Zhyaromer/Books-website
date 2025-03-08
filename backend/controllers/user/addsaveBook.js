@@ -1,7 +1,7 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const addSaveBook = async (req, res) => {
-    const { book_id } = req.body;
+    const { book_id } = req.params;
     const user_id = req?.user?.id;
 
     if (!user_id || !book_id) {

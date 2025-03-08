@@ -3,7 +3,6 @@ require("dotenv").config();
 
 const verifyToken = (req, res, next) => {
     const authHeader = req?.headers?.authorization;
-    console.log(authHeader);
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         req.user = null;
