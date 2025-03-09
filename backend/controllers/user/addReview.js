@@ -2,8 +2,9 @@ const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 
 const addReview = async (req, res) => {
-    let { book_id, rating, comment } = req.body;
-    const user_id = req?.user?.id;
+    let { rating, isSpoiler, comment } = req.body;
+    let user_id = req?.user?.id;
+    let { book_id } = req.params;
 
     comment = xss(comment).trim();
     book_id = xss(book_id).trim();
@@ -13,7 +14,7 @@ const addReview = async (req, res) => {
         return res.status(400).json({ error: "user_id and book_id are required" });
     }
 
-    if (!rating || !comment) {
+    if (!rating || !comment || !isSpoiler) {
         return res.status(400).json({ error: "rating and comment are required" });
     }
 
@@ -26,18 +27,18 @@ const addReview = async (req, res) => {
     }
 
     try {
+
         const [existingReview] = await db.promise().query(
-            "SELECT * FROM user_reviews WHERE user_id = ? AND book_id = ?",
+            "SELECT * FROM reviews WHERE user_id = ? AND book_id = ?",
             [user_id, book_id]
         );
-
         if (existingReview.length > 0) {
             return res.status(400).json({ error: "You have already reviewed this book" });
         }
 
         const [result] = await db.promise().query(
-            "INSERT INTO user_reviews (user_id, book_id, rating, comment) VALUES (?, ?, ?, ?)",
-            [user_id, book_id, rating, comment]
+            "INSERT INTO reviews (user_id, book_id, rating, comment,isSpoiler) VALUES (?, ?, ?, ?, ?)",
+            [user_id, book_id, rating, comment, isSpoiler]
         );
 
         if (result.affectedRows > 0) {

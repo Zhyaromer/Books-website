@@ -1,7 +1,7 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const removeReview = async (req, res) => {
-    const review_id = req.body.review_id;
+    const review_id = req.params.review_id;
     const user_id = req?.user?.id;
 
     if (!user_id) {
@@ -12,9 +12,12 @@ const removeReview = async (req, res) => {
         return res.status(400).json({ error: "Review ID is required" });
     }
 
+    // console.log(review_id);
+    // console.log(user_id);
+
     try {
         const [existingReview] = await db.promise().query(
-            "SELECT id FROM user_reviews WHERE id = ? AND user_id = ?", 
+            "SELECT id FROM reviews WHERE id = ? AND user_id = ?", 
             [review_id, user_id]
         );
 
@@ -22,7 +25,7 @@ const removeReview = async (req, res) => {
             return res.status(404).json({ error: "Review not found or unauthorized" });
         }
 
-        const [result] = await db.promise().query("DELETE FROM user_reviews WHERE id = ?", [review_id]);
+        const [result] = await db.promise().query("DELETE FROM reviews WHERE id = ?", [review_id]);
 
         if (result.affectedRows > 0) {
             return res.status(200).json({ message: "Review deleted successfully" });

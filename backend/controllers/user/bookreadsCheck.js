@@ -1,11 +1,8 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const bookreadsCheck = async (req, res) => {
-    console.log(`req.query`);
     const { book_id } = req?.query;
-    console.log(`book_id : ${book_id}`);
     const user_id = req?.user?.id;
-    console.log(`user_id : ${user_id}`);
 
     if (!user_id || !book_id) {
         return res.status(400).json({ error: "user_id and book_id are required" });

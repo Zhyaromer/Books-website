@@ -51,7 +51,6 @@ const useCheckAuth = () => {
       try {
         const res = await axiosInstance.get('/auth/verifyAuth');
         if (res.status === 200 && res.data.isAuthenticated) {
-          console.log(res.data);
           setIsAuthenticated(true);
         }
       } catch (error) {
@@ -72,7 +71,6 @@ const logout = async (setIsAuthenticated) => {
       localStorage.removeItem('token');
       setIsAuthenticated(false);
       window.location.href = '/';
-      console.log(res.data);
     }
   } catch (error) {
     console.error(error);

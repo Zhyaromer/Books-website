@@ -10,6 +10,9 @@ const getUserComments = require('../../controllers/user/getUserComments');
 const removeReview = require('../../controllers/user/removeReview');
 const bookreadsCheck = require('../../controllers/user/bookreadsCheck');
 const booksSaveCheck = require('../../controllers/user/booksSaveCheck');
+const getallreviews = require('../../controllers/user/getallreviews');
+const userID = require('../../controllers/user/returnUserid');
+const updateReview = require('../../controllers/user/updateReviews');
 
 router.use(verifyToken);
 
@@ -18,11 +21,15 @@ router.get('/getSavedBooks', getSavedBooks);
 router.get('/getUserComments', getUserComments);
 router.get('/bookreadsCheck', bookreadsCheck);
 router.get('/booksSaveCheck', booksSaveCheck);
+router.get('/getallreviews', getallreviews);
+router.get('/returnUserid/:id', userID);
 
 router.post('/addReadBook/:book_id', addReadBook);
-router.post('/addReview', addReview);
+router.post('/addReview/:book_id', addReview);
 router.post('/addSaveBook/:book_id', addsaveBook);
 
-router.delete('/removeReview', removeReview);
+router.patch('/updateReview', updateReview);
+
+router.delete('/removeReview/:review_id', removeReview);
 
 module.exports = router;    

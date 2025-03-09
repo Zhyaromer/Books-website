@@ -3,10 +3,30 @@ import { useParams } from 'react-router-dom';
 import { FaBookmark, FaRegBookmark, FaShare } from 'react-icons/fa';
 import axios from 'axios';
 import BookCollection from '../Components/layout/BookCard';
-import ReviewSection from '../Components/layout/ReviewSection';
+import CommentsSection from '../Components/layout/ReviewSection';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
 import { axiosInstance } from "../context/AxiosInstance";
+import { MoreVertical, Star, Edit, Trash, Flag, AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import PropTypes from 'prop-types';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -18,6 +38,129 @@ const BookDetail = () => {
   const [similarBooks, setSimilarBooks] = useState([]);
   const [hasRead, setHasRead] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
+
+  const [message, setmessage] = useState("")
+  const [rating, setrating] = useState(0)
+  const [hasSpoiler, sethasSpoiler] = useState(false)
+
+  const [reportMessage, setReportMessage] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev === comments.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? comments.length - 1 : prev - 1));
+  };
+
+  const goToSlide = (index) => {
+    setCurrentSlide(index);
+  };
+
+  const handleEditReview = async (reviewId) => {
+    const reviewToEdit = comments.find(review => review.id === reviewId);
+
+    if (!reviewToEdit) return;
+
+    setSelectedReview(reviewToEdit);
+    setEditMode(true);
+
+    setmessage(reviewToEdit.comment);
+    setrating(reviewToEdit.rating);
+
+    if (reviewToEdit.hasSpoiler !== undefined) {
+      sethasSpoiler(Boolean(reviewToEdit.hasSpoiler));
+    } 
+
+    setIsAddReviewOpen(true);
+  };
+
+  const handleDeleteReview = async (delId) => {
+    try {
+      const res = await axiosInstance.delete(`/user/removeReview/${delId}`);
+      console.log(res.data.canModify);
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleReport = () => {
+    setReportMessage("");
+    setIsReportOpen(false);
+  };
+
+  const handleOpenReport = (review) => {
+    setSelectedReview(review);
+    setIsReportOpen(true);
+  };
+
+  const toggleSpoilerReveal = (id) => {
+    setComments(
+      comments.map((review) =>
+        review.id === id ? { ...review, revealed: !review.revealed } : review
+      )
+    );
+  };
+
+  const [reviewPermissions, setReviewPermissions] = useState({});
+
+  const userID = async (reviewId) => {
+    try {
+      const response = await axiosInstance.get(`/user/returnUserid/${reviewId}`);
+      return response.data.canModify
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    if (comments.length > 0) {
+      const checkPermissions = async () => {
+        const permissionsMap = {};
+
+        for (const comment of comments) {
+          permissionsMap[comment.id] = await userID(comment?.id);
+        }
+
+        setReviewPermissions(permissionsMap);
+      };
+
+      checkPermissions();
+    }
+  }, [comments]);
+
+
+  const StarRating = ({ rating, setRating, editable = false }) => {
+    return (
+      <div className="flex flex-row-reverse">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => editable && setRating(star)}
+            className={`${star <= rating ? "text-yellow-500" : "text-gray-300"
+              } ${editable ? "cursor-pointer" : "cursor-default"}`}
+          >
+            <Star className="w-5 h-5 fill-current" />
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  StarRating.propTypes = {
+    rating: PropTypes.number.isRequired,
+    setRating: PropTypes.func.isRequired,
+    editable: PropTypes.bool,
+  };
+
 
   useEffect(() => {
     const incrementViewCount = async () => {
@@ -69,10 +212,21 @@ const BookDetail = () => {
       }
     }
 
+    const fetchComments = async () => {
+      try {
+        const response = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
+        setComments(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     incrementViewCount();
     fetchBook();
     bookreadsCheck();
     booksavesCheck();
+    fetchComments();
+    userID();
   }, [id]);
 
   const addBooktoRead = async () => {
@@ -92,6 +246,45 @@ const BookDetail = () => {
       console.log(error);
     }
   }
+
+  const handleAddComment = async () => {
+    try {
+      let response;
+
+      if (editMode && selectedReview) {
+        console.log(`hasSpoiler: ${hasSpoiler}`);
+        console.log(`selectedReview.id: ${selectedReview.id}`);
+        console.log(`rating: ${rating}`);
+        console.log(`message: ${message}`);
+        response = await axiosInstance.patch(
+          `/user/updateReview?review_id=${selectedReview.id}`,
+          {
+            rating,
+            comment: message,
+            hasSpoiler
+          }
+        );
+      } else {
+        response = await axiosInstance.post(
+          `http://localhost:3000/user/addReview/${id}`,
+          {
+            rating,
+            comment: message,
+            hasSpoiler
+          }
+        );
+      }
+
+      const updatedComments = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
+      setComments(updatedComments.data);
+
+      setIsAddReviewOpen(false);
+      return true;
+    } catch (error) {
+      console.error("Failed to add/update comment:", error);
+      return false;
+    }
+  };
 
   if (loading) {
     return (
@@ -285,8 +478,242 @@ const BookDetail = () => {
               )}
 
               {activeTab === 'reviews' && (
-                <div>
-                  <ReviewSection />
+                <div dir="rtl" className="w-full max-w-4xl mx-auto p-0 md:p-4 font-sans">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-base md:text-2xl font-bold">هەڵسەنگاندنەکان</h2>
+                    <Button
+                      className="bg-indigo-500 hover:bg-indigo-600 text-white text-xs px-2 md:px-6 md:text-lg"
+                      onClick={() => {
+                        setEditMode(false);
+                        setrating(0);
+                        setmessage("");
+                        sethasSpoiler(false);
+                        setIsAddReviewOpen(true);
+                      }}>
+                      زیادکردنی هەڵسەنگاندن
+                    </Button>
+                  </div>
+
+                  <div className="relative mb-12">
+                    {comments.length === 0 && (
+                      <div className="flex items-center justify-center h-full">
+                        <p className="text-gray-600 dark:text-gray-300">هیچ هەڵسەنگاندنێک بەردەست نیە</p>
+                      </div>
+                    )}
+                    {comments.length > 0 && (
+                      <div className="overflow-hidden relative rounded-lg shadow-lg bg-white dark:bg-gray-800 h-64">
+                        <div className="relative h-full">
+                          {comments?.map((review, index) => (
+                            <div
+                              key={review.id}
+                              className={`p-6 transition-all duration-300 absolute top-0 left-0 right-0 h-full ${currentSlide === index ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                            >
+                              <div className="flex justify-between">
+                                <div className="flex items-center">
+                                  <Avatar className="h-12 w-12 mr-3">
+                                    <AvatarImage src={review.coverImgURL} alt={review.userName} />
+                                    <AvatarFallback>{review.username}</AvatarFallback>
+                                  </Avatar>
+                                  <div>
+                                    <h3 className="font-medium text-lg">{review.userName}</h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                                      {review.title}
+                                    </p>
+                                    <div dir="ltr" className="mt-1">
+                                      <StarRating rating={review.rating} setRating={() => { }} />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="sm">
+                                      <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => handleEditReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`}>
+                                      <Edit className="ml-2 h-4 w-4" />
+                                      دەستکاری
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleOpenReport(review.id)} className={`cursor-pointer`}>
+                                      <Flag className="ml-2 h-4 w-4" />
+                                      ڕاپۆرت
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleDeleteReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`} >
+                                      <Trash className="ml-2 h-4 w-4 text-red-500" />
+                                      سڕینەوە
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+
+                              <div className="mt-4 overflow-y-auto h-32">
+                                {review.hasSpoiler && !review.revealed ? (
+                                  <div className="bg-amber-50 dark:bg-amber-900/30 p-4 rounded border border-amber-200 dark:border-amber-700">
+                                    <div className="text-center">
+                                      <AlertTriangle className="inline-block h-5 w-5 mb-1 text-amber-500" />
+                                      <p className="text-amber-800 dark:text-amber-300 mb-2">
+                                        ئەم هەڵسەنگاندنە سپۆیلەر لە خۆ دەگرێت
+                                      </p>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => toggleSpoilerReveal(review.id)}
+                                        className="bg-indigo-500 hover:bg-indigo-600 text-white hover:text-white"
+                                      >
+                                        پیشاندانی هەڵسەنگاندن
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className={`pr-2 ${review.hasSpoiler ? "bg-amber-50/50 dark:bg-amber-900/10 p-3 rounded" : ""}`}>
+                                    <p className="text-gray-700 dark:text-gray-200 p-4">{review.comment}</p>
+                                    {review.isSpoiler === 0 && (
+                                      <div className="mt-2 text-right">
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => toggleSpoilerReveal(review.id)}
+                                        >
+                                          شاردنەوە
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-between pointer-events-none">
+                          <button
+                            onClick={prevSlide}
+                            className="pointer-events-auto bg-white/80 text-indigo-600 rounded-full p-2 shadow-md ml-2"
+                          >
+                            <ChevronRight className="h-6 w-6" />
+                          </button>
+
+                          <button
+                            onClick={nextSlide}
+                            className="pointer-events-auto bg-white/80 text-indigo-600 rounded-full p-2 shadow-md mr-2"
+                          >
+                            <ChevronLeft className="h-6 w-6" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+
+                    <div className="absolute bottom-0 left-0 right-0 transform translate-y-6">
+                      <div className="flex items-center justify-center gap-2">
+                        {comments.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToSlide(index)}
+                            className={`w-2 h-2 rounded-full transition-all duration-300 ${currentSlide === index
+                              ? "bg-blue-600 scale-125"
+                              : "bg-gray-300 dark:bg-gray-600"
+                              }`}
+                            aria-label={`Go to slide ${index + 1}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <Dialog open={isAddReviewOpen} onOpenChange={setIsAddReviewOpen}>
+                    <DialogContent>
+                      <div className="flex justify-end pt-10 text-right">
+                        <DialogHeader>
+                          <DialogTitle className="text-right">
+                            {editMode ? "دەستکاری هەڵسەنگاندن" : "زیادکردنی هەڵسەنگاندن"}
+                          </DialogTitle>
+                          <DialogDescription >
+                            تکایە هەڵسەنگاندنەکەت بنووسە و نمرەکە دیاری بکە.
+                          </DialogDescription>
+                        </DialogHeader>
+                      </div>
+
+                      <div className="space-y-4 text-right">
+                        <div>
+                          <label className="block mb-2 text-sm font-medium">هەڵسەنگاندن</label>
+                          <div className="mb-2">
+                            <StarRating
+                              rating={rating}
+                              setRating={setrating}
+                              editable={true}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <label className="block mb-2 text-sm font-medium">بۆچوونەکەت</label>
+                          <Textarea
+                            value={message}
+                            onChange={(e) => setmessage(() => e.target.value)}
+                            rows={4}
+                            className=" placeholder:text-right"
+                            placeholder="هەڵسەنگاندنەکەت بنووسە"
+                          />
+                        </div>
+
+                        <div className="flex items-center space-x-2 justify-end">
+                          <Checkbox
+                            id="spoiler"
+                            checked={hasSpoiler}
+                            onCheckedChange={(checked) =>
+                              sethasSpoiler(checked)
+                            }
+                          />
+                          <label
+                            htmlFor="spoiler"
+                            className="mr-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            ئەم هەڵسەنگاندنە سپۆیلەری تێدایە
+                          </label>
+                        </div>
+                      </div>
+
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsAddReviewOpen(false)}>
+                          پاشگەزبوونەوە
+                        </Button>
+                        <Button className="bg-indigo-500 hover:bg-indigo-600 text-white" onClick={handleAddComment}>
+                          {editMode ? "نوێکردنەوە" : "ناردن"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+
+                  <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>ڕاپۆرتکردنی هەڵسەنگاندن</DialogTitle>
+                        <DialogDescription>
+                          تکایە هۆکاری ڕاپۆرتەکە ڕوون بکەرەوە.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <div>
+                        <label className="block mb-2 text-sm font-medium">هۆکار</label>
+                        <Textarea
+                          value={reportMessage}
+                          onChange={(e) => setReportMessage(e.target.value)}
+                          rows={4}
+                          placeholder="هۆکاری ڕاپۆرتەکە بنووسە..."
+                        />
+                      </div>
+
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsReportOpen(false)}>
+                          پاشگەزبوونەوە
+                        </Button>
+                        <Button onClick={handleReport}>ناردنی ڕاپۆرت</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               )}
             </div>
