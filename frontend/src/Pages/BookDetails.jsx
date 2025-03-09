@@ -42,14 +42,14 @@ const BookDetail = () => {
   const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
-
   const [message, setmessage] = useState("")
   const [rating, setrating] = useState(0)
   const [hasSpoiler, sethasSpoiler] = useState(false)
-
   const [reportMessage, setReportMessage] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [reviewPermissions, setReviewPermissions] = useState({});
+  const [isRevealed, setIsRevealed] = useState(false);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === comments.length - 1 ? 0 : prev + 1));
@@ -74,9 +74,11 @@ const BookDetail = () => {
     setmessage(reviewToEdit.comment);
     setrating(reviewToEdit.rating);
 
-    if (reviewToEdit.hasSpoiler !== undefined) {
-      sethasSpoiler(Boolean(reviewToEdit.hasSpoiler));
-    } 
+    if (reviewToEdit.isSpoiler === true || reviewToEdit.isSpoiler === 1 || reviewToEdit.isSpoiler === "true") {
+      sethasSpoiler(true);
+    } else {
+      sethasSpoiler(false);
+    }
 
     setIsAddReviewOpen(true);
   };
@@ -84,8 +86,6 @@ const BookDetail = () => {
   const handleDeleteReview = async (delId) => {
     try {
       const res = await axiosInstance.delete(`/user/removeReview/${delId}`);
-      console.log(res.data.canModify);
-      console.log(res.data);
     } catch (error) {
       console.error(error);
     }
@@ -100,16 +100,6 @@ const BookDetail = () => {
     setSelectedReview(review);
     setIsReportOpen(true);
   };
-
-  const toggleSpoilerReveal = (id) => {
-    setComments(
-      comments.map((review) =>
-        review.id === id ? { ...review, revealed: !review.revealed } : review
-      )
-    );
-  };
-
-  const [reviewPermissions, setReviewPermissions] = useState({});
 
   const userID = async (reviewId) => {
     try {
@@ -252,10 +242,6 @@ const BookDetail = () => {
       let response;
 
       if (editMode && selectedReview) {
-        console.log(`hasSpoiler: ${hasSpoiler}`);
-        console.log(`selectedReview.id: ${selectedReview.id}`);
-        console.log(`rating: ${rating}`);
-        console.log(`message: ${message}`);
         response = await axiosInstance.patch(
           `/user/updateReview?review_id=${selectedReview.id}`,
           {
@@ -549,7 +535,7 @@ const BookDetail = () => {
                               </div>
 
                               <div className="mt-4 overflow-y-auto h-32">
-                                {review.hasSpoiler && !review.revealed ? (
+                                {review.isSpoiler === 1 && !isRevealed ? (
                                   <div className="bg-amber-50 dark:bg-amber-900/30 p-4 rounded border border-amber-200 dark:border-amber-700">
                                     <div className="text-center">
                                       <AlertTriangle className="inline-block h-5 w-5 mb-1 text-amber-500" />
@@ -559,7 +545,7 @@ const BookDetail = () => {
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => toggleSpoilerReveal(review.id)}
+                                        onClick={() => setIsRevealed(true)}
                                         className="bg-indigo-500 hover:bg-indigo-600 text-white hover:text-white"
                                       >
                                         پیشاندانی هەڵسەنگاندن
@@ -567,15 +553,13 @@ const BookDetail = () => {
                                     </div>
                                   </div>
                                 ) : (
-                                  <div className={`pr-2 ${review.hasSpoiler ? "bg-amber-50/50 dark:bg-amber-900/10 p-3 rounded" : ""}`}>
-                                    <p className="text-gray-700 dark:text-gray-200 p-4">{review.comment}</p>
-                                    {review.isSpoiler === 0 && (
+                                  <div className={`pr-2 ${review.isSpoiler ? "bg-amber-50 dark:bg-amber-900 p-3 rounded" : ""}`}>
+                                    <p onClick={() => setIsRevealed(true)} className="text-gray-700 dark:text-gray-200 p-4">
+                                      {review.comment}
+                                    </p>
+                                    {review.isSpoiler === 1 && isRevealed && (
                                       <div className="mt-2 text-right">
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                          onClick={() => toggleSpoilerReveal(review.id)}
-                                        >
+                                        <Button variant="ghost" size="sm" onClick={() => setIsRevealed(false)}>
                                           شاردنەوە
                                         </Button>
                                       </div>
@@ -605,7 +589,6 @@ const BookDetail = () => {
                       </div>
                     )}
 
-
                     <div className="absolute bottom-0 left-0 right-0 transform translate-y-6">
                       <div className="flex items-center justify-center gap-2">
                         {comments.map((_, index) => (
@@ -628,10 +611,10 @@ const BookDetail = () => {
                       <div className="flex justify-end pt-10 text-right">
                         <DialogHeader>
                           <DialogTitle className="text-right">
-                            {editMode ? "دەستکاری هەڵسەنگاندن" : "زیادکردنی هەڵسەنگاندن"}
+                            {editMode ? "گۆڕێنی هەڵسەنگاندنەکەت" : "زیادکردنی هەڵسەنگاندن"}
                           </DialogTitle>
                           <DialogDescription >
-                            تکایە هەڵسەنگاندنەکەت بنووسە و نمرەکە دیاری بکە.
+                            تکایە هەڵسەنگاندنەکەت بنووسە و نمرەکە دیاری بکە
                           </DialogDescription>
                         </DialogHeader>
                       </div>
@@ -648,7 +631,7 @@ const BookDetail = () => {
                           </div>
                         </div>
 
-                        <div className="text-right">
+                        <div dir='rtl' className="text-right">
                           <label className="block mb-2 text-sm font-medium">بۆچوونەکەت</label>
                           <Textarea
                             value={message}
@@ -688,17 +671,18 @@ const BookDetail = () => {
                   </Dialog>
 
                   <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
-                    <DialogContent>
-                      <DialogHeader>
+                    <DialogContent >
+                      <DialogHeader className={"pt-4"}>
                         <DialogTitle>ڕاپۆرتکردنی هەڵسەنگاندن</DialogTitle>
                         <DialogDescription>
                           تکایە هۆکاری ڕاپۆرتەکە ڕوون بکەرەوە.
                         </DialogDescription>
                       </DialogHeader>
 
-                      <div>
+                      <div dir='rtl'>
                         <label className="block mb-2 text-sm font-medium">هۆکار</label>
                         <Textarea
+                          dir='rtl'
                           value={reportMessage}
                           onChange={(e) => setReportMessage(e.target.value)}
                           rows={4}
@@ -706,7 +690,7 @@ const BookDetail = () => {
                         />
                       </div>
 
-                      <DialogFooter>
+                      <DialogFooter >
                         <Button variant="outline" onClick={() => setIsReportOpen(false)}>
                           پاشگەزبوونەوە
                         </Button>
