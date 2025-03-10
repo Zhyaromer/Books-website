@@ -22,8 +22,8 @@ const addReview = async (req, res) => {
         return res.status(400).json({ error: "Rating must be a number between 1 and 5." });
     }
 
-    if (comment.trim().length < 5 || comment.trim().length > 500) {
-        return res.status(400).json({ error: "Comment must be between 5 and 500 characters." });
+    if (comment.trim().length < 5 || comment.trim().length > 3000) {
+        return res.status(400).json({ error: "Comment must be between 5 and 3000 characters." });
     }
 
     try {

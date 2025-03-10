@@ -9,7 +9,7 @@ const getUserComments = async (req, res) => {
 
     try {
         const [comments] = await db.promise().query(`
-            SELECT reviews.*, books.title, users.username,users.coverImgURL 
+            SELECT reviews.*, books.title,books.cover_image, users.username,users.coverImgURL 
             FROM reviews 
             INNER JOIN books ON books.id = reviews.book_id 
             INNER JOIN users ON users.id = reviews.user_id 
