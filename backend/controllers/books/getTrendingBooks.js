@@ -1,5 +1,4 @@
 const db = require('../../config/SQL/sqlconfig');
-const xss = require('xss');
 
 const getTrendingBooks = (req, res) => {
     try {
@@ -8,16 +7,16 @@ const getTrendingBooks = (req, res) => {
         authors.name, authors.bio, authors.imgURL
         FROM books
         INNER JOIN authors ON books.author_id = authors.id
-        where books.created_at >= NOW() - INTERVAL 1 WEEK
+        where books.created_at >= NOW() - INTERVAL 1 month
         ORDER BY COALESCE(books.views, 0) DESC
         LIMIT 6
         `
+
         db.query(sql, (err, result) => {
             if (err) {
                 console.error(err);
                 return res.status(500).json({ message: 'Internal Server Error' });
             }
-
             if (result.length === 0) {
                 return res.status(404).json({ message: 'No books found' });
             }

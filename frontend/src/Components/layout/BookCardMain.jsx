@@ -1,23 +1,31 @@
 import PropTypes from "prop-types";
 
-const BookCollection = ({ data, text, path }) => {
+const BookCardMain = ({ data, text, path }) => {
     return (
-        <div className="pt-6 md:pt-12 bg-gradient-to-b from-indigo-50 to-white w-full">
-            <div className={`flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-4 md:px-8 ${path == "/Bookdetails" ? 'hidden' : ''}`}>
-                <div>
-                    <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}{path == "/Books" ? (`${data?.length ? ` (${data?.length})` : ''}`) : ''}</h1>
+        <div className="pt-6 md:pt-12 bg-gradient-to-b from-indigo-50 to-white w-full flex justify-center items-center flex-col">
+            {path == "/Books" ?
+                <div className={`flex pb-4 md:pb-8 justify-end px-4 md:px-8 w-full max-w-[85rem]`}>
+                    <div>
+                        <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}</h1>
+                    </div>
                 </div>
-                <div className={`${path == "/Books" || path == "/trending" ? 'hidden' : ''}`}>
-                    <p
-                        onClick={() => (window.location.href = path)}
-                        className="text-sm md:text-base lg:text-lg font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"
-                    >
-                        بینینی هەمووی
-                    </p>
+                :
+                <div className={`flex pb-4 md:pb-8 items-center justify-between px-4 md:px-8 w-full max-w-[85rem]`}>
+                    <div>
+                        <p
+                            onClick={() => (window.location.href = path)}
+                            className="text-sm md:text-base lg:text-lg font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"
+                        >
+                            بینینی هەمووی
+                        </p>
+                    </div>
+                    <div>
+                        <h1 className="font-sans text-lg md:text-3xl font-bold text-indigo-900">{text}{` (${data?.length})`}</h1>
+                    </div>
                 </div>
-            </div>
+            }
 
-            <div dir="rtl" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-2 gap-y-8 px-4 md:px-8 pb-6">
+            <div dir="rtl" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-2 gap-y-8 px-4 md:px-8 pb-6 max-w-[85rem]">
                 {data?.length > 0 ? (
                     data?.map((book) => (
                         <div
@@ -25,7 +33,7 @@ const BookCollection = ({ data, text, path }) => {
                             className="group flex flex-col h-full"
                         >
                             <div
-                                className="relative z-10 h-[200px] lg:h-[320px] md:h-[300px] shadow-md rounded-lg mb-2 md:mb-4 
+                                className="relative z-10 h-[250px] lg:h-[350px] md:h-[300px] shadow-md rounded-lg mb-2 md:mb-4 
                                 transition-all duration-500 group-hover:shadow-xl transform group-hover:-translate-y-1 cursor-pointer"
                                 onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                             >
@@ -68,7 +76,7 @@ const BookCollection = ({ data, text, path }) => {
     );
 };
 
-BookCollection.propTypes = {
+BookCardMain.propTypes = {
     data: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -82,4 +90,4 @@ BookCollection.propTypes = {
     path: PropTypes.string.isRequired,
 };
 
-export default BookCollection;
+export default BookCardMain;

@@ -16,6 +16,7 @@ import BookSeriesPage from "./Pages/BookSeriesPage";
 import BookSeriesBooks from "./Pages/BookSeriesBooks";
 import Signup from "./Pages/Signup";
 import KurdishLoginForm from "./Pages/Login";
+import Profile from "./Pages/Profile";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/seriesbooks/:id" element={<BookSeriesBooks />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<KurdishLoginForm />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
   );

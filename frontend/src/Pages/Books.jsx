@@ -1,5 +1,5 @@
 import BookstoreNavigation from "../Components/layout/Navigation";
-import BookCollection from "../Components/layout/BookCard";
+import BookCardMain from "../Components/layout/BookCardMain";
 import Footer from "../Components/layout/Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -132,7 +132,7 @@ const Books = () => {
     return (
         <>
             <BookstoreNavigation />
-            <FilterSection 
+            <FilterSection
                 showGenre={true}
                 genreOptions={genreOptions}
                 selectedGenres={selectedGenres}
@@ -151,8 +151,8 @@ const Books = () => {
                 </div>
             ) : (
                 <>
-                    <BookCollection data={books} text={`هەموو کتێبەکان (${totalBooks})`} path="/Books" />
-                    <Pagination 
+                    <BookCardMain data={books} text={`هەموو کتێبەکان (${totalBooks})`} path="/Books" />
+                    <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={handlePageChange}
