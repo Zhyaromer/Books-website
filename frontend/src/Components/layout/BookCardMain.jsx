@@ -20,7 +20,7 @@ const BookCardMain = ({ data, text, path }) => {
                         </p>
                     </div>
                     <div>
-                        <h1 className="font-sans text-lg md:text-3xl font-bold text-indigo-900">{text}{` (${data?.length})`}</h1>
+                        <h1 className="font-sans text-lg md:text-3xl font-bold text-indigo-900">{text}</h1>
                     </div>
                 </div>
             }
@@ -33,7 +33,7 @@ const BookCardMain = ({ data, text, path }) => {
                             className="group flex flex-col h-full"
                         >
                             <div
-                                className="relative z-10 h-[250px] lg:h-[350px] md:h-[300px] shadow-md rounded-lg mb-2 md:mb-4 
+                                className="relative w-[165px] md:w-[210px] z-10 h-[250px] lg:h-[350px] md:h-[300px] shadow-md rounded-lg mb-2 md:mb-4 
                                 transition-all duration-500 group-hover:shadow-xl transform group-hover:-translate-y-1 cursor-pointer"
                                 onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                             >

@@ -5,9 +5,9 @@ const DetailedBookCard = ({ books,author }) => {
     const navigate = useNavigate();
     return (
         <div className={books.length === 0 ? "hidden" : "block" }>
-            <div className={`flex flex-row gap-2 ${window.location.pathname.includes('/seriesbooks') ? 'hidden' : ''}`}> 
-                <h2 className="text-2xl font-bold text-gray-900 mb-6"> {author ? author : 'نووسەر'}</h2>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">{`(${books.length})`}</h2>
+            <div className={`flex flex-row items-center gap-1 ${window.location.pathname.includes('/seriesbooks') ? 'hidden' : ''}`}> 
+                <h2 className="text-2xl font-bold text-gray-900 mb-6"> بەرهەمەکانی {author}</h2>
+                <p className="text-lg font-bold text-gray-900 mb-6">{`(${books.length})`}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {books?.map((book, index) => (

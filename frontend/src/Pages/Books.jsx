@@ -7,6 +7,7 @@ import { sortOptions, genreOptions, languageOptions } from "../Helpers/options";
 import { useLocation, useNavigate } from "react-router-dom";
 import Pagination from "../Components/my-ui/Pagination";
 import FilterSection from "../Components/my-ui/FilterSection";
+import LoadingUi from '../Components/my-ui/Loading';
 
 const Books = () => {
     const [Sort, setSort] = useState();
@@ -146,9 +147,7 @@ const Books = () => {
             />
 
             {loading ? (
-                <div className="flex justify-center items-center min-h-[200px]">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                </div>
+              <LoadingUi />
             ) : (
                 <>
                     <BookCardMain data={books} text={`هەموو کتێبەکان (${totalBooks})`} path="/Books" />
