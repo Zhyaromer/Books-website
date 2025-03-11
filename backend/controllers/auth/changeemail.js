@@ -21,7 +21,7 @@ const changeemail = async (req, res) => {
     }
 
     try {
-        const [updateEmail] = await db.promise().query("select email from users where id = ?", [ userId]);
+        const [updateEmail] = await db.promise().query("select email,username from users where id = ?", [userId]);
 
         const user = updateEmail[0];
 
@@ -45,11 +45,11 @@ const changeemail = async (req, res) => {
             return res.status(404).json({ error: "هیچ ئەندامێک نەدۆزرایەوە" });
         }
 
-        sendEmail.changeemail(sanEmail,{ name: user.username, email: sanEmail });
+        sendEmail.changeemail(sanEmail, { name: user.username, email: sanEmail });
         return res.status(200).json({ message: "ئیمەیڵەکەت تازە کرایەوە" });
     } catch (error) {
         return res.status(500).json({ error: "کێشەیەک ڕویدا تکایە هەوڵ بدەوە" });
     }
 }
 
-module.exports =  changeemail;
+module.exports = changeemail;

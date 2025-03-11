@@ -225,6 +225,7 @@ const Profile = () => {
                             </div>
 
                             <button
+                            onClick={() => navigate('/settings')}
                                 className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
                                 aria-label="گۆڕینی زانیارییەکان"
                             >

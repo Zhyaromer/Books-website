@@ -16,7 +16,7 @@ const updateUserInfo = async (req, res) => {
     }
 
     try {
-        const [updateName] = await db.promise().query("select name from users where id = ?", [ userId]);
+        const [updateName] = await db.promise().query("select name,email from users where id = ?", [ userId]);
 
         const user = updateName[0];
 
@@ -30,7 +30,7 @@ const updateUserInfo = async (req, res) => {
             return res.status(404).json({ error: "هیچ ئەندامێک نەدۆزرایەوە" });
         }
 
-        sendEmail.changeName(user.email, { name: sanName });
+        await sendEmail.changeName(user.email, { name: sanName });
         return res.status(200).json({ message: "ناوەکەی تازە کرایەوە" });
     } catch (error) {
         return res.status(500).json({ error: "کێشەیەک ڕویدا تکایە هەوڵ بدەوە" });

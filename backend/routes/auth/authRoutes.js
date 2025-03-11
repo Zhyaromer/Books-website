@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const checkauth = require('../../Middleware/checkauth');
+const verifyToken = require('../../Middleware/verifyToken');
 const signup = require('../../controllers/auth/signup');
 const login = require('../../controllers/auth/login');
 const { forgotPassword, resetPassword } = require('../../controllers/auth/forgotPassword');
@@ -12,8 +12,7 @@ const changepassword = require('../../controllers/auth/changepassword');
 const refreshtoken = require('../../controllers/auth/refreshtoken');
 const verifyAuth = require('../../controllers/auth/CheckUserState');
 const logout = require('../../controllers/auth/logout');
-
-;
+const changebio = require('../../controllers/auth/changebio');
 
 router.get('/refreshtoken', refreshtoken);
 router.get('/verifyAuth', verifyAuth);
@@ -22,13 +21,14 @@ router.get('/logout', logout);
 router.post('/signup', signup);
 router.post('/login', login);
 router.post('/forgotPassword', forgotPassword);
-router.post('/resetPassword/:token', checkauth, resetPassword);
+router.post('/resetPassword/:token', verifyToken, resetPassword);
 
-router.patch('/updateUserInfo', checkauth, updateUserInfo);
-router.patch('/changeusername', checkauth, changeusername);
-router.patch('/changeemail', checkauth, changeemail);
-router.patch('/changepassword', checkauth, changepassword);
+router.patch('/updateUserInfo', verifyToken, updateUserInfo);
+router.patch('/changeusername', verifyToken, changeusername);
+router.patch('/changeemail', verifyToken, changeemail);
+router.patch('/changepassword', verifyToken, changepassword);
+router.patch('/changebio', verifyToken, changebio);
 
-router.delete('/deleteaccount', checkauth, deleteaccount);
+router.delete('/deleteaccount', verifyToken, deleteaccount);
 
 module.exports = router;

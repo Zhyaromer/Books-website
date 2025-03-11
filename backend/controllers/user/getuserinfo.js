@@ -8,7 +8,7 @@ const getUserInfo = async (req, res) => {
     }
 
     try {
-        const sql = `select username, coverImgURL,bio,name from users where id = ?`;
+        const sql = `select username, coverImgURL,bio,name,email from users where id = ?`;
 
         const [result] = await db.promise().query(sql, [user_id]);
 

@@ -16,7 +16,7 @@ const changeusername = async (req, res) => {
     }
 
     try {
-        const [updateUsername] = await db.promise().query("select username from users where id = ?", [ userId]);
+        const [updateUsername] = await db.promise().query("select username,email from users where id = ?", [ userId]);
 
         const user = updateUsername[0];
 

@@ -157,7 +157,8 @@ const BookstoreNavigation = () => {
 
     const userDropdownItems = isLoggedIn
         ? [
-            { icon: <Settings className="h-4 w-4 ml-2" />, name: 'ڕێکخستنەکان', onClick: () => { window.location.href = '/profile'; } },
+            { icon: <User className="h-4 w-4 ml-2" />, name: 'پڕۆفایل', onClick: () => { window.location.href = '/profile'; } },
+            { icon: <Settings className="h-4 w-4 ml-2" />, name: 'ڕێکخستنەکان', onClick: () => { window.location.href = '/settings'; } },
             { icon: <LogOut className="h-4 w-4 ml-2" />, name: 'چوونەدەرەوە', onClick: handleLogout },
         ]
         : [
@@ -356,7 +357,7 @@ const BookstoreNavigation = () => {
                                             <p
                                                 key={item.name}
                                                 onClick={item.onClick}
-                                                className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                                                className="cursor-pointer flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
                                                 role="menuitem"
                                             >
                                                 {item.icon}
