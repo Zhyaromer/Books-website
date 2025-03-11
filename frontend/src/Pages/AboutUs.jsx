@@ -37,7 +37,7 @@ const AboutUs = () => {
           </div>
         </div>
 
-        <div className="py-12 md:py-16 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div dir="rtl" className="py-12 md:py-16 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-900">چیرۆکی ئێمە</h2>
             <div className="max-w-4xl mx-auto">

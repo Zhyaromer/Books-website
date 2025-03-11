@@ -1,9 +1,9 @@
 import BookstoreNavigation from "../Components/layout/Navigation";
-import BookCollection from "../Components/layout/BookCard";
+import BookCardMain from "../Components/layout/BookCardMain";
 import Footer from "../Components/layout/Footer";
 import LoadingUi from "@/Components/my-ui/Loading";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import {axiosInstance} from "../context/AxiosInstance";
 
 const Suggestions = () => {
     const [books, setBooks] = useState([]);
@@ -13,7 +13,7 @@ const Suggestions = () => {
     const fetchBooksData = async (abortController) => {
         try {
             setLoading(true);
-            const res = await axios.get("http://localhost:3000/books/getRandomBooks", { signal: abortController.signal });
+            const res = await axiosInstance.get("http://localhost:3000/books/getRandomBooks", { signal: abortController.signal });
             if (res.data && res.status === 200) {
                 setBooks(res.data);
             } else {
@@ -34,12 +34,12 @@ const Suggestions = () => {
         setController(abortController);
         fetchBooksData(abortController);
 
-        return () => abortController.abort(); // Cleanup on unmount
+        return () => abortController.abort(); 
     }, []);
 
     const handleFetchBooks = () => {
         if (controller) {
-            controller.abort(); // Cancel previous request
+            controller.abort(); 
         }
         const newController = new AbortController();
         setController(newController);
@@ -54,15 +54,15 @@ const Suggestions = () => {
         <>
             <BookstoreNavigation />
             <div className="py-20">
-                <div className="flex justify-end px-8 py-4">
+                <div className="flex justify-end px-4 md:px-0 py-4 max-w-7xl mx-auto">
                     <button 
                         onClick={handleFetchBooks} 
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
                     >
-                        پێشنیاری ئێمە
+                        پێشنیاری نوێ
                     </button>
                 </div>
-                <BookCollection data={books} path={"/Bookdetails"} text={"پێشنیاری ئێمە"} />
+                <BookCardMain data={books} path={"/Books"} text={"پێشنیاری ئێمە"} />
             </div>
             <Footer />
         </>
