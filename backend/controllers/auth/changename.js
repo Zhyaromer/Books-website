@@ -15,8 +15,16 @@ const updateUserInfo = async (req, res) => {
         return res.status(400).json({ error: "ناوەکەت داواکراوە" });
     }
 
+    if (sanName.trim() === '') {
+        return res.status(400).json({ error: "enter a valid name" });
+    }
+
+    if (sanName.length < 1 || sanName.length > 35) {
+        return res.status(400).json({ error: "Name must be between 1 and 35 characters" });
+    }
+
     try {
-        const [updateName] = await db.promise().query("select name,email from users where id = ?", [ userId]);
+        const [updateName] = await db.promise().query("select name,email from users where id = ?", [userId]);
 
         const user = updateName[0];
 
@@ -37,4 +45,4 @@ const updateUserInfo = async (req, res) => {
     }
 }
 
-module.exports =  updateUserInfo ;
+module.exports = updateUserInfo;

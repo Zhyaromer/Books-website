@@ -43,7 +43,7 @@ const BookCardMain = ({ data, text, path }) => {
                                     className="w-full h-full object-fill rounded-lg transition-transform duration-500 group-hover:scale-105"
                                 />
 
-                                <div className="absolute w-full h-[200px] lg:h-[320px] md:h-[300px] inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
+                                <div className="absolute w-full h-[250px] lg:h-[350px] md:h-[300px] inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
 
                                 <div className="absolute z-20 bottom-0 right-0 left-0 flex justify-center transform translate-y-1/2">
                                     <p className="text-xs sm:text-sm text-white px-2 py-1 bg-purple-500 rounded-full max-w-max shadow-lg">

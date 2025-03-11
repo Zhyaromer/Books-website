@@ -209,8 +209,8 @@ const Profile = () => {
             <div className="min-h-screen bg-gray-50 p-4 pt-20" dir="rtl">
                 <div className="max-w-7xl mx-auto">
                     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center">
+                        <div className="flex flex-row justify-between items-start md:items-center">
+                            <div className="flex flex-col md:flex-row md:items-center">
                                 <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 border-2 border-blue-500">
                                     <img
                                         src={userData.coverImgURL}
@@ -219,7 +219,7 @@ const Profile = () => {
                                     />
                                 </div>
                                 <div className="mr-4">
-                                    <h1 className="text-2xl font-bold text-gray-800">{userData.username}</h1>
+                                    <h1 className="text-xl font-bold text-gray-800">{userData.username}</h1>
                                     <p className="text-gray-600">{userData.name}</p>
                                 </div>
                             </div>

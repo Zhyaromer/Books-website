@@ -87,6 +87,20 @@ const SettingsPage = () => {
     ];
 
     const changeName = async () => {
+        if (!formData.name) {
+            console.log('Please enter a name');
+            return;
+        }
+
+        if (formData.name.trim() === '') {
+            console.log('Please enter a valid name');
+            return;
+        }
+
+        if (formData.name.length < 1 || formData.name.length > 35) {
+            console.log('Name must be between 1 and 35 characters');
+            return;
+        }
         try {
             setLoading(true);
             const res = await axiosInstance.patch('/auth/updateUserInfo', { name: formData.name });
@@ -101,6 +115,20 @@ const SettingsPage = () => {
     };
 
     const changeUsername = async () => {
+        if (!formData.username) {
+            console.log('Please enter a username');
+            return;
+        }
+
+        if (formData.username.trim() === '') {
+            console.log('Please enter a valid username');
+            return;
+        }
+
+        if (formData.username.length < 1 || formData.username.length > 35) {
+            console.log('username must be between 1 and 35 characters');
+            return;
+        }
         try {
             setLoading(true);
             const res = await axiosInstance.patch('/auth/changeusername', { username: formData.username });
@@ -115,6 +143,21 @@ const SettingsPage = () => {
     };
 
     const changeEmail = async () => {
+        if (!formData.email) {
+            console.log('Please enter a email');
+            return;
+        }
+
+        if (formData.email.trim() === '') {
+            console.log('Please enter a valid email');
+            return;
+        }
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(formData.email)) {
+            console.log('Please enter a valid email');
+            return;
+        }
         try {
             setLoading(true);
             const res = await axiosInstance.patch('/auth/changeemail', { email: formData.email });
@@ -129,6 +172,20 @@ const SettingsPage = () => {
     };
 
     const changeBio = async () => {
+        if (!formData.bio) {
+            console.log('Please enter a bio');
+            return;
+        }
+
+        if (formData.bio.trim() === '') {
+            console.log('Please enter a valid bio');
+            return;
+        }
+
+        if (formData.bio.length < 1 || formData.bio.length > 100) {
+            console.log('bio must be between 1 and 100 characters');
+            return;
+        }
         try {
             setLoading(true);
             const res = await axiosInstance.patch('/auth/changebio', { bio: formData.bio });
@@ -143,6 +200,19 @@ const SettingsPage = () => {
     };
 
     const changePassword = async () => {
+        if (!formData.currentPassword || !formData.password || !formData.confirmPassword) {
+            console.log('Please enter a current password, new password, and confirm password');
+            return;
+        }
+
+        if (formData.currentPassword.trim() === '' || formData.password.trim() === '' || formData.confirmPassword.trim() === '') {
+            console.log('Please enter a valid current password, new password, and confirm password');
+        }
+
+        if ((formData.password.length < 3 || formData.password.length > 35) || (formData.confirmPassword.length < 3 || formData.confirmPassword.length > 35)) {
+            console.log('password and confirm password must be between 3 and 35 characters');
+            return;
+        }
         try {
             setLoading(true);
             const res = await axiosInstance.patch('/auth/changepassword', { oldPassword: formData.currentPassword, newPassword: formData.password, confirmPassword: formData.confirmPassword });

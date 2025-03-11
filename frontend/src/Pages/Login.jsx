@@ -32,7 +32,7 @@ const KurdishLoginForm = () => {
                     const userId = response.data.userId;
                     localStorage.setItem('token', token);
                     localStorage.setItem('userId', userId);
-                    window.location.href = '/quotes';
+                    window.location.href = '/';
                 }
             })
             .catch(error => {

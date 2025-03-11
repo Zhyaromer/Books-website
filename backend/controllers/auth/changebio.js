@@ -15,6 +15,10 @@ const changebio = async (req, res) => {
         return res.status(400).json({ error: "بیۆکەت داواکراوە" });
     }
 
+    if (sanBio.length >= 100) {
+        return res.status(400).json({ error: "no more than 100 characters" });
+    }
+
     try {
         const [updateBio] = await db.promise().query("select bio,email from users where id = ?", [userId]);
 

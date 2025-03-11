@@ -15,6 +15,14 @@ const changeusername = async (req, res) => {
         return res.status(401).json({ error: "Unauthorized" });
     }
 
+    if (sanUserName.trim() === '') {
+        return res.status(400).json({ error: "enter a valid username" });
+    }
+
+    if (sanUserName.length < 1 || sanUserName.length > 35) {
+        return res.status(400).json({ error: "username must be between 1 and 35 characters" });
+    }
+
     try {
         const [updateUsername] = await db.promise().query("select username,email from users where id = ?", [ userId]);
 
