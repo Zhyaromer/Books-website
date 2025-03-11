@@ -1,6 +1,8 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const getSavedBooks = async (req, res) => {
+    const { page = 1, limit = 12 } = req.query;
+    const offset = (page - 1) * parseInt(limit);
     const user_id = req?.user?.id;
 
     if (!user_id) {
@@ -8,10 +10,33 @@ const getSavedBooks = async (req, res) => {
     }
 
     try {
-        const [savedBooks] = await db.promise().query("SELECT book_id FROM user_saves WHERE user_id = ?", [user_id]);
+        const [countResult] = await db.promise().query(
+            "SELECT COUNT(*) as total FROM user_saves WHERE user_id = ?", 
+            [user_id]
+        );
+        const total = countResult[0].total;
+        
+        if (total === 0) {
+            return res.status(200).json({
+                foundBooks: [],
+                total: 0,
+                currentPage: parseInt(page),
+                totalPages: 0
+            });
+        }
+
+        const [savedBooks] = await db.promise().query(
+            "SELECT book_id FROM user_saves WHERE user_id = ? LIMIT ? OFFSET ?", 
+            [user_id, parseInt(limit), parseInt(offset)]
+        );
 
         if (savedBooks.length === 0) {
-            return res.status(200).json({ message: "No books found" });
+            return res.status(200).json({
+                foundBooks: [],
+                total: total,
+                currentPage: parseInt(page),
+                totalPages: Math.ceil(total / limit)
+            });
         }
 
         const booksIds = savedBooks.map(book => book.book_id);
@@ -22,17 +47,18 @@ const getSavedBooks = async (req, res) => {
              authors.name, authors.imgURL 
              FROM books 
              INNER JOIN authors ON books.author_id = authors.id 
-             WHERE books.id IN (${placeholders})`, 
-             booksIds
+             WHERE books.id IN (${placeholders})`,
+            booksIds
         );
 
-        if (foundBooks.length === 0) {
-            return res.status(200).json({ message: "No books saved" });
-        }
-
-        return res.status(200).json(foundBooks);
+        return res.status(200).json({
+            foundBooks: foundBooks,
+            total: total,
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(total / limit)
+        });
     } catch (error) {
-        console.error(error);
+        console.error("Error fetching saved books:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }

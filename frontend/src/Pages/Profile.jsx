@@ -5,6 +5,7 @@ import BookCollection from '../Components/layout/BookCard';
 import { useNavigate } from "react-router-dom";
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
+import Pagination from "../Components/my-ui/Pagination";
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -16,6 +17,16 @@ const Profile = () => {
     const [openMenuId, setOpenMenuId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingReview, setEditingReview] = useState(null);
+
+
+    const booksPerPage = 12;
+    const commentsPerPage = 6;
+    const [currentPage, setCurrentPage] = useState(1);
+    const [booksTotal, setBooksTotal] = useState(0);
+    const [readbooksTotal, setreadbooksTotal] = useState(0);
+    const [commentsTotal, setcommentsTotal] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+
     const [editFormData, setEditFormData] = useState({
         comment: '',
         rating: 0,
@@ -40,17 +51,33 @@ const Profile = () => {
 
         const fetchSavedBooks = async () => {
             try {
-                const res = await axiosInstance.get('/user/getSavedBooks');
-                setSavedBooks(res.data);
+                const res = await axiosInstance.get(`/user/getSavedBooks?page=${currentPage}&limit=${booksPerPage}`);
+                if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
+                    setSavedBooks(res.data.foundBooks);
+                    setBooksTotal(res.data.total || 0);
+                    setTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                } else {
+                    setSavedBooks([]);
+                    setTotalPages(0);
+                }
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching saved books:", error);
+                setSavedBooks([]);
+                setTotalPages(0);
             }
         }
 
         const fetchReadBooks = async () => {
             try {
-                const res = await axiosInstance.get('/user/getReadBooks');
-                setReadBooks(res.data);
+                const res = await axiosInstance.get(`/user/getReadBooks?page=${currentPage}&limit=${booksPerPage}`);
+                if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
+                    setReadBooks(res.data.foundBooks);
+                    setreadbooksTotal(res.data.total || 0);
+                    setTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                } else {
+                    setReadBooks([]);
+                    setTotalPages(0);
+                }
             } catch (error) {
                 console.error(error);
             }
@@ -58,8 +85,16 @@ const Profile = () => {
 
         const fetchComments = async () => {
             try {
-                const res = await axiosInstance.get('/user/getUserComments');
-                setcomments(res.data);
+                const res = await axiosInstance.get(`/user/getUserComments?page=${currentPage}&limit=${commentsPerPage}`);
+                console.log(res.data);
+                if (res.data.comments && Array.isArray(res.data.comments)) {
+                    setcomments(res.data.comments);
+                    setcommentsTotal(res.data.total || 0);
+                    setTotalPages(Math.ceil((res.data.total || 0) / commentsPerPage));
+                } else {
+                    setcomments([]);
+                    setTotalPages(0);
+                }
             } catch (error) {
                 console.error(error);
             }
@@ -69,7 +104,7 @@ const Profile = () => {
         fetchSavedBooks();
         fetchReadBooks();
         fetchComments();
-    }, []);
+    }, [currentPage]);
 
     const toggleMenu = (id, e) => {
         e.stopPropagation();
@@ -126,6 +161,15 @@ const Profile = () => {
 
         if (!editingReview) return;
 
+        if (editFormData.comment.trim() === '') {
+            console.log('Please enter a comment');
+            return;
+        }
+
+        if (editFormData.comment.length > 3000 || editFormData.comment.length < 1) {
+            console.log('Comment must be between 1 and 3000 characters');
+            return;
+        }
         try {
             const res = await axiosInstance.patch(
                 `/user/updateReview?review_id=${editingReview.id}`,
@@ -203,6 +247,26 @@ const Profile = () => {
         );
     };
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+        const newParams = new URLSearchParams(location.search);
+        newParams.set('page', newPage.toString());
+        navigate({
+            pathname: location.pathname,
+            search: newParams.toString()
+        }, { replace: true });
+    };
+
+    const resetPage = () => {
+        setCurrentPage(1);
+        const newParams = new URLSearchParams(location.search);
+        newParams.delete('page');
+        navigate({
+            pathname: location.pathname,
+            search: newParams.toString()
+        }, { replace: true });
+    }
+
     return (
         <div>
             <BookstoreNavigation />
@@ -225,7 +289,7 @@ const Profile = () => {
                             </div>
 
                             <button
-                            onClick={() => navigate('/settings')}
+                                onClick={() => navigate('/settings')}
                                 className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
                                 aria-label="گۆڕینی زانیارییەکان"
                             >
@@ -243,19 +307,19 @@ const Profile = () => {
                         <div className="flex border-b">
                             <button
                                 className={`flex-1 py-3 font-medium ${activeTab === 'saved' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
-                                onClick={() => setActiveTab('saved')}
+                                onClick={() => { setActiveTab('saved'); resetPage() }}
                             >
                                 بینینی دواتر
                             </button>
                             <button
                                 className={`flex-1 py-3 font-medium ${activeTab === 'read' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
-                                onClick={() => setActiveTab('read')}
+                                onClick={() => { setActiveTab('read'); resetPage() }}
                             >
                                 خوێندراوەکان
                             </button>
                             <button
                                 className={`flex-1 py-3 font-medium ${activeTab === 'comments' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
-                                onClick={() => setActiveTab('comments')}
+                                onClick={() => { setActiveTab('comments'); resetPage() }}
                             >
                                 هەڵسەنگاندنەکان
                             </button>
@@ -264,27 +328,38 @@ const Profile = () => {
                         <div className="p-6">
                             {activeTab === 'saved' && (
                                 <div dir='rtl' className="space-y-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">بینینی دواتر ({savedBooks.length})</h3>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">بینینی دواتر ({booksTotal})</h3>
                                     <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
                                         <BookCollection data={savedBooks} text="" path="/Bookdetails" />
                                     </div>
+
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                    />
                                 </div>
                             )}
 
                             {activeTab === 'read' && (
                                 <div className="space-y-6">
                                     <div dir='rtl' className="space-y-6">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">بینینی دواتر ({readBooks.length})</h3>
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">خوێندراوەکان ({readbooksTotal})</h3>
                                         <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
                                             <BookCollection data={readBooks} text="" path="/Bookdetails" />
                                         </div>
                                     </div>
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                    />
                                 </div>
                             )}
 
                             {activeTab === 'comments' && (
                                 <div dir="rtl" className="w-fulll mx-auto p-4">
-                                    <h2 className="text-xl font-bold mb-4 text-right text-gray-800">هەڵسەنگاندنەکان {`(${comments.length})`}</h2>
+                                    <h2 className="text-xl font-bold mb-4 text-right text-gray-800">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h2>
                                     <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {comments.length === 0 ? (
                                             <p className="text-gray-500 text-center py-4">هیچ هەڵسەنگاندنێک نییە</p>
@@ -359,6 +434,12 @@ const Profile = () => {
                                             ))
                                         )}
                                     </div>
+
+                                    <Pagination
+                                        currentPage={currentPage}
+                                        totalPages={totalPages}
+                                        onPageChange={handlePageChange}
+                                    />
 
                                     <style>{`
                             .custom-scrollbar::-webkit-scrollbar {
@@ -436,6 +517,7 @@ const Profile = () => {
                         </div>
                     </div>
                 )}
+
             </div>
             <Footer />
         </div>

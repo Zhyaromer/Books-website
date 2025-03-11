@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import LoadingUi from '../Components/my-ui/Loading';
 import PropTypes from 'prop-types';
 
 const BookDetail = () => {
@@ -151,7 +152,6 @@ const BookDetail = () => {
     editable: PropTypes.bool,
   };
 
-
   useEffect(() => {
     const incrementViewCount = async () => {
       try {
@@ -238,6 +238,15 @@ const BookDetail = () => {
   }
 
   const handleAddComment = async () => {
+    if (message.trim() === "") {
+      console.log("Please enter a comment");
+      return;
+    }
+
+    if (message.length > 3000 || message.length < 1) {
+      console.log("Comment must be between 1 and 3000 characters");
+      return;
+    }
     try {
       let response;
 
@@ -251,6 +260,7 @@ const BookDetail = () => {
           }
         );
       } else {
+        console.log(id);
         response = await axiosInstance.post(
           `http://localhost:3000/user/addReview/${id}`,
           {
@@ -260,6 +270,8 @@ const BookDetail = () => {
           }
         );
       }
+
+      setIsAddReviewOpen(false);
 
       const updatedComments = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
       setComments(updatedComments.data);
@@ -273,11 +285,7 @@ const BookDetail = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
+    return <LoadingUi />
   }
 
   return (

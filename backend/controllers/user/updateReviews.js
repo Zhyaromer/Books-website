@@ -32,8 +32,8 @@ const updateReview = async (req, res) => {
                 return res.status(400).json({ error: "Rating must be a number between 1 and 5." });
             }
 
-            if (comment.trim().length < 5 || comment.trim().length > 3000) {
-                return res.status(400).json({ error: "Comment must be between 5 and 3000 characters." });
+            if (comment.trim().length < 1 || comment.trim().length > 3000) {
+                return res.status(400).json({ error: "Comment must be between 1 and 3000 characters." });
             }
 
            const sql2 = `update reviews set rating = ?, comment = ?, isSpoiler = ? where id = ? and user_id = ?`
