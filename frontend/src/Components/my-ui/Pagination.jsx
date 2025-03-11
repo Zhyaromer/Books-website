@@ -9,7 +9,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 <button
                     key={i}
                     onClick={() => onPageChange(i)}
-                    className={`px-4 py-2 mx-1 rounded ${
+                    className={`px-4 py-2 mx-1 rounded-full ${
                         currentPage === i 
                             ? 'bg-blue-600 text-white' 
                             : 'bg-gray-200 hover:bg-gray-300'
@@ -27,7 +27,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
             >
                <ChevronRight />
             </button>
@@ -35,7 +35,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
             >
                  <ChevronLeft />
             </button>

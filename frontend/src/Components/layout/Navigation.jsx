@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Search, Book, User, ChevronDown, Settings, LogOut } from 'lucide-react';
-import { useCheckAuth, logout } from "../../context/AxiosInstance";
+import { useCheckAuth, logout, axiosInstance } from "../../context/AxiosInstance";
 
 const BookstoreNavigation = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -13,11 +13,31 @@ const BookstoreNavigation = () => {
     const [bestSellerDropdownOpen, setBestSellerDropdownOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+    const [userIcon, setUserIcon] = useState(null);
+    const [userIconText, setUserIconText] = useState(null);
     const { isAuthenticated, setIsAuthenticated } = useCheckAuth();
 
     useEffect(() => {
         setIsLoggedIn(isAuthenticated);
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        const profilePic = async () => {
+            try {
+                const res = await axiosInstance.get('/user/getusernameandpic');
+                if (res.status === 200 && res.data.coverImgURL !== null && res.data.coverImgURL !== undefined && res.data.coverImgURL !== '') {
+                    setUserIcon(res?.data?.coverImgURL);
+                } else if (res.status === 200 && res.data.username) {
+                    setUserIconText(res?.data?.username?.slice(0, 1)?.toUpperCase());
+                } else {
+                    setUserIcon(null);
+                    setUserIconText(null);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        profilePic();
     }, [isAuthenticated]);
 
     const mockBookResults = [
@@ -343,12 +363,24 @@ const BookstoreNavigation = () => {
                         </div>
 
                         <div className="relative dropdown-container">
-                            <button
-                                onClick={handleUserDropdownToggle}
-                                className="text-gray-700 hover:text-indigo-600 p-1 rounded-full hover:bg-gray-100"
-                            >
-                                <User className={`h-6 w-6 ${isLoggedIn ? 'text-indigo-600' : 'text-red-500'}`} />
-                            </button>
+                            {isLoggedIn ? (
+                                <button
+                                    onClick={handleUserDropdownToggle}
+                                    className="h-[36px] w-[36px] text-white rounded-full bg-indigo-600 hover:bg-indigo-500 transition-colors duration-300"
+                                >
+                                    {userIcon ? <img className="rounded-full h-[36px] w-[36px]" src={userIcon} alt="" />
+                                        :
+                                        userIconText
+                                    }
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleUserDropdownToggle}
+                                    className="flex items-center justify-center p-2 h-[36px] w-[36px] text-white rounded-full bg-indigo-600 hover:bg-indigo-500 transition-colors duration-300"
+                                >
+                                    <User className="h-[36px] w-[36px]" />
+                                </button>
+                            )}
 
                             {userDropdownOpen && (
                                 <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
@@ -499,6 +531,10 @@ const BookstoreNavigation = () => {
                             </div>
                             {isLoggedIn ? (
                                 <div className="space-y-1 pr-6">
+                                    <a href="/profile" className="flex items-center px-3 py-1 text-sm text-gray-600 hover:text-indigo-600">
+                                        <User className="h-4 w-4 ml-2" />
+                                        پروفایل
+                                    </a>
                                     <a href="/settings" className="flex items-center px-3 py-1 text-sm text-gray-600 hover:text-indigo-600">
                                         <Settings className="h-4 w-4 ml-2" />
                                         ڕێکخستنەکان

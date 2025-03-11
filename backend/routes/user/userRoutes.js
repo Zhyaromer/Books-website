@@ -14,6 +14,7 @@ const getallreviews = require('../../controllers/user/getallreviews');
 const userID = require('../../controllers/user/returnUserid');
 const updateReview = require('../../controllers/user/updateReviews');
 const getUserInfo = require('../../controllers/user/getuserinfo');
+const get_user_name_and_pic = require('../../controllers/user/get_user_name_and_pic');
 
 router.use(verifyToken);
 
@@ -25,6 +26,7 @@ router.get('/booksSaveCheck', booksSaveCheck);
 router.get('/getallreviews', getallreviews);
 router.get('/returnUserid/:id', userID);
 router.get('/getuserinfo', getUserInfo);
+router.get('/getusernameandpic', get_user_name_and_pic);
 
 router.post('/addReadBook/:book_id', addReadBook);
 router.post('/addReview/:book_id', addReview);
