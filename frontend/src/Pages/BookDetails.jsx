@@ -205,6 +205,7 @@ const BookDetail = () => {
     const fetchComments = async () => {
       try {
         const response = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
+        console.log(response.data[0].username);
         setComments(response.data);
       } catch (error) {
         console.log(error);
@@ -496,73 +497,83 @@ const BookDetail = () => {
                     )}
                     {comments.length > 0 && (
                       <div className="overflow-hidden relative rounded-lg shadow-lg bg-white dark:bg-gray-800 h-64">
-                        <div className="relative h-full">
+                        <div className="h-full">
                           {comments?.map((review, index) => (
                             <div
                               key={review.id}
-                              className={`p-6 transition-all duration-300 absolute top-0 left-0 right-0 h-full ${currentSlide === index ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                              className={`p-4 absolute inset-0 transition-opacity duration-300 ease-in-out ${currentSlide === index ? "opacity-100" : "opacity-0 pointer-events-none"
+                                }`}
                             >
-                              <div className="flex justify-between">
-                                <div className="flex items-center">
-                                  <Avatar className="h-12 w-12 mr-3">
+                              {/* Header with user info and actions */}
+                              <div className="flex items-center justify-between mb-3 pb-3 border-b dark:border-gray-700">
+                                <div className="flex items-center gap-3">
+                                  <Avatar className="h-10 w-10 ring-2 ring-indigo-100 dark:ring-indigo-900">
                                     <AvatarImage src={review.coverImgURL} alt={review.userName} />
-                                    <AvatarFallback>{review.username}</AvatarFallback>
+                                    <AvatarFallback className="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                                      {review.username?.substring(0, 2)}
+                                    </AvatarFallback>
                                   </Avatar>
+
                                   <div>
-                                    <h3 className="font-medium text-lg">{review.userName}</h3>
-                                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                                      {review.title}
-                                    </p>
-                                    <div dir="ltr" className="mt-1">
-                                      <StarRating rating={review.rating} setRating={() => { }} />
+                                    <h3 className="font-medium text-base">{review.username}</h3>
+                                    <div className="flex items-center gap-2">
+                                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                                        {review.title}
+                                      </p>
+                                      <div dir="ltr">
+                                        <StarRating rating={review.rating} setRating={() => { }} />
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
 
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm">
+                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
                                       <MoreVertical className="h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => handleEditReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`}>
-                                      <Edit className="ml-2 h-4 w-4" />
-                                      دەستکاری
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleOpenReport(review.id)} className={`cursor-pointer`}>
+                                  <DropdownMenuContent align="end" className="w-40">
+                                    {reviewPermissions[review.id] && (
+                                      <DropdownMenuItem onClick={() => handleEditReview(review.id)} className="cursor-pointer">
+                                        <Edit className="ml-2 h-4 w-4" />
+                                        دەستکاری
+                                      </DropdownMenuItem>
+                                    )}
+                                    <DropdownMenuItem onClick={() => handleOpenReport(review.id)} className="cursor-pointer">
                                       <Flag className="ml-2 h-4 w-4" />
                                       ڕاپۆرت
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleDeleteReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`} >
-                                      <Trash className="ml-2 h-4 w-4 text-red-500" />
-                                      سڕینەوە
-                                    </DropdownMenuItem>
+                                    {reviewPermissions[review.id] && (
+                                      <DropdownMenuItem onClick={() => handleDeleteReview(review.id)} className="cursor-pointer text-red-500 focus:text-red-500">
+                                        <Trash className="ml-2 h-4 w-4" />
+                                        سڕینەوە
+                                      </DropdownMenuItem>
+                                    )}
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </div>
 
-                              <div className="mt-4 overflow-y-auto h-32">
+                              {/* Comment Content */}
+                              <div className="mt-2 overflow-y-auto h-32 px-1">
                                 {review.isSpoiler === 1 && !isRevealed ? (
-                                  <div className="bg-amber-50 dark:bg-amber-900/30 p-4 rounded border border-amber-200 dark:border-amber-700">
-                                    <div className="text-center">
-                                      <AlertTriangle className="inline-block h-5 w-5 mb-1 text-amber-500" />
-                                      <p className="text-amber-800 dark:text-amber-300 mb-2">
-                                        ئەم هەڵسەنگاندنە سپۆیلەر لە خۆ دەگرێت
-                                      </p>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setIsRevealed(true)}
-                                        className="bg-indigo-500 hover:bg-indigo-600 text-white hover:text-white"
-                                      >
-                                        پیشاندانی هەڵسەنگاندن
-                                      </Button>
-                                    </div>
+                                  <div className="bg-amber-50 dark:bg-amber-900/30 p-4 rounded-lg border border-amber-200 dark:border-amber-700 text-center">
+                                    <AlertTriangle className="inline-block h-5 w-5 mb-1 text-amber-500" />
+                                    <p className="text-amber-800 dark:text-amber-300 mb-2 text-sm">
+                                      ئەم هەڵسەنگاندنە سپۆیلەر لە خۆ دەگرێت
+                                    </p>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => setIsRevealed(true)}
+                                      className="bg-indigo-500 hover:bg-indigo-600 text-white hover:text-white"
+                                    >
+                                      پیشاندانی هەڵسەنگاندن
+                                    </Button>
                                   </div>
                                 ) : (
-                                  <div className={`pr-2 ${review.isSpoiler ? "bg-amber-50 dark:bg-amber-900 p-3 rounded" : ""}`}>
-                                    <p onClick={() => setIsRevealed(true)} className="text-gray-700 dark:text-gray-200 p-4">
+                                  <div className={review.isSpoiler ? "bg-amber-50 dark:bg-amber-900/30 p-3 rounded-lg" : ""}>
+                                    <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
                                       {review.comment}
                                     </p>
                                     {review.isSpoiler === 1 && isRevealed && (
@@ -579,19 +590,23 @@ const BookDetail = () => {
                           ))}
                         </div>
 
-                        <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-between pointer-events-none">
+                        <div className="absolute inset-y-0 left-0 flex items-center">
                           <button
                             onClick={prevSlide}
-                            className="pointer-events-auto bg-white/80 text-indigo-600 rounded-full p-2 shadow-md ml-2"
+                            className="flex items-center justify-center h-8 w-8 rounded-full bg-white/90 dark:bg-gray-700/90 text-indigo-600 dark:text-indigo-400 shadow-md ml-2 hover:bg-white dark:hover:bg-gray-700 transition-colors"
+                            aria-label="Previous slide"
                           >
-                            <ChevronRight className="h-6 w-6" />
+                            <ChevronRight className="h-5 w-5" />
                           </button>
+                        </div>
 
+                        <div className="absolute inset-y-0 right-0 flex items-center">
                           <button
                             onClick={nextSlide}
-                            className="pointer-events-auto bg-white/80 text-indigo-600 rounded-full p-2 shadow-md mr-2"
+                            className="flex items-center justify-center h-8 w-8 rounded-full bg-white/90 dark:bg-gray-700/90 text-indigo-600 dark:text-indigo-400 shadow-md mr-2 hover:bg-white dark:hover:bg-gray-700 transition-colors"
+                            aria-label="Next slide"
                           >
-                            <ChevronLeft className="h-6 w-6" />
+                            <ChevronLeft className="h-5 w-5" />
                           </button>
                         </div>
                       </div>

@@ -1,15 +1,27 @@
 const db = require('../../config/SQL/sqlconfig');
+const xss = require('xss');
 
-const getUserComments = async (req, res) => {
+const getallmemberreviews = async (req, res) => {
     const { page = 1, limit = 6 } = req.query;
     const offset = (page - 1) * parseInt(limit);
-    const user_id = req?.user?.id;
+    const username = xss(req?.query?.username);
 
-    if (!user_id) {
-        return res.status(401).json({ error: "Unauthorized" });
+    if (!username) {
+        return res.status(404).json({ error: "not found" });
     }
 
     try {
+
+        const sql = `select * from users where username = ?`;
+
+        const [result] = await db.promise().query(sql, [username]);
+
+        if (result.length === 0) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const user_id = result[0].id;
+
         const [countResult] = await db.promise().query(
             "SELECT COUNT(*) as total FROM reviews WHERE user_id = ?",
             [user_id]
@@ -37,8 +49,6 @@ const getUserComments = async (req, res) => {
             return res.status(200).json({ message: "No comments found" });
         }
 
-        console.log(comments);
-
         return res.status(200).json({
             comments,
             total: total,
@@ -51,4 +61,4 @@ const getUserComments = async (req, res) => {
     }
 }
 
-module.exports = getUserComments;
+module.exports = getallmemberreviews;

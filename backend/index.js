@@ -12,6 +12,7 @@ const authRoutes = require('./routes/auth/authRoutes');
 const userRoutes = require('./routes/user/userRoutes');
 const newsRoutes = require('./routes/news/newsRoutes');
 const bookSeriesRoutes = require('./routes/book_series/book_seriesRoutes');
+const membersRoutes = require('./routes/members/membersRoutes');
 const PORT = process.env.PORT || 3001;
 
 app.use(cors( {
@@ -30,6 +31,7 @@ app.use('/authors', authorsRoutes);
 app.use('/user', userRoutes);
 app.use('/news', newsRoutes);
 app.use('/bookseries', bookSeriesRoutes);
+app.use('/members', membersRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

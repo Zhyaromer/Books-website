@@ -1,39 +1,35 @@
 import { useState, useEffect } from 'react';
-import { Cog, X, Save, MoreVertical, Star, StarHalf, Edit2, Trash2 } from 'lucide-react';
+import { Star, StarHalf } from 'lucide-react';
 import { axiosInstance } from "../context/AxiosInstance";
 import BookCollection from '../Components/layout/BookCard';
 import { useNavigate } from "react-router-dom";
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import Pagination from "../Components/my-ui/Pagination";
+import { useLocation } from "react-router-dom";
 
-const Profile = () => {
+const UserProfile = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('saved');
     const [userData, setUserData] = useState([]);
     const [savedBooks, setSavedBooks] = useState([]);
     const [readBooks, setReadBooks] = useState([]);
     const [comments, setcomments] = useState([]);
-    const [openMenuId, setOpenMenuId] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingReview, setEditingReview] = useState(null);
-    const booksPerPage = 12;
-    const commentsPerPage = 6;
     const [currentPage, setCurrentPage] = useState(1);
     const [booksTotal, setBooksTotal] = useState(0);
     const [readbooksTotal, setreadbooksTotal] = useState(0);
     const [commentsTotal, setcommentsTotal] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
-    const [editFormData, setEditFormData] = useState({
-        comment: '',
-        rating: 0,
-        hasSpoiler: false
-    });
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const username = queryParams.get("username");
+    const booksPerPage = 12;
+    const commentsPerPage = 6;
 
     useEffect(() => {
         const fetchInfo = async () => {
             try {
-                const res = await axiosInstance.get('/user/getuserinfo');
+                const res = await axiosInstance.get(`/members/getmemberinfo?username=${username}`);
                 if (res.status === 200) {
                     setUserData(res.data);
                 } else if (res.status === 401) {
@@ -48,7 +44,7 @@ const Profile = () => {
 
         const fetchSavedBooks = async () => {
             try {
-                const res = await axiosInstance.get(`/user/getSavedBooks?page=${currentPage}&limit=${booksPerPage}`);
+                const res = await axiosInstance.get(`/members/getmemberSavedBooks?username=${username}&page=${currentPage}&limit=${booksPerPage}`);
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setSavedBooks(res.data.foundBooks);
                     setBooksTotal(res.data.total || 0);
@@ -66,7 +62,7 @@ const Profile = () => {
 
         const fetchReadBooks = async () => {
             try {
-                const res = await axiosInstance.get(`/user/getReadBooks?page=${currentPage}&limit=${booksPerPage}`);
+                const res = await axiosInstance.get(`/members/getmemberReadBooks?username=${username}&page=${currentPage}&limit=${booksPerPage}`);
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setReadBooks(res.data.foundBooks);
                     setreadbooksTotal(res.data.total || 0);
@@ -82,8 +78,8 @@ const Profile = () => {
 
         const fetchComments = async () => {
             try {
-                const res = await axiosInstance.get(`/user/getUserComments?page=${currentPage}&limit=${commentsPerPage}`);
-                console.log(res.data);
+                const res = await axiosInstance.get(`/members/getallmemberreviews?username=${username}&page=${currentPage}&limit=${commentsPerPage}`);
+                console.log(res.data.total);
                 if (res.data.comments && Array.isArray(res.data.comments)) {
                     setcomments(res.data.comments);
                     setcommentsTotal(res.data.total || 0);
@@ -101,96 +97,7 @@ const Profile = () => {
         fetchSavedBooks();
         fetchReadBooks();
         fetchComments();
-    }, [currentPage]);
-
-    const toggleMenu = (id, e) => {
-        e.stopPropagation();
-        setOpenMenuId(openMenuId === id ? null : id);
-    };
-
-    const handleEdit = (id) => {
-        const reviewToEdit = comments.find(review => review.id === id);
-        if (reviewToEdit) {
-            setEditingReview(reviewToEdit);
-            setEditFormData({
-                comment: reviewToEdit.comment,
-                rating: reviewToEdit.rating
-            });
-            setIsModalOpen(true);
-        }
-        setOpenMenuId(null);
-    };
-
-    const handleDelete = async (id) => {
-        try {
-            await axiosInstance.delete(`/user/removeReview/${id}`);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setOpenMenuId(null);
-        }
-    };
-
-    useEffect(() => {
-        const handleClickOutside = () => {
-            setOpenMenuId(null);
-        };
-
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-    }, []);
-
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-        setEditingReview(null);
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditFormData({
-            ...editFormData,
-            [name]: name === 'rating' ? parseFloat(value) : value
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!editingReview) return;
-
-        if (editFormData.comment.trim() === '') {
-            console.log('Please enter a comment');
-            return;
-        }
-
-        if (editFormData.comment.length > 3000 || editFormData.comment.length < 1) {
-            console.log('Comment must be between 1 and 3000 characters');
-            return;
-        }
-        try {
-            const res = await axiosInstance.patch(
-                `/user/updateReview?review_id=${editingReview.id}`,
-                {
-                    comment: editFormData.comment,
-                    rating: editFormData.rating,
-                    hasSpoiler: editingReview.isSpoiler
-                }
-            );
-
-            if (res.status === 200) {
-                const updatedComments = comments.map(comment =>
-                    comment.id === editingReview.id ?
-                        { ...comment, comment: editFormData.comment, rating: editFormData.rating } :
-                        comment
-                );
-                setcomments(updatedComments);
-
-                handleModalClose();
-            }
-        } catch (error) {
-            console.error("Error updating comment:", error);
-        }
-    };
+    }, [currentPage, username]);
 
     const renderStars = (rating) => {
         const stars = [];
@@ -219,31 +126,6 @@ const Profile = () => {
         return stars;
     };
 
-    const renderStarSelector = () => {
-        const ratings = [1, 2, 3, 4, 5];
-
-        return (
-            <div className="flex flex-row-reverse justify-center mt-2">
-                {ratings.map((value) => (
-                    <label key={value} className="cursor-pointer">
-                        <input
-                            type="radio"
-                            name="rating"
-                            value={value}
-                            checked={editFormData.rating === value}
-                            onChange={handleInputChange}
-                            className="sr-only"
-                        />
-                        <Star
-                            className={`w-8 h-8 mx-1 ${value <= editFormData.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'
-                                }`}
-                        />
-                    </label>
-                ))}
-            </div>
-        );
-    };
-
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
         const newParams = new URLSearchParams(location.search);
@@ -270,8 +152,8 @@ const Profile = () => {
             <div className="min-h-screen bg-gray-50 p-4 pt-20" dir="rtl">
                 <div className="max-w-7xl mx-auto">
                     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                        <div className="flex flex-row justify-between items-start md:items-center">
-                            <div className="flex flex-col md:flex-row md:items-center">
+                        <div className="flex flex-row justify-between items-center">
+                            <div className="flex flex-row items-center">
                                 <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 border-2 border-blue-500">
                                     <img
                                         src={userData.coverImgURL}
@@ -284,14 +166,6 @@ const Profile = () => {
                                     <p className="text-gray-600">{userData.name}</p>
                                 </div>
                             </div>
-
-                            <button
-                                onClick={() => navigate('/settings')}
-                                className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
-                                aria-label="گۆڕینی زانیارییەکان"
-                            >
-                                <Cog size={24} className="text-gray-700" />
-                            </button>
                         </div>
 
                         <div className="mt-6 text-right">
@@ -330,11 +204,13 @@ const Profile = () => {
                                         <BookCollection data={savedBooks} text="" path="/Bookdetails" />
                                     </div>
 
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                    />
+                                    {booksTotal > 12 && (
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    )}
                                 </div>
                             )}
 
@@ -346,11 +222,13 @@ const Profile = () => {
                                             <BookCollection data={readBooks} text="" path="/Bookdetails" />
                                         </div>
                                     </div>
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                    />
+                                    {readbooksTotal > 12 && (
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    )}
                                 </div>
                             )}
 
@@ -380,37 +258,7 @@ const Profile = () => {
                                                         </div>
 
                                                         <div className="flex-grow overflow-hidden">
-                                                            <div className="flex flex-row-reverse justify-between items-start">
-                                                                <div className="relative z-50">
-                                                                    <button
-                                                                        onClick={(e) => toggleMenu(review.id, e)}
-                                                                        className="p-1 rounded-full hover:bg-gray-100"
-                                                                    >
-                                                                        <MoreVertical className="w-5 h-5 text-gray-500" />
-                                                                    </button>
-
-                                                                    {openMenuId === review.id && (
-                                                                        <div className="absolute left-0 mt-1 w-32 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                                                                            <div className="py-1">
-                                                                                <button
-                                                                                    onClick={() => handleEdit(review.id)}
-                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 justify-end"
-                                                                                >
-                                                                                    <span>دەستکاری</span>
-                                                                                    <Edit2 className="w-4 h-4 mr-2" />
-                                                                                </button>
-                                                                                <button
-                                                                                    onClick={() => handleDelete(review.id)}
-                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 justify-end"
-                                                                                >
-                                                                                    <span>سڕینەوە</span>
-                                                                                    <Trash2 className="w-4 h-4 mr-2" />
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-
+                                                            <div className="flex flex-row-reverse justify-end items-start">
                                                                 <div>
                                                                     <h3 onClick={() => navigate(`/booksDetail/${review.book_id}`)} className="cursor-pointer text-lg font-medium text-gray-900 mb-1">{review.title}</h3>
                                                                     <div className="flex items-center mb-2">
@@ -432,11 +280,13 @@ const Profile = () => {
                                         )}
                                     </div>
 
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                    />
+                                    {commentsTotal > 6 && (
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    )}
 
                                     <style>{`
                             .custom-scrollbar::-webkit-scrollbar {
@@ -460,65 +310,10 @@ const Profile = () => {
                     </div>
                 </div>
 
-                {isModalOpen && editingReview && (
-                    <div dir='rtl' className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden" dir="rtl">
-                            <div className="flex justify-between items-center p-4 border-b">
-                                <h3 className="text-lg font-semibold text-gray-800">دەستکاری هەڵسەنگاندن</h3>
-                                <button
-                                    onClick={handleModalClose}
-                                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-                                >
-                                    <X className="w-5 h-5 text-gray-500" />
-                                </button>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="p-4">
-                                <div dir='rtl' className="mb-4">
-                                    <div className="mb-2 text-center">
-                                        <h4 className="text-md font-medium text-gray-700">{editingReview.title}</h4>
-                                    </div>
-
-                                    {renderStarSelector()}
-
-                                    <div className="mt-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">هەڵسەنگاندن</label>
-                                        <textarea
-                                            name="comment"
-                                            value={editFormData.comment}
-                                            onChange={handleInputChange}
-                                            rows="5"
-                                            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            dir="rtl"
-                                        ></textarea>
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-start">
-                                    <button
-                                        type="button"
-                                        onClick={handleModalClose}
-                                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 ml-2"
-                                    >
-                                        پاشگەزبوونەوە
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 flex items-center"
-                                    >
-                                        <Save className="w-4 h-4 ml-1" />
-                                        <span>پاشەکەوتکردن</span>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
-
             </div>
             <Footer />
         </div>
     );
 };
 
-export default Profile;
+export default UserProfile;

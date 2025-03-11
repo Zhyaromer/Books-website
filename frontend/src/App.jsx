@@ -18,6 +18,7 @@ import Signup from "./Pages/Signup";
 import KurdishLoginForm from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import SettingsPage from "./Pages/Settings";
+import UserProfile from "./Pages/UserProfile";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/login" element={<KurdishLoginForm />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/userprofile" element={<UserProfile />} />
       </Routes>
     </Router>
   );
