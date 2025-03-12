@@ -6,7 +6,7 @@ const BookCardMain = ({ data, text, path }) => {
             {path == "/Books" ?
                 <div className={`flex pb-4 md:pb-8 justify-end px-4 md:px-8 w-full max-w-[85rem]`}>
                     <div>
-                        <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}</h1>
+                        <h1 className="font-sans text-base md:text-xl font-bold text-indigo-700">{text}</h1>
                     </div>
                 </div>
                 :
@@ -20,12 +20,12 @@ const BookCardMain = ({ data, text, path }) => {
                         </p>
                     </div>
                     <div>
-                        <h1 className="font-sans text-lg md:text-3xl font-bold text-indigo-900">{text}</h1>
+                        <h1 className="font-sans text-base md:text-xl font-bold text-indigo-700">{text}</h1>
                     </div>
                 </div>
             }
 
-            <div dir="rtl" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-2 gap-y-8 px-4 md:px-8 pb-6 max-w-[85rem]">
+            <div dir="rtl" className="flex flex-wrap justify-center gap-2 gap-y-8 px-4 md:px-8 pb-6 max-w-[85rem]">
                 {data?.length > 0 ? (
                     data?.map((book) => (
                         <div
@@ -33,7 +33,7 @@ const BookCardMain = ({ data, text, path }) => {
                             className="group flex flex-col h-full"
                         >
                             <div
-                                className="relative w-[165px] md:w-[210px] z-10 h-[250px] lg:h-[350px] md:h-[300px] shadow-md rounded-lg mb-2 md:mb-4 
+                                className="relative w-[175px] md:w-[207px] z-10 h-[250px] lg:h-[350px] md:h-[300px] shadow-md rounded-lg mb-2 md:mb-4 
                                 transition-all duration-500 group-hover:shadow-xl transform group-hover:-translate-y-1 cursor-pointer"
                                 onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                             >
@@ -57,7 +57,7 @@ const BookCardMain = ({ data, text, path }) => {
                                     group-hover:text-indigo-700 transition-colors duration-300 line-clamp-2 "
                                     onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                                 >
-                                    {book?.title?.length > 10 ? `${book.title.slice(0, 10)}...` : book.title}
+                                    {book?.title?.length > 20 ? `${book.title.slice(0, 20)}...` : book.title}
                                 </h6>
 
                                 <div className="flex items-center justify-center">

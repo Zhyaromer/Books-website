@@ -5,8 +5,6 @@ import LoadingUi from "@/Components/my-ui/Loading";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import { sortOptionsNews, categoryOptions } from "../Helpers/options";
-import FilterSection from "../Components/my-ui/FilterSection";
 import Pagination from "../Components/my-ui/Pagination";
 
 const NewsPage = () => {

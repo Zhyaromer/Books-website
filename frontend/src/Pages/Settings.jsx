@@ -2,10 +2,16 @@ import { User, Mail, Key, Edit, Camera, FileText, Save } from 'lucide-react';
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import { useState, useEffect } from 'react';
-import { axiosInstance } from "../context/AxiosInstance";
+import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
 import LoadingUi from '../Components/my-ui/Loading';
+import { useNavigate } from "react-router-dom";
 
 const SettingsPage = () => {
+    const navigate = useNavigate();
+    const { isAuthenticated } = useCheckAuth();
+    if (isAuthenticated === false) {
+        navigate('/');
+    }
     const [activeTab, setActiveTab] = useState('name');
     const [UserData, setUserData] = useState([]);
     const [loading, setLoading] = useState(true);

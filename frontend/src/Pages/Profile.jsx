@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Cog, X, Save, MoreVertical, Star, StarHalf, Edit2, Trash2 } from 'lucide-react';
-import { axiosInstance } from "../context/AxiosInstance";
+import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
 import BookCollection from '../Components/layout/BookCard';
 import { useNavigate } from "react-router-dom";
 import BookstoreNavigation from "../Components/layout/Navigation";
@@ -9,6 +9,10 @@ import Pagination from "../Components/my-ui/Pagination";
 
 const Profile = () => {
     const navigate = useNavigate();
+    const { isAuthenticated } = useCheckAuth();
+    if (isAuthenticated === false) {
+        navigate('/');
+    }
     const [activeTab, setActiveTab] = useState('saved');
     const [userData, setUserData] = useState([]);
     const [savedBooks, setSavedBooks] = useState([]);
@@ -361,7 +365,7 @@ const Profile = () => {
                             {activeTab === 'comments' && (
                                 <div dir="rtl" className="w-fulll mx-auto p-4">
                                     <h2 className="text-xl font-bold mb-4 text-right text-gray-800">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h2>
-                                    <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {comments.length === 0 ? (
                                             <p className="text-gray-500 text-center py-4">هیچ هەڵسەنگاندنێک نییە</p>
                                         ) : (

@@ -2,9 +2,14 @@ import { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
-import axios from "axios";
+import { axiosInstance,useCheckAuth } from "../context/AxiosInstance";
 
 const KurdishLoginForm = () => {
+    const {isAuthenticated} = useCheckAuth();
+    console.log(isAuthenticated);
+    if (isAuthenticated === true) {
+        window.location.href = '/';
+    }
     const [credentials, setCredentials] = useState({
         user_login_email: '',
         user_login_password: ''
@@ -21,7 +26,7 @@ const KurdishLoginForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:3000/auth/login',{
+        axiosInstance.post('http://localhost:3000/auth/login', {
             email: credentials.user_login_email,
             password: credentials.user_login_password
         }, { withCredentials: true })
@@ -53,7 +58,7 @@ const KurdishLoginForm = () => {
                     <form onSubmit={handleSubmit} className="space-y-6" autoComplete="new-password">
                         <div className="space-y-2">
                             <label htmlFor="user_login_email" className="block text-right text-sm font-medium text-gray-700">
-                                ئیمەیڵی بەکارهێنەر
+                                ئیمەیڵ
                             </label>
                             <div className="relative">
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">

@@ -1,9 +1,14 @@
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import { useState } from "react";
-import axios from "axios";
+import { axiosInstance,useCheckAuth } from "../context/AxiosInstance";
 
 const SignUp = () => {
+    const {isAuthenticated} = useCheckAuth();
+    console.log(isAuthenticated);
+    if (isAuthenticated === true) {
+        window.location.href = '/';
+    }
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [errors, setErrors] = useState({});
@@ -80,7 +85,7 @@ const SignUp = () => {
         e.preventDefault();
         if (validateForm()) {
             try {
-                const res = await axios.post("http://localhost:3000/auth/signup", {
+                const res = await axiosInstance.post("http://localhost:3000/auth/signup", {
                     username: formData.username,
                     name: formData.name,
                     email: formData.email,
@@ -115,7 +120,7 @@ const SignUp = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">ناوی تەواو</label>
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">ناو</label>
                                 <input
                                     type="text"
                                     id="name"
@@ -123,13 +128,13 @@ const SignUp = () => {
                                     value={formData.name}
                                     onChange={handleChange}
                                     className={`w-full px-4 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-blue-500 focus:border-blue-500`}
-                                    placeholder="ناوی تەواو"
+                                    placeholder="ناوەکەت بنووسە"
                                 />
                                 {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
                             </div>
 
                             <div>
-                                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">ناوی بەکارهێنەر</label>
+                                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">نازناو</label>
                                 <input
                                     type="text"
                                     id="username"
@@ -137,7 +142,7 @@ const SignUp = () => {
                                     value={formData.username}
                                     onChange={handleChange}
                                     className={`w-full px-4 py-2 border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-blue-500 focus:border-blue-500`}
-                                    placeholder="ناوی بەکارهێنەر"
+                                    placeholder="نازناوەکەت بنووسە"
                                 />
                                 {errors.username && <p className="mt-1 text-sm text-red-500">{errors.username}</p>}
                             </div>

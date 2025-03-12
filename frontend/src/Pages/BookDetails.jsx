@@ -351,7 +351,7 @@ const BookDetail = () => {
                   <img
                     src={fetchBook.cover_image}
                     alt={fetchBook.title}
-                    className="w-64 h-auto mx-auto rounded-lg shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                    className="w-64 h-[390px] mx-auto rounded-lg shadow-2xl transform hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>
@@ -524,10 +524,10 @@ const BookDetail = () => {
 
               {activeTab === 'reviews' && (
                 <div dir="rtl" className="w-full max-w-7xl mx-auto p-0 md:p-4 font-sans">
-                  <div className="flex justify-between items-center mb-6">
+                  <div className="flex justify-between items-center mb-6 mt-4 md:mt-0">
                     <h2 className="text-base md:text-2xl font-bold">هەڵسەنگاندنەکان</h2>
                     <Button
-                      className="bg-indigo-500 hover:bg-indigo-600 text-white text-sm md:text-xs px-2"
+                      className="bg-indigo-500 hover:bg-indigo-600 text-white text-xs md:text-sm px-1 md:px-2"
                       onClick={() => {
                         setEditMode(false);
                         setrating(0);

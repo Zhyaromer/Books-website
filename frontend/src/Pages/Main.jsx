@@ -121,12 +121,12 @@ const Main = () => {
             <div>
                 <div className={`flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-8 md:px-24`}>
                     <div>
-                        <h1 className="font-sans text-xl md:text-2xl lg:text-4xl font-bold text-indigo-900">زنجیرە کتێبەکان</h1>
+                        <h1 className="font-sans text-base md:text-2xl font-bold text-indigo-700">زنجیرە کتێبەکان</h1>
                     </div>
                     <div >
                         <p
                             onClick={() => (window.location.href = "/bookseries")}
-                            className="text-sm md:text-base lg:text-lg font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"
+                            className="text-sm lg:text-base font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"
                         >
                             بینینی هەمووی
                         </p>

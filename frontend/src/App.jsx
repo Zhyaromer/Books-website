@@ -19,6 +19,7 @@ import KurdishLoginForm from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import SettingsPage from "./Pages/Settings";
 import UserProfile from "./Pages/UserProfile";
+import NotFoundPage from "./Pages/NotFound";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/userprofile" element={<UserProfile />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );
