@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaBookmark, FaRegBookmark, FaShare } from 'react-icons/fa';
 import axios from 'axios';
@@ -7,7 +7,7 @@ import CommentsSection from '../Components/layout/ReviewSection';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
 import { axiosInstance } from "../context/AxiosInstance";
-import { MoreVertical, Star, Edit, Trash, Flag, AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
+import { MoreVertical, Star, Edit, Trash, Flag, AlertTriangle } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -48,21 +48,13 @@ const BookDetail = () => {
   const [hasSpoiler, sethasSpoiler] = useState(false)
   const [reportMessage, setReportMessage] = useState("");
   const [editMode, setEditMode] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [reviewPermissions, setReviewPermissions] = useState({});
-  const [isRevealed, setIsRevealed] = useState(false);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === comments.length - 1 ? 0 : prev + 1));
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? comments.length - 1 : prev - 1));
-  };
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-  };
+  const scrollContainer = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [revealedSpoilers, setRevealedSpoilers] = useState({});
 
   const handleEditReview = async (reviewId) => {
     const reviewToEdit = comments.find(review => review.id === reviewId);
@@ -127,7 +119,6 @@ const BookDetail = () => {
     }
   }, [comments]);
 
-
   const StarRating = ({ rating, setRating, editable = false }) => {
     return (
       <div className="flex flex-row-reverse">
@@ -139,7 +130,7 @@ const BookDetail = () => {
             className={`${star <= rating ? "text-yellow-500" : "text-gray-300"
               } ${editable ? "cursor-pointer" : "cursor-default"}`}
           >
-            <Star className="w-5 h-5 fill-current" />
+            <Star className="w-4 h-4 fill-current" />
           </button>
         ))}
       </div>
@@ -205,7 +196,6 @@ const BookDetail = () => {
     const fetchComments = async () => {
       try {
         const response = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
-        console.log(response.data[0].username);
         setComments(response.data);
       } catch (error) {
         console.log(error);
@@ -284,6 +274,66 @@ const BookDetail = () => {
       return false;
     }
   };
+
+  const handleRevealSpoiler = (reviewId) => {
+    setRevealedSpoilers((prev) => ({ ...prev, [reviewId]: true }));
+  };
+
+  const handleHideSpoiler = (reviewId) => {
+    setRevealedSpoilers((prev) => ({ ...prev, [reviewId]: false }));
+  };
+
+  const handleScroll = () => {
+    if (!scrollContainer.current) return;
+
+    const container = scrollContainer.current;
+    const scrollPosition = container.scrollLeft;
+    const cardWidth = container.clientWidth / Math.min(3, comments.length);
+    const newIndex = Math.round(scrollPosition / cardWidth);
+
+    if (newIndex !== activeIndex && newIndex >= 0 && newIndex < comments.length) {
+      setActiveIndex(newIndex);
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - scrollContainer.current.offsetLeft);
+    setScrollLeft(scrollContainer.current.scrollLeft);
+  };
+
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - scrollContainer.current.offsetLeft);
+    setScrollLeft(scrollContainer.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainer.current.offsetLeft;
+    const walk = (x - startX) * 0.8;
+    scrollContainer.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const x = e.touches[0].pageX - scrollContainer.current.offsetLeft;
+    const walk = (x - startX) * 0.8;
+    scrollContainer.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    const container = scrollContainer.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [activeIndex]);
 
   if (loading) {
     return <LoadingUi />
@@ -372,7 +422,7 @@ const BookDetail = () => {
           </div>
         </div>
 
-        <div className="container mx-auto px-0 sm:px-6 lg:px-8 py-12">
+        <div className="container max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="flex border-b">
               <button
@@ -401,15 +451,15 @@ const BookDetail = () => {
               </button>
             </div>
 
-            <div className="p-6">
+            <div>
               {activeTab === 'description' && (
-                <div className="prose max-w-none">
+                <div className="prose max-w-none p-6">
                   <p className="text-lg leading-relaxed">{fetchBook.description}</p>
                 </div>
               )}
 
               {activeTab === 'details' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
                   <div>
                     <h3 className="text-xl font-semibold mb-4">وردەکاری کتێب</h3>
                     <table className="w-full">
@@ -452,7 +502,7 @@ const BookDetail = () => {
               )}
 
               {activeTab === 'author' && (
-                <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex flex-col md:flex-row gap-8 p-6">
                   <div className="md:w-1/4">
                     <img
                       src={fetchBook.imgURL}
@@ -473,11 +523,11 @@ const BookDetail = () => {
               )}
 
               {activeTab === 'reviews' && (
-                <div dir="rtl" className="w-full max-w-4xl mx-auto p-0 md:p-4 font-sans">
+                <div dir="rtl" className="w-full max-w-7xl mx-auto p-0 md:p-4 font-sans">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-base md:text-2xl font-bold">هەڵسەنگاندنەکان</h2>
                     <Button
-                      className="bg-indigo-500 hover:bg-indigo-600 text-white text-xs px-2 md:px-6 md:text-lg"
+                      className="bg-indigo-500 hover:bg-indigo-600 text-white text-sm md:text-xs px-2"
                       onClick={() => {
                         setEditMode(false);
                         setrating(0);
@@ -496,89 +546,86 @@ const BookDetail = () => {
                       </div>
                     )}
                     {comments.length > 0 && (
-                      <div className="overflow-hidden relative rounded-lg shadow-lg bg-white dark:bg-gray-800 h-64">
-                        <div className="h-full">
-                          {comments?.map((review, index) => (
+                      <div
+                        className="h-72 overflow-y-auto hide-scrollbar cursor-grab overflow-x-auto no-select "
+                        ref={scrollContainer}
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={handleDragEnd}
+                        onMouseLeave={handleDragEnd}
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleDragEnd}
+                      >
+                        <div className="flex gap-2 h-full">
+                          {comments?.map((review) => (
                             <div
                               key={review.id}
-                              className={`p-4 absolute inset-0 transition-opacity duration-300 ease-in-out ${currentSlide === index ? "opacity-100" : "opacity-0 pointer-events-none"
-                                }`}
+                              className="p-2 shadow-md border w-[280px] h-full flex-shrink-0 "
                             >
-                              {/* Header with user info and actions */}
-                              <div className="flex items-center justify-between mb-3 pb-3 border-b dark:border-gray-700">
-                                <div className="flex items-center gap-3">
-                                  <Avatar className="h-10 w-10 ring-2 ring-indigo-100 dark:ring-indigo-900">
+                              <div className="flex justify-between">
+                                <div className="flex items-center gap-2">
+                                  <Avatar onClick={() => (window.location.href = `/userprofile?username=${review.username}`)} className="h-12 w-12 cursor-pointer">
                                     <AvatarImage src={review.coverImgURL} alt={review.userName} />
-                                    <AvatarFallback className="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                      {review.username?.substring(0, 2)}
-                                    </AvatarFallback>
+                                    <AvatarFallback>{review.username}</AvatarFallback>
                                   </Avatar>
-
                                   <div>
-                                    <h3 className="font-medium text-base">{review.username}</h3>
-                                    <div className="flex items-center gap-2">
-                                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                                        {review.title}
-                                      </p>
-                                      <div dir="ltr">
-                                        <StarRating rating={review.rating} setRating={() => { }} />
-                                      </div>
+                                    <h3 onClick={() => (window.location.href = `/userprofile?username=${review.username}`)} className="font-medium text-sm cursor-pointer">{review.username}</h3>
+                                    <div dir="ltr" className="mt-1">
+                                      <StarRating rating={review.rating} setRating={() => { }} />
                                     </div>
                                   </div>
                                 </div>
 
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
+                                    <Button variant="ghost" size="sm">
                                       <MoreVertical className="h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end" className="w-40">
-                                    {reviewPermissions[review.id] && (
-                                      <DropdownMenuItem onClick={() => handleEditReview(review.id)} className="cursor-pointer">
-                                        <Edit className="ml-2 h-4 w-4" />
-                                        دەستکاری
-                                      </DropdownMenuItem>
-                                    )}
-                                    <DropdownMenuItem onClick={() => handleOpenReport(review.id)} className="cursor-pointer">
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => handleEditReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`}>
+                                      <Edit className="ml-2 h-4 w-4" />
+                                      دەستکاری
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => handleOpenReport(review.id)} className={`cursor-pointer`}>
                                       <Flag className="ml-2 h-4 w-4" />
                                       ڕاپۆرت
                                     </DropdownMenuItem>
-                                    {reviewPermissions[review.id] && (
-                                      <DropdownMenuItem onClick={() => handleDeleteReview(review.id)} className="cursor-pointer text-red-500 focus:text-red-500">
-                                        <Trash className="ml-2 h-4 w-4" />
-                                        سڕینەوە
-                                      </DropdownMenuItem>
-                                    )}
+                                    <DropdownMenuItem onClick={() => handleDeleteReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`} >
+                                      <Trash className="ml-2 h-4 w-4 text-red-500" />
+                                      سڕینەوە
+                                    </DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </div>
 
-                              {/* Comment Content */}
-                              <div className="mt-2 overflow-y-auto h-32 px-1">
-                                {review.isSpoiler === 1 && !isRevealed ? (
-                                  <div className="bg-amber-50 dark:bg-amber-900/30 p-4 rounded-lg border border-amber-200 dark:border-amber-700 text-center">
-                                    <AlertTriangle className="inline-block h-5 w-5 mb-1 text-amber-500" />
-                                    <p className="text-amber-800 dark:text-amber-300 mb-2 text-sm">
-                                      ئەم هەڵسەنگاندنە سپۆیلەر لە خۆ دەگرێت
-                                    </p>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => setIsRevealed(true)}
-                                      className="bg-indigo-500 hover:bg-indigo-600 text-white hover:text-white"
-                                    >
-                                      پیشاندانی هەڵسەنگاندن
-                                    </Button>
+                              <div className="mt-4 overflow-x-hidden h-48">
+                                {review.isSpoiler === 1 && !revealedSpoilers[review.id] ? (
+                                  <div className="rounded">
+                                    <div className="text-center">
+                                      <AlertTriangle className="inline-block h-5 w-5 mb-1 text-amber-500" />
+                                      <p className="text-amber-800 mb-2">
+                                        سپۆیلەر
+                                      </p>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => handleRevealSpoiler(review.id)}
+                                        className="bg-indigo-500 hover:bg-indigo-600 text-white hover:text-white"
+                                      >
+                                        پیشاندانی هەڵسەنگاندن
+                                      </Button>
+                                    </div>
                                   </div>
                                 ) : (
-                                  <div className={review.isSpoiler ? "bg-amber-50 dark:bg-amber-900/30 p-3 rounded-lg" : ""}>
-                                    <p className="text-gray-700 dark:text-gray-200 text-sm leading-relaxed">
+                                  <div className={`${review.isSpoiler ? "rounded" : ""}`}>
+                                    <p className="text-gray-700 text-[14px] px-4 ">
                                       {review.comment}
                                     </p>
-                                    {review.isSpoiler === 1 && isRevealed && (
+                                    {review.isSpoiler === 1 && revealedSpoilers[review.id] && (
                                       <div className="mt-2 text-right">
-                                        <Button variant="ghost" size="sm" onClick={() => setIsRevealed(false)}>
+                                        <Button variant="ghost" size="sm" onClick={() => handleHideSpoiler(review.id)}>
                                           شاردنەوە
                                         </Button>
                                       </div>
@@ -589,44 +636,24 @@ const BookDetail = () => {
                             </div>
                           ))}
                         </div>
-
-                        <div className="absolute inset-y-0 left-0 flex items-center">
-                          <button
-                            onClick={prevSlide}
-                            className="flex items-center justify-center h-8 w-8 rounded-full bg-white/90 dark:bg-gray-700/90 text-indigo-600 dark:text-indigo-400 shadow-md ml-2 hover:bg-white dark:hover:bg-gray-700 transition-colors"
-                            aria-label="Previous slide"
-                          >
-                            <ChevronRight className="h-5 w-5" />
-                          </button>
-                        </div>
-
-                        <div className="absolute inset-y-0 right-0 flex items-center">
-                          <button
-                            onClick={nextSlide}
-                            className="flex items-center justify-center h-8 w-8 rounded-full bg-white/90 dark:bg-gray-700/90 text-indigo-600 dark:text-indigo-400 shadow-md mr-2 hover:bg-white dark:hover:bg-gray-700 transition-colors"
-                            aria-label="Next slide"
-                          >
-                            <ChevronLeft className="h-5 w-5" />
-                          </button>
-                        </div>
                       </div>
                     )}
 
-                    <div className="absolute bottom-0 left-0 right-0 transform translate-y-6">
-                      <div className="flex items-center justify-center gap-2">
-                        {comments.map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => goToSlide(index)}
-                            className={`w-2 h-2 rounded-full transition-all duration-300 ${currentSlide === index
-                              ? "bg-blue-600 scale-125"
-                              : "bg-gray-300 dark:bg-gray-600"
-                              }`}
-                            aria-label={`Go to slide ${index + 1}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
+                    <style >{`
+        .hide-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;  /* Chrome, Safari, Opera */
+        }
+          .no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+      `}</style>
                   </div>
 
                   <Dialog open={isAddReviewOpen} onOpenChange={setIsAddReviewOpen}>

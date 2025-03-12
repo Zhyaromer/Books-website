@@ -330,11 +330,13 @@ const Profile = () => {
                                         <BookCollection data={savedBooks} text="" path="/Bookdetails" />
                                     </div>
 
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                    />
+                                    {booksTotal > 12 && (
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    )}
                                 </div>
                             )}
 
@@ -346,11 +348,13 @@ const Profile = () => {
                                             <BookCollection data={readBooks} text="" path="/Bookdetails" />
                                         </div>
                                     </div>
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                    />
+                                    {readbooksTotal > 12 && (
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    )}
                                 </div>
                             )}
 
@@ -432,11 +436,13 @@ const Profile = () => {
                                         )}
                                     </div>
 
-                                    <Pagination
-                                        currentPage={currentPage}
-                                        totalPages={totalPages}
-                                        onPageChange={handlePageChange}
-                                    />
+                                    {commentsTotal > 6 && (
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    )}
 
                                     <style>{`
                             .custom-scrollbar::-webkit-scrollbar {

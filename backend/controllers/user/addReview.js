@@ -11,19 +11,22 @@ const addReview = async (req, res) => {
     rating = parseInt(xss(rating).trim(), 10);
 
     if (!user_id || !book_id) {
+        console.log("user_id and book_id are required");
         return res.status(400).json({ error: "user_id and book_id are required" });
     }
 
     if (!rating || !comment || hasSpoiler == null || hasSpoiler == undefined) {
+        console.log("rating and comment are required");
         return res.status(400).json({ error: "rating and comment are required" });
     }
 
     if (isNaN(rating) || rating < 1 || rating > 5) {
+        console.log("Rating must be a number between 1 and 5.");
         return res.status(400).json({ error: "Rating must be a number between 1 and 5." });
     }
 
-    if (comment.trim().length < 1 || comment.trim().length > 3000) {
-        return res.status(400).json({ error: "Comment must be between 1 and 3000 characters." });
+    if (comment.trim().length < 1 || comment.trim().length > 5000) {
+        return res.status(400).json({ error: "Comment must be between 1 and 5000 characters." });
     }
 
     try {
