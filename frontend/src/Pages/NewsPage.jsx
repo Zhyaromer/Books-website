@@ -46,38 +46,6 @@ const NewsPage = () => {
     }, { replace: true });
   };
 
-  const handleCategoryChange = (value) => {
-    setCategory(value);
-    setCurrentPage(1);
-    const newParams = new URLSearchParams(location.search);
-    if (value && value !== 'all') {
-      newParams.set('category', value);
-    } else {
-      newParams.delete('category');
-    }
-    newParams.set('page', '1');
-    navigate({
-      pathname: location.pathname,
-      search: newParams.toString()
-    }, { replace: true });
-  };
-
-  const handleSortChange = (value) => {
-    setSort(value);
-    setCurrentPage(1);
-    const newParams = new URLSearchParams(location.search);
-    if (value) {
-      newParams.set('sort', value);
-    } else {
-      newParams.delete('sort');
-    }
-    newParams.set('page', '1');
-    navigate({
-      pathname: location.pathname,
-      search: newParams.toString()
-    }, { replace: true });
-  };
-
   useEffect(() => {
     const fetchNews = async () => {
       setLoading(true);

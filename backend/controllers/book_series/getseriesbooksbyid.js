@@ -16,7 +16,7 @@ const getseriesbooksbyid = async (req, res) => {
             return res.status(404).json({ message: 'No books found' });
         }
 
-        const sql2 = `select series_title,cover_img from book_series where id = ?`;
+        const sql2 = `select series_title,cover_img,description,state from book_series where id = ?`;
         const [result2] = await db.promise().query(sql2, [id]);
 
         if (result2.length === 0) {
