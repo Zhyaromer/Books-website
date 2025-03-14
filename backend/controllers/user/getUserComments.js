@@ -1,8 +1,9 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const getUserComments = async (req, res) => {
-    const { page = 1, limit = 6 } = req.query;
-    const offset = (page - 1) * parseInt(limit);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 6;
+    const offset = (page - 1) * limit;
     const user_id = req?.user?.id;
 
     if (!user_id) {

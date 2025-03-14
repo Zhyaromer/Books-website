@@ -39,6 +39,7 @@ const BookDetail = () => {
   const [similarBooks, setSimilarBooks] = useState([]);
   const [hasRead, setHasRead] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
+  const [hasSuggested, setHasSuggested] = useState(false);
   const [comments, setComments] = useState([]);
   const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
@@ -193,6 +194,19 @@ const BookDetail = () => {
       }
     }
 
+    const booksuggestedCheck = async () => {
+      try {
+        const response = await axiosInstance.get(`/user/suggestionscheck?book_id=${id}`);
+        if (response.data.success) {
+          setHasSuggested(true);
+        } else {
+          setHasSuggested(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
     const fetchComments = async () => {
       try {
         const response = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
@@ -206,6 +220,7 @@ const BookDetail = () => {
     fetchBook();
     bookreadsCheck();
     booksavesCheck();
+    booksuggestedCheck();
     fetchComments();
     userID();
   }, [id]);
@@ -327,6 +342,16 @@ const BookDetail = () => {
     setIsDragging(false);
   };
 
+  const handleaddSuggestion = async () => {
+    try {
+      await axiosInstance.post(`http://localhost:3000/user/addsuggestion/${id}`);
+      console.log("suggestion added");
+      setHasSuggested(!hasSuggested);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     const container = scrollContainer.current;
     if (container) {
@@ -390,6 +415,20 @@ const BookDetail = () => {
                           <FaBookmark className="mr-2" />
                           :
                           <FaRegBookmark className="mr-2" />
+                        }
+                      </div>
+                    </div>
+                  </button>
+                  <button onClick={() => handleaddSuggestion()} className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-900 text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
+                    <div className="flex flex-row items-center">
+                      <div>
+                        پێشنیار کردن
+                      </div>
+                      <div>
+                        {hasSuggested ?
+                          <Star className="mr-2 text-yellow-500 fill-current" />
+                          :
+                          <Star className="mr-2" />
                         }
                       </div>
                     </div>

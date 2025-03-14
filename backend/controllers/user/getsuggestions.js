@@ -12,11 +12,11 @@ const getSavedBooks = async (req, res) => {
 
     try {
         const [countResult] = await db.promise().query(
-            "SELECT COUNT(*) as total FROM user_saves WHERE user_id = ?", 
+            "SELECT COUNT(*) as total FROM suggestions WHERE user_id = ?",
             [user_id]
         );
         const total = countResult[0].total;
-        
+
         if (total === 0) {
             return res.status(200).json({
                 foundBooks: [],
@@ -27,7 +27,7 @@ const getSavedBooks = async (req, res) => {
         }
 
         const [savedBooks] = await db.promise().query(
-            "SELECT book_id FROM user_saves WHERE user_id = ? LIMIT ? OFFSET ?", 
+            "SELECT book_id FROM suggestions WHERE user_id = ? LIMIT ? OFFSET ?",
             [user_id, limit, offset]
         );
 
@@ -59,7 +59,7 @@ const getSavedBooks = async (req, res) => {
             totalPages: Math.ceil(total / limit)
         });
     } catch (error) {
-        console.error("Error fetching saved books:", error);
+        console.error("Error fetching suggestions books:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 }

@@ -1,8 +1,9 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const getReadBooks = async (req, res) => {
-    const { page = 1, limit = 12 } = req.query;
-    const offset = (page - 1) * parseInt(limit);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const offset = (page - 1) * limit;
     const user_id = req?.user?.id;
 
     if (!user_id) {
@@ -27,7 +28,7 @@ const getReadBooks = async (req, res) => {
 
         const [readBooks] = await db.promise().query(
             "SELECT book_id FROM user_reads WHERE user_id = ? LIMIT ? OFFSET ?",
-            [user_id, parseInt(limit), parseInt(offset)]
+            [user_id, limit, offset]
         );
 
         if (readBooks.length === 0) {

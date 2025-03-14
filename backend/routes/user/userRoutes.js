@@ -15,6 +15,9 @@ const userID = require('../../controllers/user/returnUserid');
 const updateReview = require('../../controllers/user/updateReviews');
 const getUserInfo = require('../../controllers/user/getuserinfo');
 const get_user_name_and_pic = require('../../controllers/user/get_user_name_and_pic');
+const addsuggestion = require('../../controllers/user/addsuggestion');
+const getSuggestion = require('../../controllers/user/getsuggestions');
+const suggestionscheck = require('../../controllers/user/suggestionscheck');
 
 router.use(verifyToken);
 
@@ -27,10 +30,13 @@ router.get('/getallreviews', getallreviews);
 router.get('/returnUserid/:id', userID);
 router.get('/getuserinfo', getUserInfo);
 router.get('/getusernameandpic', get_user_name_and_pic);
+router.get('/getsuggestions', getSuggestion);
+router.get('/suggestionscheck', suggestionscheck);
 
 router.post('/addReadBook/:book_id', addReadBook);
 router.post('/addReview/:book_id', addReview);
 router.post('/addSaveBook/:book_id', addsaveBook);
+router.post('/addsuggestion/:book_id', addsuggestion);
 
 router.patch('/updateReview', updateReview);
 

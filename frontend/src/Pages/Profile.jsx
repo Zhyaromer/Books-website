@@ -13,10 +13,12 @@ const Profile = () => {
     if (isAuthenticated === false) {
         navigate('/');
     }
-    const [activeTab, setActiveTab] = useState('saved');
+    const [activeTab, setActiveTab] = useState('suggestion');
     const [userData, setUserData] = useState([]);
     const [savedBooks, setSavedBooks] = useState([]);
     const [readBooks, setReadBooks] = useState([]);
+    const [suggestionBooks, setSuggestionBooks] = useState([]);
+    const [suggestionstotal, setsuggestionstotal] = useState([]);
     const [comments, setcomments] = useState([]);
     const [openMenuId, setOpenMenuId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,9 +52,27 @@ const Profile = () => {
             }
         }
 
+        const fetchsuggestionBooks = async () => {
+            try {
+                const res = await axiosInstance.get(`/user/getsuggestions?page=${currentPage}&limit=${booksPerPage}`);
+                if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
+                    setSuggestionBooks(res.data.foundBooks);
+                    setsuggestionstotal(res.data.total || 0);
+                    setTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                } else {
+                    setSavedBooks([]);
+                    setTotalPages(0);
+                }
+            } catch {
+                setSuggestionBooks([]);
+                setTotalPages(0);
+            }
+        }
+
         const fetchSavedBooks = async () => {
             try {
                 const res = await axiosInstance.get(`/user/getSavedBooks?page=${currentPage}&limit=${booksPerPage}`);
+                console.log(res.data);
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setSavedBooks(res.data.foundBooks);
                     setBooksTotal(res.data.total || 0);
@@ -102,6 +122,7 @@ const Profile = () => {
         }
 
         fetchInfo();
+        fetchsuggestionBooks();
         fetchSavedBooks();
         fetchReadBooks();
         fetchComments();
@@ -307,19 +328,25 @@ const Profile = () => {
                     <div className="bg-white rounded-lg shadow-md overflow-hidden">
                         <div className="flex border-b">
                             <button
-                                className={`flex-1 py-3 font-medium ${activeTab === 'saved' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
+                                className={`text-xs md:text-base flex-1 py-3 font-medium ${activeTab === 'suggestion' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
+                                onClick={() => { setActiveTab('suggestion'); resetPage() }}
+                            >
+                                پێشنیارکراو
+                            </button>
+                            <button
+                                className={`text-xs md:text-base flex-1 py-3 font-medium ${activeTab === 'saved' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
                                 onClick={() => { setActiveTab('saved'); resetPage() }}
                             >
                                 بینینی دواتر
                             </button>
                             <button
-                                className={`flex-1 py-3 font-medium ${activeTab === 'read' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
+                                className={`text-xs md:text-base flex-1 py-3 font-medium ${activeTab === 'read' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
                                 onClick={() => { setActiveTab('read'); resetPage() }}
                             >
                                 خوێندراوەکان
                             </button>
                             <button
-                                className={`flex-1 py-3 font-medium ${activeTab === 'comments' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
+                                className={`text-xs md:text-base flex-1 py-3 font-medium ${activeTab === 'comments' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
                                 onClick={() => { setActiveTab('comments'); resetPage() }}
                             >
                                 هەڵسەنگاندنەکان
@@ -327,6 +354,22 @@ const Profile = () => {
                         </div>
 
                         <div className="p-6">
+                            {activeTab === 'suggestion' && (
+                                <div dir='rtl' className="space-y-6">
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">پێشنیارکراو ({suggestionstotal})</h3>
+                                    <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                                        <BookCollection data={suggestionBooks} text="" path="/Bookdetails" />
+                                    </div>
+
+                                    {suggestionstotal > 12 && (
+                                        <Pagination
+                                            currentPage={currentPage}
+                                            totalPages={totalPages}
+                                            onPageChange={handlePageChange}
+                                        />
+                                    )}
+                                </div>
+                            )}
                             {activeTab === 'saved' && (
                                 <div dir='rtl' className="space-y-6">
                                     <h3 className="text-lg font-semibold text-gray-800 mb-4">بینینی دواتر ({booksTotal})</h3>
