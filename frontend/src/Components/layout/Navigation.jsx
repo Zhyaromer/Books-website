@@ -28,6 +28,7 @@ useEffect(() => {
         setIsLoading(true);
         try {
             const res = await axiosInstance.get('/user/getusernameandpic');
+            console.log(res.data.coverImgURL);
             if (res.status === 200 && res.data.coverImgURL) {
                 setUserIcon(res.data.coverImgURL);
             } else if (res.status === 200 && res.data.username) {

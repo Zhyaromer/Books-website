@@ -16,6 +16,7 @@ const SettingsPage = () => {
     const [UserData, setUserData] = useState([]);
     const [loading, setLoading] = useState(true);
 
+
     useEffect(() => {
         const fetchInfo = async () => {
             setLoading(true);
@@ -24,8 +25,9 @@ const SettingsPage = () => {
                 if (res.status === 200) {
                     setUserData(res.data);
                     setFormData({
-                        ...formData, bio: res.data.bio
+                        ...formData, bio: res.data.bio,
                     })
+                    setImage(res.data.coverImgURL);
                 } else if (res.status === 401) {
                     console.log("unauthorized");
                 } else if (res.status === 404) {
@@ -66,10 +68,6 @@ const SettingsPage = () => {
             }
         });
 
-    };
-
-    const handleFileChange = (e) => {
-        console.log('File selected:', e.target.files[0]);
     };
 
     const isSubmitDisabled = (field) => {
@@ -231,6 +229,42 @@ const SettingsPage = () => {
             setLoading(false);
         }
     };
+
+    const [image, setImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        console.log(file);
+        if (file) {
+            setImage(file);
+            const previewUrl = URL.createObjectURL(file);
+            setPreviewImage(previewUrl);
+        }
+    };
+
+    const changeprofilepic = async () => {
+        if (!image) {
+            console.log('Please select an image');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("filename", image);
+
+        try {
+            const res = await axiosInstance.post("/user/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            if (res.status === 200) {
+                location.reload();
+            }
+            console.log("Upload successful:", res.data);
+        } catch (error) {
+            console.error("Upload failed:", error);
+        }
+    };
+
 
     if (loading) {
         return <LoadingUi />;
@@ -403,11 +437,21 @@ const SettingsPage = () => {
 
                                             <div className="mb-6">
                                                 <div className="flex items-center p-3 bg-gray-50 rounded-lg mb-4">
-                                                    <span className="text-gray-700 font-medium">وێنەی ئێستای سەرەکی:</span>
+                                                    <span className="text-gray-700 font-medium">وێنەی ئێستا:</span>
                                                 </div>
 
-                                                <div className="h-48 bg-gray-200 rounded-xl flex items-center justify-center mb-4">
-                                                    <div className="text-gray-500">وێنەی سەرەکی</div>
+                                                <div className="rounded-full flex items-center justify-center mb-4">
+                                                    {image ? (
+                                                        <img
+                                                            src={previewImage || image }
+                                                            alt="Selected Cover"
+                                                            className="w-64 h-64 object-cover rounded-full"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                                                            <span className="text-gray-400">No Image Selected</span>
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 <div className="mt-4">
@@ -428,9 +472,10 @@ const SettingsPage = () => {
 
                                             <div className="flex justify-end">
                                                 <button
+                                                    onClick={changeprofilepic}
                                                     type="submit"
-                                                    disabled={true}
-                                                    className="bg-gray-300 text-gray-500 cursor-not-allowed font-medium px-6 py-3 rounded-lg flex items-center gap-2"
+                                                    disabled={!image}
+                                                    className={`${!image ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"} font-medium px-6 py-3 rounded-lg flex items-center gap-2`}
                                                 >
                                                     <Save size={18} />
                                                     پاشەکەوتکردن

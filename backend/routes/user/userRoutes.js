@@ -18,6 +18,7 @@ const get_user_name_and_pic = require('../../controllers/user/get_user_name_and_
 const addsuggestion = require('../../controllers/user/addsuggestion');
 const getSuggestion = require('../../controllers/user/getsuggestions');
 const suggestionscheck = require('../../controllers/user/suggestionscheck');
+const { changepic, upload } = require('../../controllers/user/changeprofilepic');
 
 router.use(verifyToken);
 
@@ -37,6 +38,15 @@ router.post('/addReadBook/:book_id', addReadBook);
 router.post('/addReview/:book_id', addReview);
 router.post('/addSaveBook/:book_id', addsaveBook);
 router.post('/addsuggestion/:book_id', addsuggestion);
+router.post("/upload", (req, res) => {
+    upload.single("filename")(req, res, (err) => {
+        if (err) {
+            console.log(err);
+            return res.status(400).json({ error: err.message });
+        }
+        changepic(req, res);
+    });
+});
 
 router.patch('/updateReview', updateReview);
 

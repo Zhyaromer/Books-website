@@ -14,7 +14,8 @@ const newsRoutes = require('./routes/news/newsRoutes');
 const bookSeriesRoutes = require('./routes/book_series/book_seriesRoutes');
 const membersRoutes = require('./routes/members/membersRoutes');
 const PORT = process.env.PORT || 3001;
-const users = require('./Models/users');
+const path = require('path');
+const fs = require('fs');
 
 app.use(cors( {
   origin: 'http://localhost:5173',
@@ -24,6 +25,7 @@ app.use(cors( {
 app.use(bodyParser.json());
 passport.initialize();
 app.use(cookieParser());
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.use('/auth', authRoutes);
 app.use('/books', booksRoutes);
