@@ -19,6 +19,8 @@ import KurdishLoginForm from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import SettingsPage from "./Pages/Settings";
 import UserProfile from "./Pages/UserProfile";
+import ForgotPassword from "./Pages/ForgotPassword";
+import PasswordResetPage from "./Pages/ChangePassword";
 import NotFoundPage from "./Pages/NotFound";
 
 function App() {
@@ -40,9 +42,11 @@ function App() {
         <Route path="/seriesbooks/:id" element={<BookSeriesBooks />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<KurdishLoginForm />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/userprofile" element={<UserProfile />} />
+        <Route path="/changepassword/:token" element={<PasswordResetPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

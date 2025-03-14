@@ -14,6 +14,7 @@ const newsRoutes = require('./routes/news/newsRoutes');
 const bookSeriesRoutes = require('./routes/book_series/book_seriesRoutes');
 const membersRoutes = require('./routes/members/membersRoutes');
 const PORT = process.env.PORT || 3001;
+const users = require('./Models/users');
 
 app.use(cors( {
   origin: 'http://localhost:5173',
@@ -25,7 +26,6 @@ passport.initialize();
 app.use(cookieParser());
 
 app.use('/auth', authRoutes);
-
 app.use('/books', booksRoutes);
 app.use('/authors', authorsRoutes);
 app.use('/user', userRoutes);

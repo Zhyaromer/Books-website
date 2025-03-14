@@ -111,7 +111,7 @@ const KurdishLoginForm = () => {
                         </div>
 
                         <div className="flex justify-start">
-                            <a href="#" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                            <a href="/forgotpassword" className="text-sm font-medium text-blue-600 hover:text-blue-500">
                                 وشەی نهێنیت لەبیرچووە؟
                             </a>
                         </div>
