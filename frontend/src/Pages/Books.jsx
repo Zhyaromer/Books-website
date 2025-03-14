@@ -131,36 +131,34 @@ const Books = () => {
     }, [selectedGenres, Sort, language, genreQuery, currentPage]);
 
     return (
-        <>
-            <BookstoreNavigation />
-            <FilterSection
-                showGenre={true}
-                genreOptions={genreOptions}
-                selectedGenres={selectedGenres}
-                onGenreChange={handleGenreChange}
-                languageOptions={languageOptions}
-                language={language}
-                onLanguageChange={handleLanguageChange}
-                sortOptions={sortOptions}
-                sort={Sort}
-                onSortChange={handleSortChange}
-            />
-
-            {loading ? (
-              <LoadingUi />
-            ) : (
-                <>
-                    <BookCardMain data={books} text={`هەموو کتێبەکان (${totalBooks})`} path="/Books" />
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                    />
-                </>
-            )}
-            <Footer />
-        </>
+        loading ? (
+            <LoadingUi />
+        ) : (
+            <>
+                <BookstoreNavigation />
+                <FilterSection
+                    showGenre={true}
+                    genreOptions={genreOptions}
+                    selectedGenres={selectedGenres}
+                    onGenreChange={handleGenreChange}
+                    languageOptions={languageOptions}
+                    language={language}
+                    onLanguageChange={handleLanguageChange}
+                    sortOptions={sortOptions}
+                    sort={Sort}
+                    onSortChange={handleSortChange}
+                />
+                <BookCardMain data={books} text={`هەموو کتێبەکان (${totalBooks})`} path="/Books" />
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                />
+                <Footer />
+            </>
+        )
     );
+
 }
 
 export default Books;

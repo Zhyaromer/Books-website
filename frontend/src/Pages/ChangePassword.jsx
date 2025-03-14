@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Lock, Eye, EyeOff, Check, X } from 'lucide-react';
+import { useState } from 'react';
+import { Lock, Eye, EyeOff, Check } from 'lucide-react';
 import { axiosInstance } from "../context/AxiosInstance";
 import { useParams } from 'react-router-dom';
 
