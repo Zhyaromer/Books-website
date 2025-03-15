@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, X, Search, Book, User, ChevronDown, Settings, LogOut } from 'lucide-react';
 import { useCheckAuth, logout, axiosInstance } from "../../context/AxiosInstance";
 import LoadingUi from '../my-ui/Loading';
+import { useNavigate } from 'react-router-dom';
 
 const BookstoreNavigation = () => {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [homeDropdownOpen, setHomeDropdownOpen] = useState(false);
@@ -17,48 +18,103 @@ const BookstoreNavigation = () => {
     const [userIcon, setUserIcon] = useState(null);
     const [userIconText, setUserIconText] = useState(null);
     const { isAuthenticated, setIsAuthenticated } = useCheckAuth();
-    const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [searchLoading, setSearchLoading] = useState(false);
+    const [showResults, setShowResults] = useState(false);
+    const [activeTab, setActiveTab] = useState('books');
+    const [results, setResults] = useState({
+        books: [],
+        authors: [],
+        users: []
+    });
+    const searchRef = useRef(null);
 
-useEffect(() => {
-    setIsLoggedIn(isAuthenticated);
-}, [isAuthenticated]);
+    useEffect(() => {
+        if (searchTerm.length >= 1) {
+            const delayDebounceFn = setTimeout(() => {
+                handleSearch();
+            }, 500);
 
-useEffect(() => {
-    const profilePic = async () => {  
-        setIsLoading(true);
-        try {
-            const res = await axiosInstance.get('/user/getusernameandpic');
-            console.log(res.data.coverImgURL);
-            if (res.status === 200 && res.data.coverImgURL) {
-                setUserIcon(res.data.coverImgURL);
-            } else if (res.status === 200 && res.data.username) {
-                setUserIconText(res.data.username[0]?.toUpperCase());
-            } else {
-                setUserIcon(null);
-                setUserIconText(null);
+            return () => clearTimeout(delayDebounceFn);
+        } else {
+            setShowResults(false);
+        }
+    }, [searchTerm]);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (searchRef.current && !searchRef.current.contains(event.target)) {
+                setShowResults(false);
             }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleSearch = async () => {
+        if (!searchTerm.trim()) return;
+
+        setSearchLoading(true);
+        setShowResults(true);
+        try {
+            setTimeout(async () => {
+                const res = await axiosInstance.get(`/user/search/${searchTerm}`);
+                if (res.status === 200) {
+                    setResults(res.data);
+                    setSearchLoading(false);
+                }
+            }, 800);
+
         } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
+            console.error('Error searching:', error);
+            setSearchLoading(false);
         }
     };
-    
-    profilePic();
-}, [isAuthenticated]);
 
+    const handleResultClick = (item, type) => {
+       if (type === 'book') {
+        navigate(`/booksDetail/${item}`)
+        } else if (type === 'authors') {
+           navigate(`/AuthorDetails/${item}`);
+        } else  {
+            navigate(`/userprofile?username=${item}`);
+        }
+        setShowResults(false);
+    };
 
-    const mockBookResults = [
-        { id: 1, title: 'مەم و زین', author: 'ئەحمەدی خانی', cover: 'book1.jpg' },
-        { id: 2, title: 'دیوانی نالی', author: 'نالی', cover: 'book2.jpg' },
-        { id: 3, title: 'چیرۆکی کوردستان', author: 'محەمەد ئەمین زەکی', cover: 'book3.jpg' },
-    ];
+    const truncateBio = (text, maxLength = 60) => {
+        if (!text) return '';
+        return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    };
 
-    const mockAuthorResults = [
-        { id: 1, name: 'ئەحمەدی خانی', books: 5, image: 'author1.jpg' },
-        { id: 2, name: 'نالی', books: 8, image: 'author2.jpg' },
-        { id: 3, name: 'مەحوی', books: 3, image: 'author3.jpg' },
-    ];
+    useEffect(() => {
+        setIsLoggedIn(isAuthenticated);
+    }, [isAuthenticated]);
+
+    useEffect(() => {
+        const profilePic = async () => {
+            setIsLoading(true);
+            try {
+                const res = await axiosInstance.get('/user/getusernameandpic');
+                if (res.status === 200 && res.data.coverImgURL) {
+                    setUserIcon(res.data.coverImgURL);
+                } else if (res.status === 200 && res.data.username) {
+                    setUserIconText(res.data.username[0]?.toUpperCase());
+                } else {
+                    setUserIcon(null);
+                    setUserIconText(null);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        profilePic();
+    }, [isAuthenticated]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -83,13 +139,6 @@ useEffect(() => {
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
-
-    const handleSearchInputChange = (e) => {
-        const query = e.target.value;
-        setSearchQuery(query);
-
-        setShowSearchResults(query.length > 0);
-    };
 
     const handleNavigation = (href) => {
         if (href !== '#') {
@@ -127,7 +176,7 @@ useEffect(() => {
         try {
             await logout(setIsAuthenticated);
             setIsLoggedIn(false);
-            window.location.href = '/';
+            navigate('/');
         } catch (error) {
             console.error(error);
         }
@@ -194,17 +243,12 @@ useEffect(() => {
             { icon: null, name: 'تۆمارکردن', onClick: () => { window.location.href = '/signup'; } },
         ];
 
-
     const handleUserDropdownToggle = (e) => {
         e.stopPropagation();
         setUserDropdownOpen(!userDropdownOpen);
         setShowSearchResults(false);
     };
 
-    const handleSearchResultClick = () => {
-        setShowSearchResults(false);
-        setSearchQuery('');
-    };
     return (
         <div>
             {isLoading ? <LoadingUi /> :
@@ -306,67 +350,145 @@ useEffect(() => {
                                             type="text"
                                             placeholder="گەڕان بۆ کتێب..."
                                             className="w-full pr-10 pl-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            onClick={() => searchQuery && setShowSearchResults(true)}
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            onFocus={() => searchTerm}
                                         />
                                         <div className="absolute right-3 top-2.5">
                                             <Search className="h-5 w-5 text-gray-400" />
                                         </div>
                                     </div>
 
-                                    {showSearchResults && (
-                                        <div className="absolute right-0 mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 max-h-96 overflow-y-auto">
-                                            <div className="py-2">
-                                                <h3 className="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
-                                                    کتێبەکان
-                                                </h3>
-                                                <div className="py-1">
-                                                    {mockBookResults.map(book => (
-                                                        <a
-                                                            key={book.id}
-                                                            href={`/books/${book.id}`}
-                                                            className="block px-4 py-2 hover:bg-indigo-50"
-                                                            onClick={handleSearchResultClick}
-                                                        >
-                                                            <div className="flex items-center">
-                                                                <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-md flex items-center justify-center">
-                                                                    <Book className="h-6 w-6 text-gray-400" />
-                                                                </div>
-                                                                <div className="mr-3">
-                                                                    <div className="text-sm font-medium text-gray-900">{book.title}</div>
-                                                                    <div className="text-xs text-gray-500">{book.author}</div>
-                                                                </div>
-                                                            </div>
-                                                        </a>
-                                                    ))}
-                                                </div>
+                                    {showResults && (
+                                        <div className="absolute left-0 mt-2 w-[470px] bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
+                                            <div className="flex border-b border-gray-200">
+                                                <button
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    onClick={() => setActiveTab('books')}
+                                                >
+                                                    کتێبەکان ({results.books.length})
+                                                </button>
+                                                <button
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'authors' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    onClick={() => setActiveTab('authors')}
+                                                >
+                                                    نووسەرەکان ({results.authors.length})
+                                                </button>
+                                                <button
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'users' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    onClick={() => setActiveTab('users')}
+                                                >
+                                                    بەکارهێنەران ({results.users.length})
+                                                </button>
                                             </div>
 
-                                            <div className="py-2">
-                                                <h3 className="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
-                                                    نووسەرەکان
-                                                </h3>
-                                                <div className="py-1">
-                                                    {mockAuthorResults.map(author => (
-                                                        <a
-                                                            key={author.id}
-                                                            href={`/authors/${author.id}`}
-                                                            className="block px-4 py-2 hover:bg-indigo-50"
-                                                            onClick={handleSearchResultClick}
-                                                        >
-                                                            <div className="flex items-center">
-                                                                <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                                                    <User className="h-6 w-6 text-gray-400" />
+                                            <div className="max-h-80 overflow-y-auto">
+                                                {searchLoading && (
+                                                    <div className="flex flex-col gap-2 items-center justify-center py-12">
+                                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                                                        <div>
+                                                            <p>تکایە چاوەڕوانبە...</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {!searchLoading && activeTab === 'books' && (
+                                                    <>
+                                                        {results.books.length > 0 ? (
+                                                            results.books.map(book => (
+                                                                <div
+                                                                    key={book.id}
+                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    onClick={() => handleResultClick(book.id, 'book')}
+                                                                >
+                                                                    <div className="flex-shrink-0 w-16 h-20 bg-gradient-to-b from-indigo-200 to-indigo-400 rounded flex items-center justify-center shadow-md">
+                                                                        {book.cover_image ? (
+                                                                            <img src={book.cover_image} alt={book.title} className="w-16 h-20 object-cover rounded" />
+                                                                        ) : (
+                                                                            <Book className="h-8 w-8 text-white" />
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="mr-4 flex-1">
+                                                                        <div className="text-base font-bold text-gray-900 mb-1">{book.title}</div>
+                                                                        <div className="flex items-center space-x-2 space-x-reverse mb-2">
+                                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                                                {book.genre}
+                                                                            </span>
+                                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                                                {book.language}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="text-xs text-gray-600 line-clamp-2">{book.description}</div>
+                                                                    </div>
                                                                 </div>
-                                                                <div className="mr-3">
-                                                                    <div className="text-sm font-medium text-gray-900">{author.name}</div>
-                                                                    <div className="text-xs text-gray-500">{author.books} کتێب</div>
-                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="py-8 text-center text-gray-500">
+                                                                هیچ کتێبێک نەدۆزرایەوە
                                                             </div>
-                                                        </a>
-                                                    ))}
-                                                </div>
+                                                        )}
+                                                    </>
+                                                )}
+
+                                                {!searchLoading && activeTab === 'authors' && (
+                                                    <>
+                                                        {results.authors.length > 0 ? (
+                                                            results.authors.map(author => (
+                                                                <div
+                                                                    key={author.id}
+                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    onClick={() => handleResultClick(author.id, 'authors')}
+                                                                >
+                                                                    <div className="flex-shrink-0 w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center shadow-md">
+                                                                        {author.imgURL ? (
+                                                                            <img src={author.imgURL} className="w-14 h-14 object-cover rounded-full" />
+                                                                        ) : (
+                                                                            <span className="text-lg font-bold text-white">{author.name.charAt(0)}</span>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="mr-4 flex-1">
+                                                                        <div className="text-base font-bold text-gray-900">{author.name}</div>
+                                                                        <div className="text-xs text-gray-600 mt-1 line-clamp-2">{truncateBio(author.bio)}</div>
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="py-8 text-center text-gray-500">
+                                                                هیچ نووسەرێک نەدۆزرایەوە
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+
+                                                {!searchLoading && activeTab === 'users' && (
+                                                    <>
+                                                        {results.users.length > 0 ? (
+                                                            results.users.map(user => (
+                                                                <div
+                                                                    key={user.username}
+                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    onClick={() => handleResultClick(user.username, 'users')}
+                                                                >
+                                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-indigo-500'}`}>
+                                                                        {user.coverImgURL ? (
+                                                                            <img src={user.coverImgURL} alt={user.username} className="w-12 h-12 object-cover rounded-full" />
+                                                                        ) : (
+                                                                            <span className="text-base font-bold text-white">{user.username.charAt(0)}</span>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="mr-4 flex-1">
+                                                                        <div className="text-base font-bold text-gray-900">{user.name}</div>
+                                                                        <div className="text-xs text-gray-500">@{user.username}</div>
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="py-8 text-center text-gray-500">
+                                                                هیچ بەکارهێنەرێک نەدۆزرایەوە
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
                                     )}
@@ -436,71 +558,149 @@ useEffect(() => {
                                     <input
                                         type="text"
                                         placeholder="گەڕان..."
-                                        className="w-full pr-10 pl-1 py-2 rounded-l-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                        value={searchQuery}
-                                        onChange={handleSearchInputChange}
-                                        onClick={() => searchQuery && setShowSearchResults(true)}
+                                        className="w-full pr-10 pl-1 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        onFocus={() => searchTerm}
                                     />
                                 </div>
                                 <div className="absolute right-3 top-2.5">
                                     <Search className="h-5 w-5 text-gray-400" />
                                 </div>
 
-                                {showSearchResults && (
-                                    <div className="absolute right-0 left-0 mt-2 mx-4 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 max-h-96 overflow-y-auto">
-                                        <div className="py-2">
-                                            <h3 className="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
-                                                کتێبەکان
-                                            </h3>
-                                            <div className="py-1">
-                                                {mockBookResults.map(book => (
-                                                    <a
-                                                        key={book.id}
-                                                        href={`/books/${book.id}`}
-                                                        className="block px-4 py-2 hover:bg-indigo-50"
-                                                        onClick={handleSearchResultClick}
-                                                    >
-                                                        <div className="flex items-center">
-                                                            <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-md flex items-center justify-center">
-                                                                <Book className="h-6 w-6 text-gray-400" />
-                                                            </div>
-                                                            <div className="mr-3">
-                                                                <div className="text-sm font-medium text-gray-900">{book.title}</div>
-                                                                <div className="text-xs text-gray-500">{book.author}</div>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                ))}
+                                {showResults && (
+                                        <div className="absolute mt-2 w-full bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
+                                            <div className="flex border-b border-gray-200">
+                                                <button
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    onClick={() => setActiveTab('books')}
+                                                >
+                                                    کتێبەکان ({results.books.length})
+                                                </button>
+                                                <button
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'authors' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    onClick={() => setActiveTab('authors')}
+                                                >
+                                                    نووسەرەکان ({results.authors.length})
+                                                </button>
+                                                <button
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'users' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    onClick={() => setActiveTab('users')}
+                                                >
+                                                    بەکارهێنەران ({results.users.length})
+                                                </button>
                                             </div>
-                                        </div>
 
-                                        <div className="py-2">
-                                            <h3 className="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
-                                                نووسەرەکان
-                                            </h3>
-                                            <div className="py-1">
-                                                {mockAuthorResults.map(author => (
-                                                    <a
-                                                        key={author.id}
-                                                        href={`/authors/${author.id}`}
-                                                        className="block px-4 py-2 hover:bg-indigo-50"
-                                                        onClick={handleSearchResultClick}
-                                                    >
-                                                        <div className="flex items-center">
-                                                            <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                                                <User className="h-6 w-6 text-gray-400" />
-                                                            </div>
-                                                            <div className="mr-3">
-                                                                <div className="text-sm font-medium text-gray-900">{author.name}</div>
-                                                                <div className="text-xs text-gray-500">{author.books} کتێب</div>
-                                                            </div>
+                                            <div className="max-h-80 overflow-y-auto">
+                                                {searchLoading && (
+                                                    <div className="flex flex-col gap-2 items-center justify-center py-12">
+                                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                                                        <div>
+                                                            <p>تکایە چاوەڕوانبە...</p>
                                                         </div>
-                                                    </a>
-                                                ))}
+                                                    </div>
+                                                )}
+
+                                                {!searchLoading && activeTab === 'books' && (
+                                                    <>
+                                                        {results.books.length > 0 ? (
+                                                            results.books.map(book => (
+                                                                <div
+                                                                    key={book.id}
+                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    onClick={() => handleResultClick(book.id, 'book')}
+                                                                >
+                                                                    <div className="flex-shrink-0 w-16 h-20 bg-gradient-to-b from-indigo-200 to-indigo-400 rounded flex items-center justify-center shadow-md">
+                                                                        {book.cover_image ? (
+                                                                            <img src={book.cover_image} alt={book.title} className="w-16 h-20 object-cover rounded" />
+                                                                        ) : (
+                                                                            <Book className="h-8 w-8 text-white" />
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="mr-4 flex-1">
+                                                                        <div className="text-base font-bold text-gray-900 mb-1">{book.title}</div>
+                                                                        <div className="flex items-center space-x-2 space-x-reverse mb-2">
+                                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                                                {book.genre}
+                                                                            </span>
+                                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                                                {book.language}
+                                                                            </span>
+                                                                        </div>
+                                                                        <div className="text-xs text-gray-600 line-clamp-2">{book.description}</div>
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="py-8 text-center text-gray-500">
+                                                                هیچ کتێبێک نەدۆزرایەوە
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+
+                                                {!searchLoading && activeTab === 'authors' && (
+                                                    <>
+                                                        {results.authors.length > 0 ? (
+                                                            results.authors.map(author => (
+                                                                <div
+                                                                    key={author.id}
+                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    onClick={() => handleResultClick(author.id, 'authors')}
+                                                                >
+                                                                    <div className="flex-shrink-0 w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center shadow-md">
+                                                                        {author.imgURL ? (
+                                                                            <img src={author.imgURL} className="w-14 h-14 object-cover rounded-full" />
+                                                                        ) : (
+                                                                            <span className="text-lg font-bold text-white">{author.name.charAt(0)}</span>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="mr-4 flex-1">
+                                                                        <div className="text-base font-bold text-gray-900">{author.name}</div>
+                                                                        <div className="text-xs text-gray-600 mt-1 line-clamp-2">{truncateBio(author.bio)}</div>
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="py-8 text-center text-gray-500">
+                                                                هیچ نووسەرێک نەدۆزرایەوە
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
+
+                                                {!searchLoading && activeTab === 'users' && (
+                                                    <>
+                                                        {results.users.length > 0 ? (
+                                                            results.users.map(user => (
+                                                                <div
+                                                                    key={user.username}
+                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    onClick={() => handleResultClick(user.username, 'users')}
+                                                                >
+                                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-indigo-500'}`}>
+                                                                        {user.coverImgURL ? (
+                                                                            <img src={user.coverImgURL} alt={user.username} className="w-12 h-12 object-cover rounded-full" />
+                                                                        ) : (
+                                                                            <span className="text-base font-bold text-white">{user.username.charAt(0)}</span>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="mr-4 flex-1">
+                                                                        <div className="text-base font-bold text-gray-900">{user.name}</div>
+                                                                        <div className="text-xs text-gray-500">@{user.username}</div>
+                                                                    </div>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="py-8 text-center text-gray-500">
+                                                                هیچ بەکارهێنەرێک نەدۆزرایەوە
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                )}
                                             </div>
                                         </div>
-                                    </div>
-                                )}
+                                    )}
                             </div>
                         </div>
                     )}

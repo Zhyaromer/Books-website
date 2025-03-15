@@ -4,7 +4,6 @@ const app = express();
 const cors = require('cors');
 const passport = require("passport");
 const cookieParser = require('cookie-parser');
-const verifyToken = require('./Middleware/verifyToken');
 const bodyParser = require('body-parser');
 const booksRoutes = require('./routes/books/booksRoutes');
 const authorsRoutes = require('./routes/authors/authorsRoutes');

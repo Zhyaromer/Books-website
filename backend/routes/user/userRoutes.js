@@ -19,6 +19,9 @@ const addsuggestion = require('../../controllers/user/addsuggestion');
 const getSuggestion = require('../../controllers/user/getsuggestions');
 const suggestionscheck = require('../../controllers/user/suggestionscheck');
 const { changepic, upload } = require('../../controllers/user/changeprofilepic');
+const  Searching = require('../../controllers/user/Searching');
+
+router.get('/search/:search', Searching);
 
 router.use(verifyToken);
 

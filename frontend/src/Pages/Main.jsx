@@ -5,11 +5,28 @@ import MultipleAuthorsCard from "../Components/layout/AuthorsCardLanding";
 import Footer from "../Components/layout/Footer";
 import Quotes from "../Components/layout/QuotesCards";
 import SeriesCard from "../Components/layout/SeriesCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import LoadingUi from '../Components/my-ui/Loading';
-
+const results = {
+    books: [
+        { id: 1, title: 'مەم و زین', author: 'ئەحمەدی خانی', cover_image: null, genre: 'کلاسیک' },
+        { id: 2, title: 'دیوانی نالی', author: 'نالی', cover_image: null, genre: 'شیعر' },
+        { id: 3, title: 'ئەو پیاوەی بە لاى سەگەوە دەڕۆيشت', author: 'کامەران سوبحان', cover_image: null, genre: 'ڕۆمان' },
+        { id: 4, title: 'تاریکی ڕووناکی', author: 'شێرکۆ بێکەس', cover_image: null, genre: 'شیعر' },
+    ],
+    authors: [
+        { id: 1, name: 'ئەحمەدی خانی', books: 5, image: null, bio: 'شاعیر و نووسەری بەناوبانگی کلاسیکی کورد' },
+        { id: 2, name: 'نالی', books: 8, image: null, bio: 'شاعیری گەورەی کورد' },
+        { id: 3, name: 'شێرکۆ بێکەس', books: 12, image: null, bio: 'شاعیری هاوچەرخی کورد' },
+    ],
+    users: [
+        { id: 1, username: 'کاردۆ', coverImgURL: null, name: 'کاردۆ محەمەد' },
+        { id: 2, username: 'شەیدا', coverImgURL: null, name: 'شەیدا ئەحمەد' },
+    ]
+};
 const Main = () => {
+
     const [sliderbooks, setsliderbooks] = useState([]);
     const [kurdishbooks, setkurdishbooks] = useState([]);
     const [englishbooks, setenglishbooks] = useState([]);
@@ -20,6 +37,7 @@ const Main = () => {
     const [getquotes, setquotes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    
 
     useEffect(() => {
         const fetchAllData = async () => {
@@ -80,7 +98,7 @@ const Main = () => {
                     <BookSlider data={sliderbooks} />
                     <BookCardMain data={kurdishbooks} text="نوێترین کتێبە کوردیەکان" path="/books?language=Kurdish" />
                     <BookCardMain data={englishbooks} text="نوێترین کتێبە ئینگلیزیەکان" path="/books?language=English" />
-                    <BookCardMain data={trendingbooks} text="کتێبی تریندینگ" path="/trending" />
+                    <BookCardMain data={trendingbooks} text="کتێبی تریندینگ" path="/Books" />
                     <BookCardMain data={romancebooks} text="کتێبی ڕۆمانس" path="/books?genre=ڕۆمانس" />
                     <Quotes quotes={getquotes} />
                     <div>

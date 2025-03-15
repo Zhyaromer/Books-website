@@ -79,7 +79,6 @@ const UserProfile = () => {
         const fetchComments = async () => {
             try {
                 const res = await axiosInstance.get(`/members/getallmemberreviews?username=${username}&page=${currentPage}&limit=${commentsPerPage}`);
-                console.log(res.data.total);
                 if (res.data.comments && Array.isArray(res.data.comments)) {
                     setcomments(res.data.comments);
                     setcommentsTotal(res.data.total || 0);
