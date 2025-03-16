@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const NewsCard = ({ data }) => {
@@ -54,8 +54,8 @@ const NewsCard = ({ data }) => {
             className="text-blue-600 hover:text-blue-800 px-4 py-2 flex items-center group"
           >
             <span>زیاتر ببینە</span>
-            <span className="transform rotate-180 transition-transform duration-200 group-hover:translate-x-1">
-              <ChevronLeft size={20}/>
+            <span className="transform rotate-180 transition-transform duration-200 group-hover:-translate-x-1">
+              <ChevronRight size={20}/>
             </span>
           </button>
         </div>

@@ -8,7 +8,7 @@ const AdminDashboard = () => {
     const [news, setNews] = useState([]);
     const [quotes, setQuotes] = useState([]);
     const [users, setUsers] = useState([]);
-    const [activeTab, setActiveTab] = useState('bookSeries');
+    const [activeTab, setActiveTab] = useState('quotes');
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('add');
     const [currentItem, setCurrentItem] = useState(null);
@@ -132,16 +132,28 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('series deleted successfully');
                     } else {
-                        console.error("an error occurred while deleting the author");
+                        console.error("an error occurred while deleting the series");
                     }
                     break;
                 }
-                case 'news':
-                    setNews(news.filter(item => item.id !== id));
+                case 'news': {
+                    const res = await axiosInstance.delete(`/newsdashboard/deletenews/${id}`);
+                    if (res.status === 200) {
+                        console.log('news deleted successfully');
+                    } else {
+                        console.error("an error occurred while deleting the news");
+                    }
                     break;
-                case 'quotes':
-                    setQuotes(quotes.filter(quote => quote.id !== id));
+                }
+                case 'quotes' : {
+                    const res = await axiosInstance.delete(`/quotesdashboard/deleteqoute/${id}`);
+                    if (res.status === 200) {
+                        console.log('news deleted successfully');
+                    } else {
+                        console.error("an error occurred while deleting the news");
+                    }
                     break;
+                }
                 case 'users':
                     setUsers(users.filter(user => user.id !== id));
                     break;
@@ -470,6 +482,89 @@ const AdminDashboard = () => {
 
                     if (res.status === 200) {
                         console.log('series added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            }
+
+            if (modalMode === 'add' && activeTab === 'news') {
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('title', formData.title);
+                    formDataToSend.append('description', formData.description);
+
+                    if (formData.news_cover) {
+                        formDataToSend.append('news_cover', formData.news_cover);
+                    }
+                    const res = await axiosInstance.post('/newsdashboard/addnews', formDataToSend, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    });
+
+                    if (res.status === 200) {
+                        console.log('news added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+
+            } else if (modalMode === 'edit' && activeTab === 'news') {
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('title', formData.title);
+                    formDataToSend.append('description', formData.description);
+
+                    if (formData.news_cover) {
+                        formDataToSend.append('news_cover', formData.news_cover);
+                    }
+
+                    const res = await axiosInstance.patch(
+                        `/newsdashboard/updatenews/${formData.id}`, formDataToSend, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    })
+
+                    if (res.status === 200) {
+                        console.log('news added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            }
+
+            if (modalMode === 'add' && activeTab === 'quotes') {
+                try {
+                    const res = await axiosInstance.post('/quotesdashboard/addquote', formData);
+                    if (res.status === 200) {
+                        console.log('quote added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            } else if (modalMode === 'edit' && activeTab === 'quotes') {
+                try {
+                    const res = await axiosInstance.patch(`/quotesdashboard/updatequote/${formData.id}`, formData);
+                    if (res.status === 200) {
+                        console.log('quote added successfully');
                         setShowModal(false);
                         handleSubmit(formData);
                     } else {
@@ -875,7 +970,7 @@ const AdminDashboard = () => {
                                     <label className="block text-sm font-medium text-gray-700">Cover Image</label>
                                     <input
                                         type="file"
-                                        name="cover_image"
+                                        name="news_cover"
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
@@ -900,7 +995,7 @@ const AdminDashboard = () => {
                                     <div className="relative">
                                         <input
                                             type="text"
-                                            value={formData.title || ''}
+                                            value={formData.book_id || ''}
                                             onClick={() => handleRelationSearch('book_id')}
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                             placeholder="Search for book..."
@@ -923,7 +1018,7 @@ const AdminDashboard = () => {
                                                         <li
                                                             key={book.id}
                                                             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                                            onClick={() => handleRelationSelect(book.id, book.title, 'book_id')}
+                                                            onClick={() => handleRelationSelect(book.id,'book_id')}
                                                         >
                                                             {book.title}
                                                         </li>
@@ -939,7 +1034,7 @@ const AdminDashboard = () => {
                                     <div className="relative">
                                         <input
                                             type="text"
-                                            value={formData.name || ''}
+                                            value={formData.author_id || ''}
                                             onClick={() => handleRelationSearch('author_id')}
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                             placeholder="Search for author..."
@@ -962,7 +1057,7 @@ const AdminDashboard = () => {
                                                         <li
                                                             key={author.id}
                                                             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                                            onClick={() => handleRelationSelect(author.id, author.name, 'author_id')}
+                                                            onClick={() => handleRelationSelect(author.id, 'author_id')}
                                                         >
                                                             {author.name}
                                                         </li>
