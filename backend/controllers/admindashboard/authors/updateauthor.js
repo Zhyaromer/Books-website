@@ -14,7 +14,7 @@ const updateAuthor = async (req, res) => {
         return res.status(400).json({ error: "Valid author ID is required" });
     }
 
-    const filename = req.file?.filename ? getFilePath(req.file.filename) : null;
+    const filename = req.file ? getFilePath(req.file.filename) : null;
     const { name, bio, language, dateOfBirth, country } = req.body;
     if (!name || !bio || !language || !dateOfBirth || !country) {
         return res.status(400).json({ message: "Missing required fields" });

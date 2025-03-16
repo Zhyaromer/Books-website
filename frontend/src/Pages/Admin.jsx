@@ -8,7 +8,7 @@ const AdminDashboard = () => {
     const [news, setNews] = useState([]);
     const [quotes, setQuotes] = useState([]);
     const [users, setUsers] = useState([]);
-    const [activeTab, setActiveTab] = useState('books');
+    const [activeTab, setActiveTab] = useState('bookSeries');
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('add');
     const [currentItem, setCurrentItem] = useState(null);
@@ -118,7 +118,7 @@ const AdminDashboard = () => {
                     }
                     break;
                 }
-                case 'authors' : {
+                case 'authors': {
                     const res = await axiosInstance.delete(`/authorsdashboard/removeAuthor/${id}`);
                     if (res.status === 200) {
                         console.log('author deleted successfully');
@@ -127,9 +127,15 @@ const AdminDashboard = () => {
                     }
                     break;
                 }
-                case 'bookSeries':
-                    setBookSeries(bookSeries.filter(series => series.id !== id));
+                case 'bookSeries': {
+                    const res = await axiosInstance.delete(`/seriesdashboard/removeseries/${id}`);
+                    if (res.status === 200) {
+                        console.log('series deleted successfully');
+                    } else {
+                        console.error("an error occurred while deleting the author");
+                    }
                     break;
+                }
                 case 'news':
                     setNews(news.filter(item => item.id !== id));
                     break;
@@ -229,7 +235,7 @@ const AdminDashboard = () => {
                 setFilePreview(URL.createObjectURL(files[0]));
                 setFormData({
                     ...formData,
-                    [name]: files[0] 
+                    [name]: files[0]
                 });
             } else if (type === 'number') {
                 setFormData({
@@ -398,14 +404,72 @@ const AdminDashboard = () => {
 
                     const res = await axiosInstance.patch(
                         `/authorsdashboard/updateAuthor/${formData.id}`, formDataToSend, {
-                            headers: {
-                                "Content-Type": "multipart/form-data"
-                            }
+                        headers: {
+                            "Content-Type": "multipart/form-data"
                         }
+                    }
                     )
 
                     if (res.status === 200) {
                         console.log('author added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            }
+
+            if (modalMode === 'add' && activeTab === 'bookSeries') {
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('title', formData.series_title);
+                    formDataToSend.append('state', formData.state);
+                    formDataToSend.append('description', formData.description);
+
+                    if (formData.series_cover) {
+                        formDataToSend.append('series_cover', formData.series_cover);
+                    }
+
+                    const res = await axiosInstance.post('/seriesdashboard/addseries', formDataToSend, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    });
+
+                    if (res.status === 200) {
+                        console.log('series added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            } else if (modalMode === 'edit' && activeTab === 'bookSeries') {
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('title', formData.series_title);
+                    formDataToSend.append('state', formData.state);
+                    formDataToSend.append('description', formData.description);
+
+                    if (formData.series_cover) {
+                        formDataToSend.append('series_cover', formData.series_cover);
+                    }
+
+                    const res = await axiosInstance.patch(
+                        `/seriesdashboard/updateseries/${formData.id}`, formDataToSend, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    }
+                    )
+
+                    if (res.status === 200) {
+                        console.log('series added successfully');
                         setShowModal(false);
                         handleSubmit(formData);
                     } else {
@@ -764,7 +828,7 @@ const AdminDashboard = () => {
                                     <label className="block text-sm font-medium text-gray-700">Cover Image</label>
                                     <input
                                         type="file"
-                                        name="cover_img"
+                                        name="series_cover"
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
@@ -1190,7 +1254,7 @@ const AdminDashboard = () => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{series.series_title}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {series.totalbooks || 'N/A'}
+                                        {series.totalbooks || 0}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
