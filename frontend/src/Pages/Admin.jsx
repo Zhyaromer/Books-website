@@ -118,9 +118,15 @@ const AdminDashboard = () => {
                     }
                     break;
                 }
-                case 'authors':
-                    setAuthors(authors.filter(author => author.id !== id));
+                case 'authors' : {
+                    const res = await axiosInstance.delete(`/authorsdashboard/removeAuthor/${id}`);
+                    if (res.status === 200) {
+                        console.log('author deleted successfully');
+                    } else {
+                        console.error("an error occurred while deleting the author");
+                    }
                     break;
+                }
                 case 'bookSeries':
                     setBookSeries(bookSeries.filter(series => series.id !== id));
                     break;
@@ -223,7 +229,7 @@ const AdminDashboard = () => {
                 setFilePreview(URL.createObjectURL(files[0]));
                 setFormData({
                     ...formData,
-                    [name]: files[0]
+                    [name]: files[0] 
                 });
             } else if (type === 'number') {
                 setFormData({
@@ -307,8 +313,7 @@ const AdminDashboard = () => {
                 } catch (error) {
                     console.error('Error adding book:', error);
                 }
-            }
-            else if (modalMode === 'edit' && activeTab === 'books') {
+            } else if (modalMode === 'edit' && activeTab === 'books') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append("title", formData.title);
@@ -346,6 +351,70 @@ const AdminDashboard = () => {
                 }
             }
 
+            if (modalMode === 'add' && activeTab === 'authors') {
+                try {
+                    const formDataToSend = new FormData();
+                    console.log(formDataToSend);
+
+                    formDataToSend.append('name', formData.name);
+                    formDataToSend.append('bio', formData.bio);
+                    formDataToSend.append('language', formData.language);
+                    formDataToSend.append('dateOfBirth', formData.dateOfBirth);
+                    formDataToSend.append('country', formData.country);
+
+                    if (formData.author_cover) {
+                        formDataToSend.append('author_cover', formData.author_cover);
+                    }
+
+
+                    const res = await axiosInstance.post('/authorsdashboard/addAuthor', formDataToSend, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    });
+
+                    if (res.status === 200) {
+                        console.log('author added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            } else if (modalMode === 'edit' && activeTab === 'authors') {
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('name', formData.name);
+                    formDataToSend.append('bio', formData.bio);
+                    formDataToSend.append('language', formData.language);
+                    formDataToSend.append('dateOfBirth', formData.dateOfBirth);
+                    formDataToSend.append('country', formData.country);
+
+                    if (formData.author_cover) {
+                        formDataToSend.append('author_cover', formData.author_cover);
+                    }
+
+                    const res = await axiosInstance.patch(
+                        `/authorsdashboard/updateAuthor/${formData.id}`, formDataToSend, {
+                            headers: {
+                                "Content-Type": "multipart/form-data"
+                            }
+                        }
+                    )
+
+                    if (res.status === 200) {
+                        console.log('author added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            }
         };
 
         return (
@@ -602,7 +671,7 @@ const AdminDashboard = () => {
                                     <input
                                         type="date"
                                         name="dateOfBirth"
-                                        value={new Date(formData.dateOfBirth).toISOString().split('T')[0] || ''}
+                                        value={formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString().split('T')[0] : ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                     />
@@ -634,7 +703,7 @@ const AdminDashboard = () => {
                                     <label className="block text-sm font-medium text-gray-700">Image</label>
                                     <input
                                         type="file"
-                                        name="imgURL"
+                                        name="author_cover"
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
@@ -1067,7 +1136,7 @@ const AdminDashboard = () => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{author.name}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {author.totalbooks || 'N/A'}
+                                        {author.totalbooks || 0}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(author.created_at).toLocaleDateString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -1357,10 +1426,10 @@ const AdminDashboard = () => {
                         <div className="relative">
                             <input
                                 type="text"
-                            placeholder={`Search ${activeTab === 'bookSeries' ? 'by series title or ID' : activeTab === '`by name or username or email or ID`' ? 'User' : activeTab === 'news' ? 'by title or ID' : activeTab === 'quotes' ? 'search by quote or book title or ID ' : activeTab === 'authors' ? 'by name or ID' : 'by Title or series title or ID'}`}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder={`Search ${activeTab === 'bookSeries' ? 'by series title or ID' : activeTab === '`by name or username or email or ID`' ? 'User' : activeTab === 'news' ? 'by title or ID' : activeTab === 'quotes' ? 'search by quote or book title or ID ' : activeTab === 'authors' ? 'by name or ID' : 'by Title or series title or ID'}`}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                             />
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

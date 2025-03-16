@@ -2,7 +2,7 @@ const db = require('../../../config/SQL/sqlconfig');
 
 const getAllAuthors = async (req, res) => {
     try {
-        const sql = `select authors.*,count(books.id) as totalbooks from authors inner join books on authors.id = books.author_id group by authors.id`;
+        const sql = `select authors.*,count(books.id) as totalbooks from authors left join books on authors.id = books.author_id group by authors.id`;
 
         const [authors] = await db.promise().query(sql);
 

@@ -25,12 +25,14 @@ const changePassword = async (req, res) => {
         });
     }
 
-    const connection = await db.promise().getConnection();
+    const promiseDb = db.promise();
+
     try {
-        await connection.beginTransaction();
+        await promiseDb.beginTransaction();
         const [[user]] = await db.promise().query("SELECT password_hash,username,email FROM users WHERE id = ?", [userId]);
 
         if (!user) {
+            await promiseDb.rollback();
             return res.status(404).json({ error: "هیچ ئەندامێک نەدۆزرایەوە" });
         }
 
@@ -50,18 +52,17 @@ const changePassword = async (req, res) => {
         const [result] = await db.promise().query("UPDATE users SET password_hash = ? WHERE id = ?", [hashedNewPassword, userId]);
 
         if (result.affectedRows === 0) {
+            await promiseDb.rollback();
             return res.status(400).json({ error: "نەتوانرا وشەی نهێنی نوێ بکرێت" });
         }
 
-        await connection.commit();
+        await promiseDb.commit();
         await sendEmail.changePassword(user.email, { name: user.username });
         return res.status(200).json({ message: "وشەی نهێنیەکەت گۆڕدرا" });
     } catch (error) {
-        await connection.rollback();
+        await promiseDb.rollback();
         console.error("Error changing password:", error);
         return res.status(500).json({ error: "کێشەیەک ڕویدا تکایە هەوڵ بدەوە" });
-    } finally {
-        connection.release();
     }
 };
 
