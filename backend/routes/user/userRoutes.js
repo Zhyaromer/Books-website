@@ -41,16 +41,7 @@ router.post('/addReadBook/:book_id', addReadBook);
 router.post('/addReview/:book_id', addReview);
 router.post('/addSaveBook/:book_id', addsaveBook);
 router.post('/addsuggestion/:book_id', addsuggestion);
-router.post("/upload", (req, res) => {
-    upload.single("filename")(req, res, (err) => {
-        if (err) {
-            console.log(err);
-            return res.status(400).json({ error: err.message });
-        }
-        changepic(req, res);
-    });
-});
-
+router.post("/upload", upload, changepic);
 router.patch('/updateReview', updateReview);
 
 router.delete('/removeReview/:review_id', removeReview);

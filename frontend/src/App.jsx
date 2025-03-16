@@ -21,6 +21,7 @@ import SettingsPage from "./Pages/Settings";
 import UserProfile from "./Pages/UserProfile";
 import ForgotPassword from "./Pages/ForgotPassword";
 import PasswordResetPage from "./Pages/ChangePassword";
+import Admin from "./Pages/Admin";
 import NotFoundPage from "./Pages/NotFound";
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/changepassword/:token" element={<PasswordResetPage />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>

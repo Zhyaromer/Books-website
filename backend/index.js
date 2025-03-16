@@ -12,9 +12,17 @@ const userRoutes = require('./routes/user/userRoutes');
 const newsRoutes = require('./routes/news/newsRoutes');
 const bookSeriesRoutes = require('./routes/book_series/book_seriesRoutes');
 const membersRoutes = require('./routes/members/membersRoutes');
+
+// dashboard
+const dashboardbooksRoutes = require('./routes/admindashboard/books');
+const dashboardauthorsRoutes = require('./routes/admindashboard/authors');
+const dashboardseriesRoutes = require('./routes/admindashboard/series');
+const dashboardnewsRoutes = require('./routes/admindashboard/news');
+const dashboardquotesRoutes = require('./routes/admindashboard/quotes');
+const dashboardusersRoutes = require('./routes/admindashboard/users');
+
 const PORT = process.env.PORT || 3001;
 const path = require('path');
-const fs = require('fs');
 
 app.use(cors( {
   origin: 'http://localhost:5173',
@@ -25,6 +33,15 @@ app.use(bodyParser.json());
 passport.initialize();
 app.use(cookieParser());
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+//dashboard
+app.use('/booksdashboard', dashboardbooksRoutes);
+app.use('/authorsdashboard', dashboardauthorsRoutes);
+app.use('/seriesdashboard', dashboardseriesRoutes);
+app.use('/newsdashboard', dashboardnewsRoutes);
+app.use('/quotesdashboard', dashboardquotesRoutes);
+app.use('/usersdashboard', dashboardusersRoutes);
+
 
 app.use('/auth', authRoutes);
 app.use('/books', booksRoutes);

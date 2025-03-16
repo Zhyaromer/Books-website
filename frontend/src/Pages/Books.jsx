@@ -27,6 +27,7 @@ const Books = () => {
     const [language, setLanguage] = useState(languageOptions?.value || "");
 
     useEffect(() => {
+        setLoading(true);
         if (pageQuery) {
             setCurrentPage(parseInt(pageQuery));
         }
@@ -44,6 +45,7 @@ const Books = () => {
     }, []);
 
     const handleGenreChange = (value) => {
+        setLoading(true);
         setSelectedGenres(value);
         setCurrentPage(1);
 
@@ -64,6 +66,7 @@ const Books = () => {
     };
 
     const handlePageChange = (newPage) => {
+        setLoading(true);
         setCurrentPage(newPage);
         const newParams = new URLSearchParams(location.search);
         newParams.set('page', newPage.toString());
@@ -74,11 +77,13 @@ const Books = () => {
     };
 
     const handleLanguageChange = (value) => {
+        setLoading(true);
         setLanguage(value);
         setCurrentPage(1);
     };
 
     const handleSortChange = (value) => {
+        setLoading(true);
         setSort(value);
         setCurrentPage(1);
     };
@@ -128,7 +133,7 @@ const Books = () => {
         };
 
         fetchBooks();
-    }, [selectedGenres, Sort, language, genreQuery, currentPage]);
+    }, [selectedGenres, Sort, language, genreQuery, languageQuery, currentPage]);
 
     return (
         loading ? (

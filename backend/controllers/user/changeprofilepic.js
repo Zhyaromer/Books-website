@@ -1,43 +1,15 @@
-const multer = require("multer");
+const createUploader = require("../../Middleware/uplode"); 
+const db = require('../../config/SQL/sqlconfig');
 const path = require("path");
-const db = require("../../config/SQL/sqlconfig");
 const fs = require("fs");
 
-const uploadDir = path.resolve(__dirname, "../../assets/profilepic");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination: uploadDir,
-    filename: (_, file, cb) => {
-        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    },
-});
-
-const upload = multer({
-    storage,
-    limits: { fileSize: 3 * 1024 * 1024 },
-    fileFilter: (_, file, cb) => {
-        const allowedTypes = /jpeg|jpg|png|webp|gif/;
-        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = allowedTypes.test(file.mimetype);
-
-        if (extname && mimetype) {
-            return cb(null, true);
-        } else {
-            return cb(new Error("Only image files (JPEG, PNG, GIF,webp) are allowed"));
-        }
-    },
-});
+const { upload, getFilePath , uploadDir } = createUploader("profilepic");
 
 const changepic = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "No file uploaded" });
     }
-
-    const filename = `http://localhost:3000/assets/profilepic/${req.file.filename}`;
+    const filename = getFilePath(req.file.filename);
 
     const userId = req?.user?.id;
     if (!userId) {
@@ -51,10 +23,12 @@ const changepic = async (req, res) => {
         }
 
         const oldPic = userResult[0].coverImgURL;
-        const oldPicName = `${uploadDir}/${path.basename(oldPic)}`;
-        if (oldPicName) {
-            if (fs.existsSync(oldPicName)) {
-                fs.unlinkSync(oldPicName);
+        if (oldPic) {
+            const oldFilename = path.basename(oldPic);
+            const oldFilePath = path.join(uploadDir, oldFilename);
+            
+            if (fs.existsSync(oldFilePath)) {
+                fs.unlinkSync(oldFilePath);
             }
         }
 
@@ -73,4 +47,7 @@ const changepic = async (req, res) => {
     }
 };
 
-module.exports = { changepic, upload };
+const uploadMiddleware = upload.single("filename");
+
+
+module.exports = { changepic, upload : uploadMiddleware };

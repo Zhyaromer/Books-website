@@ -16,7 +16,6 @@ const NewsPage = () => {
   const [sort, setSort] = useState();
   const [category, setCategory] = useState();
   const newsPerPage = 12;
-
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
@@ -76,34 +75,38 @@ const NewsPage = () => {
     fetchNews();
   }, [category, sort, currentPage]);
 
-  if (loading) {
-    return <LoadingUi />;
-  }
-
   return (
     <div>
-      <BookstoreNavigation />
-      <div className="container mx-auto px-4 py-8 pt-32">
-        <h1 className="text-3xl font-bold mb-8 text-right">
-          دوایین هەواڵەکان {totalNews > 0 && `(${totalNews})`}
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {news.map(newsItem => (
-            <NewsCard
-              key={newsItem.id}
-              data={newsItem}
-            />
-          ))}
-        </div>
-        {totalPages > 1 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        )}
-      </div>
-      <Footer />
+      {loading ? (
+        <LoadingUi />
+      ) : (
+        <>
+          <div>
+            <BookstoreNavigation />
+            <div className="container mx-auto px-4 py-8 pt-32">
+              <h1 className="text-3xl font-bold mb-8 text-right">
+                دوایین هەواڵەکان {totalNews > 0 && `(${totalNews})`}
+              </h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {news.map(newsItem => (
+                  <NewsCard
+                    key={newsItem.id}
+                    data={newsItem}
+                  />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </div>
+            <Footer />
+          </div>
+        </>
+      )}
     </div>
   );
 };

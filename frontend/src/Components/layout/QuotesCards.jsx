@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import LoadingUi from '../my-ui/Loading';
 
-const Quotes = ({ quotes }) => {
+const Quotes = ({ quotes  }) => {
     const [selectedQuote, setSelectedQuote] = useState(null);
 
     useEffect(() => {
@@ -11,7 +12,7 @@ const Quotes = ({ quotes }) => {
     }, [quotes]);
 
     if (!selectedQuote) {
-        return <p>No quotes available</p>;
+        return <LoadingUi />;
     }
 
     return (

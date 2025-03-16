@@ -8,7 +8,6 @@ const BookstoreNavigation = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [showSearchResults, setShowSearchResults] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [homeDropdownOpen, setHomeDropdownOpen] = useState(false);
     const [booksDropdownOpen, setBooksDropdownOpen] = useState(false);
@@ -132,7 +131,6 @@ const BookstoreNavigation = () => {
                 setBooksDropdownOpen(false);
                 setBestSellerDropdownOpen(false);
                 setUserDropdownOpen(false);
-                setShowSearchResults(false);
             }
         };
 
@@ -151,7 +149,6 @@ const BookstoreNavigation = () => {
         setHomeDropdownOpen(false);
         setBooksDropdownOpen(false);
         setBestSellerDropdownOpen(false);
-        setShowSearchResults(false);
 
         if (navItem.hasDropdown) {
             switch (index) {
@@ -246,7 +243,6 @@ const BookstoreNavigation = () => {
     const handleUserDropdownToggle = (e) => {
         e.stopPropagation();
         setUserDropdownOpen(!userDropdownOpen);
-        setShowSearchResults(false);
     };
 
     return (
