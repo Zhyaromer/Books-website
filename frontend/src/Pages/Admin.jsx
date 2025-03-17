@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { axiosInstance } from "../context/AxiosInstance";
+import DeleteConfirmationModal from '../Components/layout/DeleteConfirmationModal';
+import Select from 'react-select';
 
 const AdminDashboard = () => {
     const [books, setBooks] = useState([]);
@@ -8,11 +10,24 @@ const AdminDashboard = () => {
     const [news, setNews] = useState([]);
     const [quotes, setQuotes] = useState([]);
     const [users, setUsers] = useState([]);
-    const [activeTab, setActiveTab] = useState('users');
+    const [activeTab, setActiveTab] = useState('books');
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('add');
     const [currentItem, setCurrentItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [genres, setGenres] = useState([]);
+    const [selectedAuthor, setSelectedAuthor] = useState(null);
+    const [selectedAuthoQuote, setSelectedAuthorQuote] = useState(null);
+    const [selectedBook, setSelectedBook] = useState(null);
+    const [selectedSeries, setSelectedSeries] = useState(null);
+    const [selectedSeriesQuote, setSelectedSeriesQuote] = useState(null);
+    const [selectedGenre, setSelectedGenre] = useState(null);
+    const [selectedLanguage, setSelectedLanguage] = useState(null);
+    const [selectedLanguageAuthor, setSelectedLanguageAuthor] = useState(null);
+    const [selectedRole, setSelectedRole] = useState(null);
+    const [selectedState, setSelectedState] = useState(null);
+    const [dateRange, setDateRange] = useState({ start: '', end: '' });
 
     useEffect(() => {
         const fetchbooks = async () => {
@@ -45,53 +60,86 @@ const AdminDashboard = () => {
             setUsers(res.data);
         }
 
+        const fetchGenres = async () => {
+            setGenres(['ڕۆمان', 'شیعر', 'چیرۆک', 'فانتاسی', 'خەیاڵی', 'ڕۆمانس', 'ترسناک', 'نادیار']);
+        }
+
+
         fetchbooks();
         fetchauthors();
         fetchbookSeries();
         fetchnews();
         fetchquotes();
         fetchusers();
+        fetchGenres();
     }, [searchTerm, activeTab]);
 
     const filteredData = () => {
+        let filtered = [];
+
         switch (activeTab) {
             case 'books':
-                return books.filter(book =>
-                    book.title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    book.series_title?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    String(book.id).toLowerCase().includes(searchTerm.toLowerCase().trim())
+                filtered = books.filter(book =>
+                    (searchTerm === '' ||
+                        book.title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        String(book.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
+                    (!selectedAuthor || book.author_id === selectedAuthor.value) &&
+                    (!selectedSeries || book.series_id === selectedSeries.value) &&
+                    (!selectedGenre || book.genre?.includes(selectedGenre.value)) &&
+                    (!selectedLanguage || book.language?.includes(selectedLanguage.value))
                 );
+                break;
             case 'authors':
-                return authors.filter(author =>
-                    author.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    String(author.id).toLowerCase().includes(searchTerm.toLowerCase().trim())
+                filtered = authors.filter(author =>
+                    (searchTerm === '' ||
+                        author.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        String(author.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
+                    (!selectedLanguageAuthor || author.language?.includes(selectedLanguageAuthor.value))
                 );
+                break;
             case 'bookSeries':
-                return bookSeries.filter(series =>
-                    series.series_title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    String(series.id).toLowerCase().includes(searchTerm.toLowerCase().trim())
+                filtered = bookSeries.filter(series =>
+                    (searchTerm === '' ||
+                        series.series_title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        String(series.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
+                    (!selectedState || series.state === selectedState.value)
                 );
+                break;
             case 'news':
-                return news.filter(item =>
-                    item.title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    String(item.id).toLowerCase().includes(searchTerm.toLowerCase().trim())
+                filtered = news.filter(item =>
+                    (searchTerm === '' ||
+                        item.title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        String(item.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
+                    (!dateRange.start || new Date(item.created_at) >= new Date(dateRange.start)) &&
+                    (!dateRange.end || new Date(item.created_at) <= new Date(dateRange.end))
                 );
+                break;
             case 'quotes':
-                return quotes.filter(quote =>
-                    quote.quote.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    quote.title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    String(quote.id).toLowerCase().includes(searchTerm.toLowerCase().trim())
+                filtered = quotes.filter(quote =>
+                    (searchTerm === '' ||
+                        quote.quote.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        String(quote.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
+                    (!selectedAuthoQuote || quote.author_id === selectedAuthoQuote.value) &&
+                    (!selectedSeriesQuote ||
+                        books.find(book => book.id === quote.book_id)?.series_id === selectedSeriesQuote.value) &&
+                    (!selectedBook || quote.book_id === selectedBook.value)
                 );
+                break;
             case 'users':
-                return users.filter(user =>
-                    user.username.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    user.email.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    user.name?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                    String(user.id).toLowerCase().includes(searchTerm.toLowerCase().trim())
+                filtered = users.filter(user =>
+                    (searchTerm === '' ||
+                        user.username.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        user.email.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        user.name?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        String(user.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
+                    (!selectedRole || user.role === selectedRole.value)
                 );
+                break;
             default:
-                return [];
+                filtered = [];
         }
+
+        return filtered;
     };
 
     const handleAdd = () => {
@@ -106,132 +154,72 @@ const AdminDashboard = () => {
         setShowModal(true);
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this item?')) {
-            switch (activeTab) {
-                case 'books': {
-                    const res = await axiosInstance.delete(`/booksdashboard/removebook/${id}`);
-                    if (res.status === 200) {
-                        console.log('Book deleted successfully');
-                    } else {
-                        console.error("an error occurred while deleting the book");
-                    }
-                    break;
-                }
-                case 'authors': {
-                    const res = await axiosInstance.delete(`/authorsdashboard/removeAuthor/${id}`);
-                    if (res.status === 200) {
-                        console.log('author deleted successfully');
-                    } else {
-                        console.error("an error occurred while deleting the author");
-                    }
-                    break;
-                }
-                case 'bookSeries': {
-                    const res = await axiosInstance.delete(`/seriesdashboard/removeseries/${id}`);
-                    if (res.status === 200) {
-                        console.log('series deleted successfully');
-                    } else {
-                        console.error("an error occurred while deleting the series");
-                    }
-                    break;
-                }
-                case 'news': {
-                    const res = await axiosInstance.delete(`/newsdashboard/deletenews/${id}`);
-                    if (res.status === 200) {
-                        console.log('news deleted successfully');
-                    } else {
-                        console.error("an error occurred while deleting the news");
-                    }
-                    break;
-                }
-                case 'quotes': {
-                    const res = await axiosInstance.delete(`/quotesdashboard/deleteqoute/${id}`);
-                    if (res.status === 200) {
-                        console.log('news deleted successfully');
-                    } else {
-                        console.error("an error occurred while deleting the news");
-                    }
-                    break;
-                }
-                case 'users':{
-                    const res = await axiosInstance.delete(`/usersdashboard/deleteuser/${id}`);
-                    if (res.status === 200) {
-                        console.log('news deleted successfully');
-                    } else {
-                        console.error("an error occurred while deleting the news");
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
+
+    const openDeleteModal = (id) => {
+        setItemToDelete(id);
+        setIsModalOpen(true);
     };
 
-    const handleSubmit = (formData) => {
-        if (modalMode === 'add') {
-            const newId = Math.max(...(activeTab === 'books' ? books.map(b => b.id) :
-                activeTab === 'authors' ? authors.map(a => a.id) :
-                    activeTab === 'bookSeries' ? bookSeries.map(s => s.id) :
-                        activeTab === 'news' ? news.map(n => n.id) :
-                            activeTab === 'quotes' ? quotes.map(q => q.id) :
-                                users.map(u => u.id)), 0) + 1;
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setItemToDelete(null);
+    };
 
-            const newItem = {
-                ...formData,
-                id: newId,
-                created_at: new Date()
-            };
+    const handleDelete = async (id) => {
+        openDeleteModal(id);
+    };
+
+    const confirmDelete = async () => {
+        const id = itemToDelete;
+
+        try {
+            let endpoint = '';
+            let itemType = '';
 
             switch (activeTab) {
                 case 'books':
-                    setBooks([...books, newItem]);
+                    endpoint = `/booksdashboard/removebook/${id}`;
+                    itemType = 'book';
                     break;
                 case 'authors':
-                    setAuthors([...authors, newItem]);
+                    endpoint = `/authorsdashboard/removeAuthor/${id}`;
+                    itemType = 'author';
                     break;
                 case 'bookSeries':
-                    setBookSeries([...bookSeries, newItem]);
+                    endpoint = `/seriesdashboard/removeseries/${id}`;
+                    itemType = 'series';
                     break;
                 case 'news':
-                    setNews([...news, newItem]);
+                    endpoint = `/newsdashboard/deletenews/${id}`;
+                    itemType = 'news article';
                     break;
                 case 'quotes':
-                    setQuotes([...quotes, newItem]);
+                    endpoint = `/quotesdashboard/deleteqoute/${id}`;
+                    itemType = 'quote';
                     break;
                 case 'users':
-                    setUsers([...users, newItem]);
+                    endpoint = `/usersdashboard/deleteuser/${id}`;
+                    itemType = 'user';
                     break;
                 default:
                     break;
             }
-        } else if (modalMode === 'edit') {
-            switch (activeTab) {
-                case 'books':
-                    setBooks(books.map(book => book.id === currentItem.id ? { ...book, ...formData } : book));
-                    break;
-                case 'authors':
-                    setAuthors(authors.map(author => author.id === currentItem.id ? { ...author, ...formData } : author));
-                    break;
-                case 'bookSeries':
-                    setBookSeries(bookSeries.map(series => series.id === currentItem.id ? { ...series, ...formData } : series));
-                    break;
-                case 'news':
-                    setNews(news.map(item => item.id === currentItem.id ? { ...item, ...formData } : item));
-                    break;
-                case 'quotes':
-                    setQuotes(quotes.map(quote => quote.id === currentItem.id ? { ...quote, ...formData } : quote));
-                    break;
-                case 'users':
-                    setUsers(users.map(user => user.id === currentItem.id ? { ...user, ...formData } : user));
-                    break;
-                default:
-                    break;
+
+            if (endpoint) {
+                const res = await axiosInstance.delete(endpoint);
+                if (res.status === 200) {
+                    console.log(`${itemType} deleted successfully`);
+                } else {
+                    console.error(`An error occurred while deleting the ${itemType}`);
+                }
             }
+        } catch (error) {
+            console.error('Delete operation failed:', error);
+        } finally {
+            closeModal();
         }
-
-        setShowModal(false);
     };
 
     const ModalForm = () => {
@@ -304,8 +292,7 @@ const AdminDashboard = () => {
             return [];
         };
 
-        const handleFormSubmit = async (e) => {
-            e.preventDefault();
+        const handleFormSubmit = async () => {
             if (modalMode === 'add' && activeTab === 'books') {
                 try {
                     const formDataToSend = new FormData();
@@ -330,7 +317,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('Book added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -366,7 +352,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('Book added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -400,7 +385,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('author added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -431,7 +415,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('author added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -460,7 +443,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('series added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -489,7 +471,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('series added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -516,7 +497,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('news added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -544,7 +524,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('news added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -559,7 +538,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('quote added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -572,7 +550,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('quote added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -603,7 +580,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('user added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -632,7 +608,6 @@ const AdminDashboard = () => {
                     if (res.status === 200) {
                         console.log('user added successfully');
                         setShowModal(false);
-                        handleSubmit(formData);
                     } else {
                         console.error("res.data.error");
                     }
@@ -1266,6 +1241,24 @@ const AdminDashboard = () => {
         );
     };
 
+    const authorOptions = authors.map(author => ({ value: author.id, label: author.name }));
+    const seriesOptions = bookSeries.map(series => ({ value: series.id, label: series.series_title }));
+    const booksOptions = books.map(book => ({ value: book.id, label: book.title }));
+    const genreOptions = Array.isArray(genres) ? genres.map(genre => ({ value: genre, label: genre })) : [];
+    const languageOptions = [
+        { value: '', label: 'all' },
+        { value: 'Kurdish', label: 'Kurdish' },
+        { value: 'English', label: 'English' }
+    ];
+    const roleOptions = [
+        { value: 'user', label: 'User' },
+        { value: 'admin', label: 'Admin' }
+    ];
+    const seriesStateOptions = [
+        { value: 'بەردەوامە', label: 'بەردەوامە' },
+        { value: 'تەواوبوە', label: 'تەواوبوە' }
+    ]
+
     const renderTable = () => {
         const data = filteredData();
 
@@ -1285,7 +1278,7 @@ const AdminDashboard = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {data.map(book => (
+                            {data.sort((a, b) => b.id - a.id).map(book => (
                                 <tr key={book.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{book.id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1343,44 +1336,47 @@ const AdminDashboard = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {data.map(author => (
-                                <tr key={author.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{author.id}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="flex-shrink-0 h-16 w-16">
-                                            {author.imgURL ? (
-                                                <img className="h-16 w-16 rounded-full object-cover" src={author.imgURL} alt={author.name} />
-                                            ) : (
-                                                <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{author.name}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {author.totalbooks || 0}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(author.created_at).toLocaleDateString()}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button
-                                            onClick={() => handleEdit(author)}
-                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(author.id)}
-                                            className="text-red-600 hover:text-red-900"
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {data
+                                .sort((a, b) => b.id - a.id)
+                                .map((author) => (
+                                    <tr key={author.id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{author.id}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex-shrink-0 h-16 w-16">
+                                                {author.imgURL ? (
+                                                    <img className="h-16 w-16 rounded-full object-cover" src={author.imgURL} alt={author.name} />
+                                                ) : (
+                                                    <div className="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                        </svg>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{author.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {author.totalbooks || 0}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(author.created_at).toLocaleDateString()}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button
+                                                onClick={() => handleEdit(author)}
+                                                className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(author.id)}
+                                                className="text-red-600 hover:text-red-900"
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                         </tbody>
+
                     </table>
                 );
 
@@ -1392,12 +1388,13 @@ const AdminDashboard = () => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">state</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Books</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {data.map(series => (
+                            {data.sort((a, b) => b.id - a.id).map(series => (
                                 <tr key={series.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{series.id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1414,6 +1411,7 @@ const AdminDashboard = () => {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{series.series_title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{series.state}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {series.totalbooks || 0}
                                     </td>
@@ -1451,7 +1449,7 @@ const AdminDashboard = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {data.map(item => (
+                            {data.sort((a, b) => b.id - a.id).map(item => (
                                 <tr key={item.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1504,7 +1502,7 @@ const AdminDashboard = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {data.map(quote => (
+                            {data.sort((a, b) => b.id - a.id).map(quote => (
                                 <tr key={quote.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{quote.id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1567,7 +1565,7 @@ const AdminDashboard = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {data.map(user => (
+                            {data.sort((a, b) => b.id - a.id).map(user => (
                                 <tr key={user.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.id}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1625,6 +1623,27 @@ const AdminDashboard = () => {
                 </div>
             </header>
 
+            <DeleteConfirmationModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                onConfirm={confirmDelete}
+                itemType={
+                    activeTab === 'books'
+                        ? 'book'
+                        : activeTab === 'authors'
+                            ? 'author'
+                            : activeTab === 'bookSeries'
+                                ? 'series'
+                                : activeTab === 'news'
+                                    ? 'news article'
+                                    : activeTab === 'quotes'
+                                        ? 'quote'
+                                        : activeTab === 'users'
+                                            ? 'user'
+                                            : 'item'
+                }
+            />
+
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div className="mb-6 border-b border-gray-200">
                     <nav className="-mb-px flex space-x-8" aria-label="Tabs">
@@ -1646,12 +1665,186 @@ const AdminDashboard = () => {
                     </nav>
                 </div>
 
+                {(() => {
+                    switch (activeTab) {
+                        case 'books':
+                            return (
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+                                        <Select
+                                            isClearable
+                                            options={authorOptions}
+                                            value={selectedAuthor}
+                                            onChange={setSelectedAuthor}
+                                            placeholder="Filter by author"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Series</label>
+                                        <Select
+                                            isClearable
+                                            options={seriesOptions}
+                                            value={selectedSeries}
+                                            onChange={setSelectedSeries}
+                                            placeholder="Filter by series"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
+                                        <Select
+                                            isClearable
+                                            options={genreOptions}
+                                            value={selectedGenre}
+                                            onChange={setSelectedGenre}
+                                            placeholder="Filter by genre"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">language</label>
+                                        <Select
+                                            isClearable
+                                            options={languageOptions}
+                                            value={selectedLanguage}
+                                            onChange={setSelectedLanguage}
+                                            placeholder="Filter by genre"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        case 'authors':
+                            return (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">language</label>
+                                        <Select
+                                            isClearable
+                                            options={languageOptions}
+                                            value={selectedLanguageAuthor}
+                                            onChange={setSelectedLanguageAuthor}
+                                            placeholder="Filter by genre"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        case 'bookSeries':
+                            return (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">series state</label>
+                                        <Select
+                                            isClearable
+                                            options={seriesStateOptions}
+                                            value={selectedState}
+                                            onChange={setSelectedState}
+                                            placeholder="Filter by series state"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        case 'news':
+                            return (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <input
+                                                type="date"
+                                                value={dateRange.start}
+                                                onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
+                                                className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2"
+                                            />
+                                            <input
+                                                type="date"
+                                                value={dateRange.end}
+                                                onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
+                                                className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        case 'quotes':
+                            return (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+                                        <Select
+                                            isClearable
+                                            options={authorOptions}
+                                            value={selectedAuthoQuote}
+                                            onChange={setSelectedAuthorQuote}
+                                            placeholder="Filter by author"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Book</label>
+                                        <Select
+                                            isClearable
+                                            options={booksOptions}
+                                            value={selectedBook}
+                                            onChange={setSelectedBook}
+                                            placeholder="Filter by series"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Book Series</label>
+                                        <Select
+                                            isClearable
+                                            options={seriesOptions}
+                                            value={selectedSeriesQuote}
+                                            onChange={setSelectedSeriesQuote}
+                                            placeholder="Filter by series"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        case 'users':
+                            return (
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                        <Select
+                                            isClearable
+                                            options={roleOptions}
+                                            value={selectedRole}
+                                            onChange={setSelectedRole}
+                                            placeholder="Filter by role"
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        default:
+                            return null;
+                    }
+                })()}
+
                 <div className="flex flex-col md:flex-row md:justify-between mb-6 space-y-4 md:space-y-0">
                     <div className="w-full md:w-1/3">
                         <div className="relative">
                             <input
                                 type="text"
-                                placeholder={`Search ${activeTab === 'bookSeries' ? 'by series title or ID' : activeTab === '`by name or username or email or ID`' ? 'User' : activeTab === 'news' ? 'by title or ID' : activeTab === 'quotes' ? 'search by quote or book title or ID ' : activeTab === 'authors' ? 'by name or ID' : 'by Title or series title or ID'}`}
+                                placeholder={`Search ${activeTab === 'bookSeries' ? 'by series title or ID' : activeTab === 'users' ? 'by name or username or email or ID' : activeTab === 'news' ? 'by title or ID' : activeTab === 'quotes' ? 'by quote or ID' : activeTab === 'authors' ? 'by name or ID' : 'by Title or ID'}`}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
@@ -1663,6 +1856,7 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     </div>
+
                     <div>
                         <button
                             onClick={handleAdd}

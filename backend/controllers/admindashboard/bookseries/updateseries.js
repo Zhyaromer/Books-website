@@ -21,11 +21,12 @@ const updateseries = async (req, res) => {
         return res.status(400).json({ message: 'Missing required fields' });
     }
 
-    console.log(req.file);
-
     const series_cover = req.file ? getFilePath(req.file.filename) : null;
 
+    const promiseDb = db.promise();
     try {
+        await promiseDb.beginTransaction();
+
         let updatedFields = `series_title = ?, state = ?, description = ?`;
         let values = [title, state, description];
 
@@ -49,6 +50,7 @@ const updateseries = async (req, res) => {
         const [result] = await db.promise().query(sql, values);
 
         if (result.affectedRows === 0) {
+            await promiseDb.rollback();
             return res.status(404).json({ message: 'Series not found' });
         }
 
@@ -56,9 +58,10 @@ const updateseries = async (req, res) => {
             fs.unlinkSync(series_cover_path);
         }
 
+        await promiseDb.commit();
         return res.status(200).json({ message: 'Series updated successfully' });
     } catch (error) {
-        console.error(error);
+        await promiseDb.rollback();
         return res.status(500).json({ message: 'Internal server error' });
     }
 }

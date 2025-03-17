@@ -22,16 +22,21 @@ const updatenews = async (req, res) => {
     }
 
     const news_cover = req.file ? getFilePath(req.file.filename) : null;
+
+    const promiseDb = db.promise();
     try {
+        await promiseDb.beginTransaction();
+
         let updateFields = `title = ?, description = ?`;
         let values = [title, description];
 
         let news_cover_path = null;
         if (news_cover) {
             const sql = `SELECT cover_image FROM news WHERE id = ?`;
-            const [result] = await db.promise().query(sql, [id]);
+            const [result] = await promiseDb.query(sql, [id]);
 
             if (result.length === 0) {
+                await promiseDb.rollback();
                 return res.status(404).json({ message: 'News not found' });
             }
 
@@ -44,9 +49,10 @@ const updatenews = async (req, res) => {
         values.push(id);
 
         const sql = `UPDATE news SET ${updateFields} WHERE id = ?`;
-        const [result] = await db.promise().query(sql, values);
+        const [result] = await promiseDb.query(sql, values);
 
         if (result.affectedRows === 0) {
+            await promiseDb.rollback();
             return res.status(404).json({ message: 'News not found' });
         }
 
@@ -54,8 +60,10 @@ const updatenews = async (req, res) => {
             fs.unlinkSync(news_cover_path);
         }
 
+        await promiseDb.commit();
         return res.status(200).json({ message: 'News updated successfully' });
     } catch (error) {
+        await promiseDb.rollback();
         console.error(error);
         return res.status(500).json({ message: 'Error updating news' });
     }

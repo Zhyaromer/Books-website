@@ -48,12 +48,11 @@ const updateAuthor = async (req, res) => {
             return res.status(404).json({ error: "Author not found" });
         }
         
-        await promiseDb.commit();
-        
         if (oldCoverPath && fs.existsSync(oldCoverPath)) {
             fs.unlinkSync(oldCoverPath);
         }
-        
+
+        await promiseDb.commit();
         return res.status(200).json({ message: "Author updated successfully" });
     } catch (error) {
         await promiseDb.rollback();
