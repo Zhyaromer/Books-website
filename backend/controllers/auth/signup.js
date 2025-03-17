@@ -15,12 +15,19 @@ const signup = async (req, res) => {
     const sanConformPassword = xss(conformPassword);
 
     if (!sanUsername || !sanName || !sanEmail || !sanPassword) {
-
         return res.status(400).json({ error: "All fields are required" });
     }
 
     if (sanPassword !== sanConformPassword) {
         return res.status(400).json({ error: "Passwords do not match" });
+    }
+
+    if (sanName.length < 1 || sanName.length > 35) {
+        return res.status(400).json({ error: "Name must be between 1 and 35 characters" });
+    }
+
+    if (sanUsername.length < 1 || sanUsername.length > 35) {
+        return res.status(400).json({ error: "Username must be between 1 and 35 characters" });
     }
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;

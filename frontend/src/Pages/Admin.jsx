@@ -8,7 +8,7 @@ const AdminDashboard = () => {
     const [news, setNews] = useState([]);
     const [quotes, setQuotes] = useState([]);
     const [users, setUsers] = useState([]);
-    const [activeTab, setActiveTab] = useState('quotes');
+    const [activeTab, setActiveTab] = useState('users');
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('add');
     const [currentItem, setCurrentItem] = useState(null);
@@ -145,7 +145,7 @@ const AdminDashboard = () => {
                     }
                     break;
                 }
-                case 'quotes' : {
+                case 'quotes': {
                     const res = await axiosInstance.delete(`/quotesdashboard/deleteqoute/${id}`);
                     if (res.status === 200) {
                         console.log('news deleted successfully');
@@ -154,9 +154,15 @@ const AdminDashboard = () => {
                     }
                     break;
                 }
-                case 'users':
-                    setUsers(users.filter(user => user.id !== id));
+                case 'users':{
+                    const res = await axiosInstance.delete(`/usersdashboard/deleteuser/${id}`);
+                    if (res.status === 200) {
+                        console.log('news deleted successfully');
+                    } else {
+                        console.error("an error occurred while deleting the news");
+                    }
                     break;
+                }
                 default:
                     break;
             }
@@ -565,6 +571,66 @@ const AdminDashboard = () => {
                     const res = await axiosInstance.patch(`/quotesdashboard/updatequote/${formData.id}`, formData);
                     if (res.status === 200) {
                         console.log('quote added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            }
+
+            if (modalMode === 'add' && activeTab === 'users') {
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('username', formData.username);
+                    formDataToSend.append('email', formData.email);
+                    formDataToSend.append('role', formData.role);
+                    formDataToSend.append('password', formData.password_hash);
+                    formDataToSend.append('name', formData.name);
+                    formDataToSend.append('bio', formData.bio);
+
+                    if (formData.profilepic) {
+                        formDataToSend.append('profilepic', formData.profilepic);
+                    }
+
+                    const res = await axiosInstance.post('/usersdashboard/adduser', formDataToSend, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    });
+                    if (res.status === 200) {
+                        console.log('user added successfully');
+                        setShowModal(false);
+                        handleSubmit(formData);
+                    } else {
+                        console.error("res.data.error");
+                    }
+                } catch (error) {
+                    console.error('Error adding book:', error);
+                }
+            } else if (modalMode === 'edit' && activeTab === 'users') {
+                try {
+                    const formDataToSend = new FormData();
+                    formDataToSend.append('username', formData.username);
+                    formDataToSend.append('email', formData.email);
+                    formDataToSend.append('role', formData.role);
+                    formDataToSend.append('name', formData.name);
+                    formDataToSend.append('bio', formData.bio);
+
+                    if (formData.profilepic) {
+                        formDataToSend.append('profilepic', formData.profilepic);
+                    }
+
+                    const res = await axiosInstance.patch(
+                        `/usersdashboard/updateuser/${formData.id}`, formDataToSend, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    })
+                    if (res.status === 200) {
+                        console.log('user added successfully');
                         setShowModal(false);
                         handleSubmit(formData);
                     } else {
@@ -1018,7 +1084,7 @@ const AdminDashboard = () => {
                                                         <li
                                                             key={book.id}
                                                             className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                                            onClick={() => handleRelationSelect(book.id,'book_id')}
+                                                            onClick={() => handleRelationSelect(book.id, 'book_id')}
                                                         >
                                                             {book.title}
                                                         </li>
@@ -1161,7 +1227,7 @@ const AdminDashboard = () => {
                                     <label className="block text-sm font-medium text-gray-700">Profile Image</label>
                                     <input
                                         type="file"
-                                        name="coverImgURL"
+                                        name="profilepic"
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
