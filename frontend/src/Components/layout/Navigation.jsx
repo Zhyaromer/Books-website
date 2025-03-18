@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search, Book, User, ChevronDown, Settings, LogOut } from 'lucide-react';
+import { Menu, X, Search, Book, User, ChevronDown, Settings, LogOut,UserCog2 } from 'lucide-react';
 import { useCheckAuth, logout, axiosInstance } from "../../context/AxiosInstance";
 import LoadingUi from '../my-ui/Loading';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,8 @@ const BookstoreNavigation = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userIcon, setUserIcon] = useState(null);
     const [userIconText, setUserIconText] = useState(null);
-    const { isAuthenticated, setIsAuthenticated } = useCheckAuth();
+    const { isAuthenticated, setIsAuthenticated, userRole } = useCheckAuth();
+    const [isAdmin, setisAdmin] = useState(false)
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [searchLoading, setSearchLoading] = useState(false);
@@ -28,6 +29,17 @@ const BookstoreNavigation = () => {
         users: []
     });
     const searchRef = useRef(null);
+
+    setTimeout(() => {
+        if (isLoading === true) {
+            return <LoadingUi />
+        } else {
+            setIsLoading(false)
+            if ((isAuthenticated === true) && (userRole != null) && (userRole === 'admin')) {
+                setisAdmin(true)
+            }
+        }
+    }, 500);
 
     useEffect(() => {
         if (searchTerm.length >= 1) {
@@ -73,11 +85,11 @@ const BookstoreNavigation = () => {
     };
 
     const handleResultClick = (item, type) => {
-       if (type === 'book') {
-        navigate(`/booksDetail/${item}`)
+        if (type === 'book') {
+            navigate(`/booksDetail/${item}`)
         } else if (type === 'authors') {
-           navigate(`/AuthorDetails/${item}`);
-        } else  {
+            navigate(`/AuthorDetails/${item}`);
+        } else {
             navigate(`/userprofile?username=${item}`);
         }
         setShowResults(false);
@@ -233,6 +245,7 @@ const BookstoreNavigation = () => {
         ? [
             { icon: <User className="h-4 w-4 ml-2" />, name: 'پڕۆفایل', onClick: () => { window.location.href = '/profile'; } },
             { icon: <Settings className="h-4 w-4 ml-2" />, name: 'ڕێکخستنەکان', onClick: () => { window.location.href = '/settings'; } },
+            ...(isAdmin ? [{ icon: <UserCog2 className="h-4 w-4 ml-2" />, name: 'ئەدمین', onClick: () => { window.location.href = '/admin'; } }] : []),
             { icon: <LogOut className="h-4 w-4 ml-2" />, name: 'چوونەدەرەوە', onClick: handleLogout },
         ]
         : [
@@ -565,138 +578,138 @@ const BookstoreNavigation = () => {
                                 </div>
 
                                 {showResults && (
-                                        <div className="absolute mt-2 w-full bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
-                                            <div className="flex border-b border-gray-200">
-                                                <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
-                                                    onClick={() => setActiveTab('books')}
-                                                >
-                                                    کتێبەکان ({results.books.length})
-                                                </button>
-                                                <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'authors' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
-                                                    onClick={() => setActiveTab('authors')}
-                                                >
-                                                    نووسەرەکان ({results.authors.length})
-                                                </button>
-                                                <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'users' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
-                                                    onClick={() => setActiveTab('users')}
-                                                >
-                                                    بەکارهێنەران ({results.users.length})
-                                                </button>
-                                            </div>
-
-                                            <div className="max-h-80 overflow-y-auto">
-                                                {searchLoading && (
-                                                    <div className="flex flex-col gap-2 items-center justify-center py-12">
-                                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
-                                                        <div>
-                                                            <p>تکایە چاوەڕوانبە...</p>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {!searchLoading && activeTab === 'books' && (
-                                                    <>
-                                                        {results.books.length > 0 ? (
-                                                            results.books.map(book => (
-                                                                <div
-                                                                    key={book.id}
-                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
-                                                                    onClick={() => handleResultClick(book.id, 'book')}
-                                                                >
-                                                                    <div className="flex-shrink-0 w-16 h-20 bg-gradient-to-b from-indigo-200 to-indigo-400 rounded flex items-center justify-center shadow-md">
-                                                                        {book.cover_image ? (
-                                                                            <img src={book.cover_image} alt={book.title} className="w-16 h-20 object-cover rounded" />
-                                                                        ) : (
-                                                                            <Book className="h-8 w-8 text-white" />
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="mr-4 flex-1">
-                                                                        <div className="text-base font-bold text-gray-900 mb-1">{book.title}</div>
-                                                                        <div className="flex items-center space-x-2 space-x-reverse mb-2">
-                                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                                                                                {book.genre}
-                                                                            </span>
-                                                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                                                {book.language}
-                                                                            </span>
-                                                                        </div>
-                                                                        <div className="text-xs text-gray-600 line-clamp-2">{book.description}</div>
-                                                                    </div>
-                                                                </div>
-                                                            ))
-                                                        ) : (
-                                                            <div className="py-8 text-center text-gray-500">
-                                                                هیچ کتێبێک نەدۆزرایەوە
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                )}
-
-                                                {!searchLoading && activeTab === 'authors' && (
-                                                    <>
-                                                        {results.authors.length > 0 ? (
-                                                            results.authors.map(author => (
-                                                                <div
-                                                                    key={author.id}
-                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
-                                                                    onClick={() => handleResultClick(author.id, 'authors')}
-                                                                >
-                                                                    <div className="flex-shrink-0 w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center shadow-md">
-                                                                        {author.imgURL ? (
-                                                                            <img src={author.imgURL} className="w-14 h-14 object-cover rounded-full" />
-                                                                        ) : (
-                                                                            <span className="text-lg font-bold text-white">{author.name.charAt(0)}</span>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="mr-4 flex-1">
-                                                                        <div className="text-base font-bold text-gray-900">{author.name}</div>
-                                                                        <div className="text-xs text-gray-600 mt-1 line-clamp-2">{truncateBio(author.bio)}</div>
-                                                                    </div>
-                                                                </div>
-                                                            ))
-                                                        ) : (
-                                                            <div className="py-8 text-center text-gray-500">
-                                                                هیچ نووسەرێک نەدۆزرایەوە
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                )}
-
-                                                {!searchLoading && activeTab === 'users' && (
-                                                    <>
-                                                        {results.users.length > 0 ? (
-                                                            results.users.map(user => (
-                                                                <div
-                                                                    key={user.username}
-                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
-                                                                    onClick={() => handleResultClick(user.username, 'users')}
-                                                                >
-                                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-indigo-500'}`}>
-                                                                        {user.coverImgURL ? (
-                                                                            <img src={user.coverImgURL} alt={user.username} className="w-12 h-12 object-cover rounded-full" />
-                                                                        ) : (
-                                                                            <span className="text-base font-bold text-white">{user.username.charAt(0)}</span>
-                                                                        )}
-                                                                    </div>
-                                                                    <div className="mr-4 flex-1">
-                                                                        <div className="text-base font-bold text-gray-900">{user.name}</div>
-                                                                        <div className="text-xs text-gray-500">@{user.username}</div>
-                                                                    </div>
-                                                                </div>
-                                                            ))
-                                                        ) : (
-                                                            <div className="py-8 text-center text-gray-500">
-                                                                هیچ بەکارهێنەرێک نەدۆزرایەوە
-                                                            </div>
-                                                        )}
-                                                    </>
-                                                )}
-                                            </div>
+                                    <div className="absolute mt-2 w-full bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
+                                        <div className="flex border-b border-gray-200">
+                                            <button
+                                                className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                onClick={() => setActiveTab('books')}
+                                            >
+                                                کتێبەکان ({results.books.length})
+                                            </button>
+                                            <button
+                                                className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'authors' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                onClick={() => setActiveTab('authors')}
+                                            >
+                                                نووسەرەکان ({results.authors.length})
+                                            </button>
+                                            <button
+                                                className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'users' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                onClick={() => setActiveTab('users')}
+                                            >
+                                                بەکارهێنەران ({results.users.length})
+                                            </button>
                                         </div>
-                                    )}
+
+                                        <div className="max-h-80 overflow-y-auto">
+                                            {searchLoading && (
+                                                <div className="flex flex-col gap-2 items-center justify-center py-12">
+                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                                                    <div>
+                                                        <p>تکایە چاوەڕوانبە...</p>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {!searchLoading && activeTab === 'books' && (
+                                                <>
+                                                    {results.books.length > 0 ? (
+                                                        results.books.map(book => (
+                                                            <div
+                                                                key={book.id}
+                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                onClick={() => handleResultClick(book.id, 'book')}
+                                                            >
+                                                                <div className="flex-shrink-0 w-16 h-20 bg-gradient-to-b from-indigo-200 to-indigo-400 rounded flex items-center justify-center shadow-md">
+                                                                    {book.cover_image ? (
+                                                                        <img src={book.cover_image} alt={book.title} className="w-16 h-20 object-cover rounded" />
+                                                                    ) : (
+                                                                        <Book className="h-8 w-8 text-white" />
+                                                                    )}
+                                                                </div>
+                                                                <div className="mr-4 flex-1">
+                                                                    <div className="text-base font-bold text-gray-900 mb-1">{book.title}</div>
+                                                                    <div className="flex items-center space-x-2 space-x-reverse mb-2">
+                                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                                            {book.genre}
+                                                                        </span>
+                                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                                            {book.language}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="text-xs text-gray-600 line-clamp-2">{book.description}</div>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="py-8 text-center text-gray-500">
+                                                            هیچ کتێبێک نەدۆزرایەوە
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+
+                                            {!searchLoading && activeTab === 'authors' && (
+                                                <>
+                                                    {results.authors.length > 0 ? (
+                                                        results.authors.map(author => (
+                                                            <div
+                                                                key={author.id}
+                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                onClick={() => handleResultClick(author.id, 'authors')}
+                                                            >
+                                                                <div className="flex-shrink-0 w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center shadow-md">
+                                                                    {author.imgURL ? (
+                                                                        <img src={author.imgURL} className="w-14 h-14 object-cover rounded-full" />
+                                                                    ) : (
+                                                                        <span className="text-lg font-bold text-white">{author.name.charAt(0)}</span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="mr-4 flex-1">
+                                                                    <div className="text-base font-bold text-gray-900">{author.name}</div>
+                                                                    <div className="text-xs text-gray-600 mt-1 line-clamp-2">{truncateBio(author.bio)}</div>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="py-8 text-center text-gray-500">
+                                                            هیچ نووسەرێک نەدۆزرایەوە
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+
+                                            {!searchLoading && activeTab === 'users' && (
+                                                <>
+                                                    {results.users.length > 0 ? (
+                                                        results.users.map(user => (
+                                                            <div
+                                                                key={user.username}
+                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                onClick={() => handleResultClick(user.username, 'users')}
+                                                            >
+                                                                <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-indigo-500'}`}>
+                                                                    {user.coverImgURL ? (
+                                                                        <img src={user.coverImgURL} alt={user.username} className="w-12 h-12 object-cover rounded-full" />
+                                                                    ) : (
+                                                                        <span className="text-base font-bold text-white">{user.username.charAt(0)}</span>
+                                                                    )}
+                                                                </div>
+                                                                <div className="mr-4 flex-1">
+                                                                    <div className="text-base font-bold text-gray-900">{user.name}</div>
+                                                                    <div className="text-xs text-gray-500">@{user.username}</div>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="py-8 text-center text-gray-500">
+                                                            هیچ بەکارهێنەرێک نەدۆزرایەوە
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

@@ -18,9 +18,11 @@ const verifyAuth = (req, res) => {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN);
 
         const decodedAccessToken = jwt.decode(accessToken);
+        console.log(decodedAccessToken)
         return res.status(200).json({
             isAuthenticated: true,
             userId: decodedAccessToken?.id || null,
+            role: decodedAccessToken?.role || null
         });
     } catch (err) {
         console.error(err);

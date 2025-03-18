@@ -1,25 +1,49 @@
 import { useState, useEffect } from 'react';
-import { axiosInstance } from "../context/AxiosInstance";
+import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
 import DeleteConfirmationModal from '../Components/layout/DeleteConfirmationModal';
 import Select from 'react-select';
+import CommentDetailsModal from '../Components/layout/CommentDetailsModal';
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+import { genreOptions as helperGenreOptions } from "../Helpers/options";
+import { useNavigate } from "react-router-dom";
+import BookstoreNavigation from "../Components/layout/Navigation";
+import Footer from "../Components/layout/Footer";
+import LoadingUi from '../Components/my-ui/Loading';
 
 const AdminDashboard = () => {
+    const [loading, setLoading] = useState(true)
+    const navigate = useNavigate();
+    const { isAuthenticated, userRole } = useCheckAuth();
+
+    setTimeout(() => {
+        if (loading === true) {
+            return <LoadingUi />
+        } else {
+            setLoading(false)
+            if ((isAuthenticated === false) || (userRole == null || userRole !== 'admin')) {
+                navigate('/');
+            }
+        }
+    }, 3000);
+
     const [books, setBooks] = useState([]);
     const [authors, setAuthors] = useState([]);
     const [bookSeries, setBookSeries] = useState([]);
     const [news, setNews] = useState([]);
     const [quotes, setQuotes] = useState([]);
     const [users, setUsers] = useState([]);
-    const [activeTab, setActiveTab] = useState('books');
+    const [comments, setComments] = useState([]);
+    const [activeTab, setActiveTab] = useState('کتێب');
     const [showModal, setShowModal] = useState(false);
     const [modalMode, setModalMode] = useState('add');
     const [currentItem, setCurrentItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
-
-    const [genres, setGenres] = useState([]);
+    const [genres] = useState(helperGenreOptions.map(genre => (genre.value)));
     const [selectedAuthor, setSelectedAuthor] = useState(null);
     const [selectedAuthoQuote, setSelectedAuthorQuote] = useState(null);
     const [selectedBook, setSelectedBook] = useState(null);
+    const [selectedBookComments, setSelectedBookComments] = useState(null);
     const [selectedSeries, setSelectedSeries] = useState(null);
     const [selectedSeriesQuote, setSelectedSeriesQuote] = useState(null);
     const [selectedGenre, setSelectedGenre] = useState(null);
@@ -27,43 +51,123 @@ const AdminDashboard = () => {
     const [selectedLanguageAuthor, setSelectedLanguageAuthor] = useState(null);
     const [selectedRole, setSelectedRole] = useState(null);
     const [selectedState, setSelectedState] = useState(null);
-    const [dateRange, setDateRange] = useState({ start: '', end: '' });
+    const [isModalOpenComments, setIsModalOpenComments] = useState(false);
+    const [selectedComment, setSelectedComment] = useState(null);
+    const [addingbookgenre, setaddingbookgenre] = useState();
 
     useEffect(() => {
         const fetchbooks = async () => {
-            const res = await axiosInstance.get(`/booksdashboard/getallbooks`);
-            setBooks(res.data);
+            try {
+                const res = await axiosInstance.get(`/booksdashboard/getallbooks`);
+                if (res.status === 200) {
+                    setBooks(res.data);
+                } else if (res.status === 401) {
+                    toast.error("ڕێگەپێنەدراوە");
+                } else if (res.status === 404) {
+                    toast.error("هیچ کتێبێک نەدۆزرایەوە");
+                }
+            } catch {
+                setBooks([]);
+                toast.error("هەڵەیەک ڕوویدا تکایە هەوڵبدەوە");
+            }
         }
 
         const fetchauthors = async () => {
-            const res = await axiosInstance.get(`/authorsdashboard/getallauthors`);
-            setAuthors(res.data);
+            try {
+                const res = await axiosInstance.get(`/authorsdashboard/getallauthors`);
+                if (res.status === 200) {
+                    setAuthors(res.data);
+
+                } else if (res.status === 401) {
+                    toast.error("ڕێگەپێنەدراوە");
+                } else if (res.status === 404) {
+                    toast.error("هیچ نووسەرێک نەدۆزرایەوە");
+                }
+            } catch {
+                setAuthors([]);
+                toast.error("هەڵەیەک ڕوویدا تکایە هەوڵبدەوە");
+            }
         }
 
         const fetchbookSeries = async () => {
-            const res = await axiosInstance.get(`/seriesdashboard/getallseries`);
-            setBookSeries(res.data);
+            try {
+                const res = await axiosInstance.get(`/seriesdashboard/getallseries`);
+                if (res.status === 200) {
+                    setBookSeries(res.data);
+                } else if (res.status === 401) {
+                    toast.error("ڕێگەپێنەدراوە");
+                } else if (res.status === 404) {
+                    toast.error("هیچ زنجیرە کتێبێک نەدۆزرایەوە");
+                }
+            } catch {
+                setBookSeries([]);
+                toast.error("هەڵەیەک ڕوویدا تکایە هەوڵبدەوە");
+            }
         }
 
         const fetchnews = async () => {
-            const res = await axiosInstance.get(`/newsdashboard/getnews`);
-            setNews(res.data);
+            try {
+                const res = await axiosInstance.get(`/newsdashboard/getnews`);
+                if (res.status === 200) {
+                    setNews(res.data);
+                } else if (res.status === 401) {
+                    toast.error("ڕێگەپێنەدراوە");
+                } else if (res.status === 404) {
+                    toast.error("هیچ هەواڵێك نەدۆزرایەوە");
+                }
+            } catch {
+                setNews([]);
+                toast.error("هەڵەیەک ڕوویدا تکایە هەوڵبدەوە");
+            }
         }
 
         const fetchquotes = async () => {
-            const res = await axiosInstance.get(`/quotesdashboard/getquotes`);
-            setQuotes(res.data);
+            try {
+                const res = await axiosInstance.get(`/quotesdashboard/getquotes`);
+                if (res.status === 200) {
+                    setQuotes(res.data);
+                } else if (res.status === 401) {
+                    toast.error("ڕێگەپێنەدراوە");
+                } else if (res.status === 404) {
+                    toast.error("هیچ وتەیەک نەدۆزرایەوە");
+                }
+            } catch {
+                setQuotes([]);
+                toast.error("هەڵەیەک ڕوویدا تکایە هەوڵبدەوە");
+            }
         }
 
         const fetchusers = async () => {
-            const res = await axiosInstance.get(`/usersdashboard/getusers`);
-            setUsers(res.data);
+            try {
+                const res = await axiosInstance.get(`/usersdashboard/getusers`);
+                if (res.status === 200) {
+                    setUsers(res.data);
+                } else if (res.status === 401) {
+                    toast.error("ڕێگەپێنەدراوە");
+                } else if (res.status === 404) {
+                    toast.error("هیچ ئەندامێک نەدۆزرایەوە");
+                }
+            } catch {
+                setUsers([]);
+                toast.error("هەڵەیەک ڕوویدا تکایە هەوڵبدەوە");
+            }
         }
 
-        const fetchGenres = async () => {
-            setGenres(['ڕۆمان', 'شیعر', 'چیرۆک', 'فانتاسی', 'خەیاڵی', 'ڕۆمانس', 'ترسناک', 'نادیار']);
+        const fetchcomments = async () => {
+            try {
+                const res = await axiosInstance.get(`/commentsdashboard/getcomments`);
+                if (res.status === 200) {
+                    setComments(res.data);
+                } else if (res.status === 401) {
+                    toast.error("ڕێگەپێنەدراوە");
+                } else if (res.status === 404) {
+                    toast.error("هیچ هەڵسەنگاندنێک نەدۆزرایەوە");
+                }
+            } catch {
+                setComments([]);
+                toast.error("هەڵەیەک ڕوویدا تکایە هەوڵبدەوە");
+            }
         }
-
 
         fetchbooks();
         fetchauthors();
@@ -71,14 +175,14 @@ const AdminDashboard = () => {
         fetchnews();
         fetchquotes();
         fetchusers();
-        fetchGenres();
+        fetchcomments();
     }, [searchTerm, activeTab]);
 
     const filteredData = () => {
         let filtered = [];
 
         switch (activeTab) {
-            case 'books':
+            case 'کتێب':
                 filtered = books.filter(book =>
                     (searchTerm === '' ||
                         book.title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
@@ -89,7 +193,7 @@ const AdminDashboard = () => {
                     (!selectedLanguage || book.language?.includes(selectedLanguage.value))
                 );
                 break;
-            case 'authors':
+            case 'نووسەر':
                 filtered = authors.filter(author =>
                     (searchTerm === '' ||
                         author.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
@@ -97,7 +201,7 @@ const AdminDashboard = () => {
                     (!selectedLanguageAuthor || author.language?.includes(selectedLanguageAuthor.value))
                 );
                 break;
-            case 'bookSeries':
+            case 'زنجیرە کتێب':
                 filtered = bookSeries.filter(series =>
                     (searchTerm === '' ||
                         series.series_title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
@@ -105,16 +209,14 @@ const AdminDashboard = () => {
                     (!selectedState || series.state === selectedState.value)
                 );
                 break;
-            case 'news':
+            case 'هەواڵ':
                 filtered = news.filter(item =>
-                    (searchTerm === '' ||
-                        item.title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-                        String(item.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
-                    (!dateRange.start || new Date(item.created_at) >= new Date(dateRange.start)) &&
-                    (!dateRange.end || new Date(item.created_at) <= new Date(dateRange.end))
+                (searchTerm === '' ||
+                    item.title.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                    String(item.id).toLowerCase().includes(searchTerm.toLowerCase().trim()))
                 );
                 break;
-            case 'quotes':
+            case 'وتە':
                 filtered = quotes.filter(quote =>
                     (searchTerm === '' ||
                         quote.quote.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
@@ -125,7 +227,7 @@ const AdminDashboard = () => {
                     (!selectedBook || quote.book_id === selectedBook.value)
                 );
                 break;
-            case 'users':
+            case 'ئەندام':
                 filtered = users.filter(user =>
                     (searchTerm === '' ||
                         user.username.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
@@ -133,6 +235,15 @@ const AdminDashboard = () => {
                         user.name?.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
                         String(user.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
                     (!selectedRole || user.role === selectedRole.value)
+                );
+                break;
+            case 'هەڵسەنگاندن':
+                filtered = comments.filter(comment =>
+                    (searchTerm === '' ||
+                        comment.comment.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        comment.username.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+                        String(comment.id).toLowerCase().includes(searchTerm.toLowerCase().trim())) &&
+                    (!selectedBookComments || comment.book_id === selectedBookComments.value)
                 );
                 break;
             default:
@@ -177,31 +288,34 @@ const AdminDashboard = () => {
         try {
             let endpoint = '';
             let itemType = '';
-
             switch (activeTab) {
-                case 'books':
+                case 'کتێب':
                     endpoint = `/booksdashboard/removebook/${id}`;
-                    itemType = 'book';
+                    itemType = 'کتێبەکە';
                     break;
-                case 'authors':
+                case 'نووسەر':
                     endpoint = `/authorsdashboard/removeAuthor/${id}`;
-                    itemType = 'author';
+                    itemType = 'نووسەرەکە';
                     break;
-                case 'bookSeries':
+                case 'زنجیرە کتێب':
                     endpoint = `/seriesdashboard/removeseries/${id}`;
-                    itemType = 'series';
+                    itemType = 'زنجیرە کتێبەکە';
                     break;
-                case 'news':
+                case 'هەواڵ':
                     endpoint = `/newsdashboard/deletenews/${id}`;
-                    itemType = 'news article';
+                    itemType = 'هەوالەکە';
                     break;
-                case 'quotes':
+                case 'وتە':
                     endpoint = `/quotesdashboard/deleteqoute/${id}`;
-                    itemType = 'quote';
+                    itemType = 'وتەکە';
                     break;
-                case 'users':
+                case 'ئەندام':
                     endpoint = `/usersdashboard/deleteuser/${id}`;
-                    itemType = 'user';
+                    itemType = 'ئەندامەکە';
+                    break;
+                case 'هەڵسەنگاندن':
+                    endpoint = `/commentsdashboard/deletecomment/${id}`;
+                    itemType = 'هەڵسەنگاندنەکە';
                     break;
                 default:
                     break;
@@ -210,13 +324,13 @@ const AdminDashboard = () => {
             if (endpoint) {
                 const res = await axiosInstance.delete(endpoint);
                 if (res.status === 200) {
-                    console.log(`${itemType} deleted successfully`);
+                    toast.success(`${itemType} سڕایەوە`);
                 } else {
-                    console.error(`An error occurred while deleting the ${itemType}`);
+                    toast.error('هەلەیەک للە سرینەوە رویدا');
                 }
             }
-        } catch (error) {
-            console.error('Delete operation failed:', error);
+        } catch {
+            toast.error('هەلەیەک للە سرینەوە رویدا');
         } finally {
             closeModal();
         }
@@ -225,11 +339,11 @@ const AdminDashboard = () => {
     const ModalForm = () => {
         const [formData, setFormData] = useState(
             modalMode === 'edit' ? { ...currentItem } :
-                activeTab === 'books' ? { title: '', author_id: '', series_id: '', genre: '', part_num: '', language: '', description: '', published_date: '', rating: 1, page_count: '', views: 0 } :
-                    activeTab === 'authors' ? { name: '', bio: '', language: '', dateOfBirth: '', country: '', views: 0 } :
-                        activeTab === 'bookSeries' ? { series_title: '', state: '', description: '' } :
-                            activeTab === 'news' ? { title: '', description: '', views: 0 } :
-                                activeTab === 'quotes' ? { book_id: '', author_id: '', quote: '' } :
+                activeTab === 'کتێب' ? { title: '', author_id: '', series_id: '', genre: '', part_num: '', language: '', description: '', published_date: '', rating: 1, page_count: '', views: 0 } :
+                    activeTab === 'نووسەر' ? { name: '', bio: '', language: '', dateOfBirth: '', country: '', views: 0 } :
+                        activeTab === 'زنجیرە کتێب' ? { series_title: '', state: '', description: '' } :
+                            activeTab === 'هەواڵ' ? { title: '', description: '', views: 0 } :
+                                activeTab === 'وتە' ? { book_id: '', author_id: '', quote: '' } :
                                     { username: '', email: '', password_hash: '', role: 'user', name: '', bio: '' }
         );
 
@@ -237,6 +351,7 @@ const AdminDashboard = () => {
 
         const handleChange = (e) => {
             const { name, value, type, files } = e.target;
+            console.log(e.target)
             if (type === 'file' && files[0]) {
                 setFilePreview(URL.createObjectURL(files[0]));
                 setFormData({
@@ -288,12 +403,16 @@ const AdminDashboard = () => {
                 return books.filter(book =>
                     book.title.toLowerCase().includes(relationSearchTerm.toLowerCase())
                 );
+            } else if (activeRelationField === 'genre') {
+                return genres.filter(genre =>
+                    genre.toLowerCase().includes(relationSearchTerm.toLowerCase())
+                );
             }
             return [];
         };
 
         const handleFormSubmit = async () => {
-            if (modalMode === 'add' && activeTab === 'books') {
+            if (modalMode === 'add' && activeTab === 'کتێب') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append('title', formData.title);
@@ -315,15 +434,13 @@ const AdminDashboard = () => {
                     );
 
                     if (res.status === 200) {
-                        console.log('Book added successfully');
+                        toast.success('کتێبێک زیاکرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە زیادکردنی کتێبێک تکایە هەوڵبدەوە');
                 }
-            } else if (modalMode === 'edit' && activeTab === 'books') {
+            } else if (modalMode === 'edit' && activeTab === 'کتێب') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append("title", formData.title);
@@ -350,21 +467,17 @@ const AdminDashboard = () => {
                     );
 
                     if (res.status === 200) {
-                        console.log('Book added successfully');
+                        toast.success('کتێبەکە گۆڕدرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە گۆڕینی کتێبەکە تکایە هەوڵبدەوە');
                 }
             }
 
-            if (modalMode === 'add' && activeTab === 'authors') {
+            if (modalMode === 'add' && activeTab === 'نووسەر') {
                 try {
                     const formDataToSend = new FormData();
-                    console.log(formDataToSend);
-
                     formDataToSend.append('name', formData.name);
                     formDataToSend.append('bio', formData.bio);
                     formDataToSend.append('language', formData.language);
@@ -375,7 +488,6 @@ const AdminDashboard = () => {
                         formDataToSend.append('author_cover', formData.author_cover);
                     }
 
-
                     const res = await axiosInstance.post('/authorsdashboard/addAuthor', formDataToSend, {
                         headers: {
                             "Content-Type": "multipart/form-data"
@@ -383,15 +495,13 @@ const AdminDashboard = () => {
                     });
 
                     if (res.status === 200) {
-                        console.log('author added successfully');
+                        toast.success('نووسەرێک زیاکرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە زیادکردنی نووسەرێک تکایە هەوڵبدەوە');
                 }
-            } else if (modalMode === 'edit' && activeTab === 'authors') {
+            } else if (modalMode === 'edit' && activeTab === 'نووسەر') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append('name', formData.name);
@@ -409,21 +519,18 @@ const AdminDashboard = () => {
                         headers: {
                             "Content-Type": "multipart/form-data"
                         }
-                    }
-                    )
+                    })
 
                     if (res.status === 200) {
-                        console.log('author added successfully');
+                        toast.success('نووسەرەکە گۆڕدرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە گۆڕینی نووسەرەکە تکایە هەوڵبدەوە');
                 }
             }
 
-            if (modalMode === 'add' && activeTab === 'bookSeries') {
+            if (modalMode === 'add' && activeTab === 'زنجیرە کتێب') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append('title', formData.series_title);
@@ -441,15 +548,13 @@ const AdminDashboard = () => {
                     });
 
                     if (res.status === 200) {
-                        console.log('series added successfully');
+                        toast.success('زنجیرە کتێبێک زیاکرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە زیادکردنی زنجیرە کتێبێک تکایە هەوڵبدەوە');
                 }
-            } else if (modalMode === 'edit' && activeTab === 'bookSeries') {
+            } else if (modalMode === 'edit' && activeTab === 'زنجیرە کتێب') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append('title', formData.series_title);
@@ -465,21 +570,18 @@ const AdminDashboard = () => {
                         headers: {
                             "Content-Type": "multipart/form-data"
                         }
-                    }
-                    )
+                    })
 
                     if (res.status === 200) {
-                        console.log('series added successfully');
+                        toast.success('زنجیرە کتێبێک گۆڕدرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە گۆڕینی زنجیرە کتێبێک تکایە هەوڵبدەوە');
                 }
             }
 
-            if (modalMode === 'add' && activeTab === 'news') {
+            if (modalMode === 'add' && activeTab === 'هەواڵ') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append('title', formData.title);
@@ -495,16 +597,14 @@ const AdminDashboard = () => {
                     });
 
                     if (res.status === 200) {
-                        console.log('news added successfully');
+                        toast.success('هەواڵێك زیاکرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە زیادکردنی هەواڵێك تکایە هەوڵبدەوە');
                 }
 
-            } else if (modalMode === 'edit' && activeTab === 'news') {
+            } else if (modalMode === 'edit' && activeTab === 'هەواڵ') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append('title', formData.title);
@@ -522,43 +622,37 @@ const AdminDashboard = () => {
                     })
 
                     if (res.status === 200) {
-                        console.log('news added successfully');
+                        toast.success('هەواڵێك گۆڕدرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە گۆڕینی هەواڵێك تکایە هەوڵبدەوە');
                 }
             }
 
-            if (modalMode === 'add' && activeTab === 'quotes') {
+            if (modalMode === 'add' && activeTab === 'وتە') {
                 try {
                     const res = await axiosInstance.post('/quotesdashboard/addquote', formData);
                     if (res.status === 200) {
-                        console.log('quote added successfully');
+                        toast.success('وتەیەک زیاکرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە زیادکردنی وتەیەک تکایە هەوڵبدەوە');
                 }
-            } else if (modalMode === 'edit' && activeTab === 'quotes') {
+            } else if (modalMode === 'edit' && activeTab === 'وتە') {
                 try {
                     const res = await axiosInstance.patch(`/quotesdashboard/updatequote/${formData.id}`, formData);
                     if (res.status === 200) {
-                        console.log('quote added successfully');
+                        toast.success('وتەیەک گۆڕدرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە گۆڕینی وتەیەک تکایە هەوڵبدەوە');
                 }
             }
 
-            if (modalMode === 'add' && activeTab === 'users') {
+            if (modalMode === 'add' && activeTab === 'ئەندام') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append('username', formData.username);
@@ -577,16 +671,15 @@ const AdminDashboard = () => {
                             "Content-Type": "multipart/form-data"
                         }
                     });
+
                     if (res.status === 200) {
-                        console.log('user added successfully');
+                        toast.success('ئەدامێک زیاکرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە زیادکردنی ئەدامێک تکایە هەوڵبدەوە');
                 }
-            } else if (modalMode === 'edit' && activeTab === 'users') {
+            } else if (modalMode === 'edit' && activeTab === 'ئەندام') {
                 try {
                     const formDataToSend = new FormData();
                     formDataToSend.append('username', formData.username);
@@ -605,14 +698,13 @@ const AdminDashboard = () => {
                             "Content-Type": "multipart/form-data"
                         }
                     })
+
                     if (res.status === 200) {
-                        console.log('user added successfully');
+                        toast.success('ئەدامێک گۆڕدرا');
                         setShowModal(false);
-                    } else {
-                        console.error("res.data.error");
                     }
-                } catch (error) {
-                    console.error('Error adding book:', error);
+                } catch {
+                    toast.error('هەڵەیەک ڕوویدا لە گۆڕینی ئەدامێک تکایە هەوڵبدەوە');
                 }
             }
         };
@@ -620,9 +712,9 @@ const AdminDashboard = () => {
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-screen overflow-y-auto">
-                    <div className="flex justify-between items-center mb-6">
+                    <div dir='rtl' className={`flex justify-between items-center mb-6`}>
                         <h2 className="text-xl font-bold">
-                            {modalMode === 'add' ? `Add New ${activeTab.slice(0, -1)}` : `Edit ${activeTab.slice(0, -1)}`}
+                            {modalMode === 'add' ? `زیادکردن ${activeTab}` : `دەستکاریکردنی ${activeTab}`}
                         </h2>
                         <button
                             onClick={() => setShowModal(false)}
@@ -635,13 +727,14 @@ const AdminDashboard = () => {
                     </div>
 
                     <form onSubmit={handleFormSubmit}>
-                        {activeTab === 'books' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {activeTab === 'کتێب' && (
+                            <div dir='rtl' className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700">Title</label>
+                                    <label className="block text-sm font-medium text-gray-700">ناوی کتێب</label>
                                     <input
                                         type="text"
                                         name="title"
+                                        placeholder='ناوی کتێب بنووسە'
                                         value={formData.title || ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -650,14 +743,14 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Author</label>
+                                    <label className="block text-sm font-medium text-gray-700">نووسەر</label>
                                     <div className="relative">
                                         <input
                                             type="text"
                                             value={formData?.author_id || ''}
                                             onClick={() => handleRelationSearch('author_id')}
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                            placeholder="Search for author..."
+                                            placeholder="بە دوای نووسەر بگەڕی..."
                                             readOnly
                                             required
                                         />
@@ -669,8 +762,8 @@ const AdminDashboard = () => {
                                                         value={relationSearchTerm}
                                                         onChange={(e) => setRelationSearchTerm(e.target.value)}
                                                         className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                                        placeholder="Filter authors..."
                                                         autoFocus
+                                                        required
                                                     />
                                                 </div>
                                                 <ul className="max-h-60 overflow-auto">
@@ -690,16 +783,16 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Series</label>
+                                    <label className="block text-sm font-medium text-gray-700">زنجیرە کتێب</label>
                                     <div className="relative">
                                         <input
                                             type="text"
                                             value={formData.series_id || ''}
                                             onClick={() => handleRelationSearch('series_id')}
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                            placeholder="Search for series..."
+                                            placeholder="بە دوای زنجیرە کتێب بگەڕی..."
                                             readOnly
-                                            required
+                                            required={formData.part_num ? true : false}
                                         />
                                         {activeRelationField === 'series_id' && showRelationDropdown && (
                                             <div className="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
@@ -709,8 +802,8 @@ const AdminDashboard = () => {
                                                         value={relationSearchTerm}
                                                         onChange={(e) => setRelationSearchTerm(e.target.value)}
                                                         className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                                        placeholder="Filter series..."
                                                         autoFocus
+                                                        required
                                                     />
                                                 </div>
                                                 <ul className="max-h-60 overflow-auto">
@@ -730,31 +823,61 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Genre</label>
-                                    <input
-                                        type="text"
-                                        name="genre"
-                                        value={formData.genre || ''}
-                                        onChange={handleChange}
-                                        required
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                    />
+                                    <label className="block text-sm font-medium text-gray-700">چەشن</label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={formData.genre || ''}
+                                            onClick={() => handleRelationSearch('genre')}
+                                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                            placeholder="بە دوای چەشن بگەڕی..."
+                                            readOnly
+                                            required
+                                        />
+                                        {activeRelationField === 'genre' && showRelationDropdown && (
+                                            <div className="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                                                <div className="p-2">
+                                                    <input
+                                                        type="text"
+                                                        value={relationSearchTerm}
+                                                        onChange={(e) => setRelationSearchTerm(e.target.value)}
+                                                        className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                                                        autoFocus
+                                                        required
+                                                    />
+                                                </div>
+                                                <ul className="max-h-60 overflow-auto">
+                                                    {filteredRelations().map(genre => (
+                                                        <li
+                                                            key={genre}
+                                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                                            onClick={() => handleRelationSelect(genre, 'genre')}
+                                                        >
+                                                            {genre}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Part Number</label>
+                                    <label className="block text-sm font-medium text-gray-700">چەنەم بەشی زنجیرەکەیە (ئەگەر هەیە)</label>
                                     <input
                                         type="number"
                                         name="part_num"
                                         value={formData.part_num || ''}
                                         onChange={handleChange}
+                                        placeholder='بەشی زنجیرەکەیە بنووسە (ئارەزوومەندانایە)'
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         min="1"
+                                        required={formData.series_id ? true : false}
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Language</label>
+                                    <label className="block text-sm font-medium text-gray-700">زمان</label>
                                     <select
                                         name="language"
                                         value={formData.language || ''}
@@ -762,14 +885,14 @@ const AdminDashboard = () => {
                                         required
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                     >
-                                        <option value="">Select Language</option>
-                                        <option value="Kurdish">Kurdish</option>
-                                        <option value="English">English</option>
+                                        <option value="">زمانێک هەڵبژێرە</option>
+                                        <option value="Kurdish">کوردی</option>
+                                        <option value="English">ئینگلیزی</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Published Date</label>
+                                    <label className="block text-sm font-medium text-gray-700">بەرواری بڵاوکردنەوە</label>
                                     <input
                                         type="date"
                                         name="published_date"
@@ -779,7 +902,7 @@ const AdminDashboard = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Rating</label>
+                                    <label className="block text-sm font-medium text-gray-700">نمرە</label>
                                     <input
                                         type="number"
                                         name="rating"
@@ -792,12 +915,13 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Page Count</label>
+                                    <label className="block text-sm font-medium text-gray-700">ژمارەی پەڕە</label>
                                     <input
                                         type="number"
                                         name="page_count"
                                         value={formData.page_count || ''}
                                         required
+                                        placeholder='ژمارەی پەڕە بنووسە'
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         min="1"
@@ -805,19 +929,20 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                                    <label className="block text-sm font-medium text-gray-700">کورتە</label>
                                     <textarea
                                         name="description"
                                         value={formData.description || ''}
                                         onChange={handleChange}
                                         rows="4"
+                                        placeholder='کورتەیەک دەربارەی ئەم کتێبە بنووسە'
                                         required
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                     ></textarea>
                                 </div>
 
                                 <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700">Cover Image</label>
+                                    <label className="block text-sm font-medium text-gray-700">وێنە</label>
                                     <input
                                         type="file"
                                         name="cover_image"
@@ -838,13 +963,14 @@ const AdminDashboard = () => {
                             </div>
                         )}
 
-                        {activeTab === 'authors' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {activeTab === 'نووسەر' && (
+                            <div dir='rtl' className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700">Name</label>
+                                    <label className="block text-sm font-medium text-gray-700">ناو</label>
                                     <input
                                         type="text"
                                         name="name"
+                                        placeholder="ناوی نووسەر بنووسە"
                                         value={formData.name || ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -853,24 +979,27 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Language</label>
+                                    <label className="block text-sm font-medium text-gray-700">زمان</label>
                                     <select
                                         name="language"
                                         value={formData.language || ''}
+                                        required
+                                        placeholder='زمانی نووسەر بنووسە'
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                     >
-                                        <option value="">Select Language</option>
-                                        <option value="Kurdish">Kurdish</option>
-                                        <option value="English">English</option>
+                                        <option value="">زمانێک هەڵبژێرە</option>
+                                        <option value="Kurdish">کوردی</option>
+                                        <option value="English">ئینگلیزی</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                                    <label className="block text-sm font-medium text-gray-700">بەرواری لەدایکبوون</label>
                                     <input
                                         type="date"
                                         name="dateOfBirth"
+                                        required
                                         value={formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString().split('T')[0] : ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -878,10 +1007,12 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Country</label>
+                                    <label className="block text-sm font-medium text-gray-700">وڵات</label>
                                     <input
                                         type="text"
                                         name="country"
+                                        required
+                                        placeholder='وڵاتی نووسەر بنووسە'
                                         value={formData.country || ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -889,9 +1020,11 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700">Bio</label>
+                                    <label className="block text-sm font-medium text-gray-700">ژیاننامە</label>
                                     <textarea
                                         name="bio"
+                                        placeholder='ژیاننامەی نووسەر بنووسە'
+                                        required
                                         value={formData.bio || ''}
                                         onChange={handleChange}
                                         rows="4"
@@ -900,10 +1033,11 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700">Image</label>
+                                    <label className="block text-sm font-medium text-gray-700">وێنە</label>
                                     <input
                                         type="file"
                                         name="author_cover"
+                                        required
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
@@ -921,13 +1055,14 @@ const AdminDashboard = () => {
                             </div>
                         )}
 
-                        {activeTab === 'bookSeries' && (
-                            <div className="grid grid-cols-1 gap-4">
+                        {activeTab === 'زنجیرە کتێب' && (
+                            <div dir='rtl' className="grid grid-cols-1 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Series Title</label>
+                                    <label className="block text-sm font-medium text-gray-700">ناوی زنجیرە کتێب</label>
                                     <input
                                         type="text"
                                         name="series_title"
+                                        placeholder='ناوی زنجیرە کتێب بنووسە'
                                         value={formData.series_title || ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -936,23 +1071,26 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">State</label>
+                                    <label className="block text-sm font-medium text-gray-700">دۆخ</label>
                                     <select
                                         name="state"
+                                        required
                                         value={formData.state || ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                     >
-                                        <option value="">Select State</option>
+                                        <option value="">دۆخێک هەڵبژێرە</option>
                                         <option value="بەردەوامە">بەردەوامە</option>
                                         <option value="تەواوبوە">تەواوبوە</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                                    <label className="block text-sm font-medium text-gray-700">کورتە</label>
                                     <textarea
                                         name="description"
+                                        placeholder='کورتەی زنجیرە کتێب بنووسە'
+                                        required
                                         value={formData.description || ''}
                                         onChange={handleChange}
                                         rows="4"
@@ -961,10 +1099,11 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Cover Image</label>
+                                    <label className="block text-sm font-medium text-gray-700">وێنە</label>
                                     <input
                                         type="file"
                                         name="series_cover"
+                                        required
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
@@ -982,13 +1121,14 @@ const AdminDashboard = () => {
                             </div>
                         )}
 
-                        {activeTab === 'news' && (
-                            <div className="grid grid-cols-1 gap-4">
+                        {activeTab === 'هەواڵ' && (
+                            <div dir='rtl' className="grid grid-cols-1 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Title</label>
+                                    <label className="block text-sm font-medium text-gray-700">سەردێڕ</label>
                                     <input
                                         type="text"
                                         name="title"
+                                        placeholder='سەردێڕی هەواڵەکە بنووسە'
                                         value={formData.title || ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -997,24 +1137,27 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Description</label>
+                                    <label className="block text-sm font-medium text-gray-700">هەواڵەکە</label>
                                     <textarea
                                         name="description"
+                                        placeholder='زانیاری هەوالەکە بنووسە'
                                         value={formData.description || ''}
                                         onChange={handleChange}
                                         rows="8"
+                                        required
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                     ></textarea>
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Cover Image</label>
+                                    <label className="block text-sm font-medium text-gray-700">وێنە</label>
                                     <input
                                         type="file"
                                         name="news_cover"
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
+                                        required
                                     />
                                     {(filePreview || formData.cover_image) && (
                                         <div className="mt-2">
@@ -1029,18 +1172,19 @@ const AdminDashboard = () => {
                             </div>
                         )}
 
-                        {activeTab === 'quotes' && (
-                            <div className="grid grid-cols-1 gap-4">
+                        {activeTab === 'وتە' && (
+                            <div dir='rtl' className="grid grid-cols-1 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Book</label>
+                                    <label className="block text-sm font-medium text-gray-700">کتێب</label>
                                     <div className="relative">
                                         <input
                                             type="text"
                                             value={formData.book_id || ''}
                                             onClick={() => handleRelationSearch('book_id')}
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                            placeholder="Search for book..."
+                                            placeholder="بە دوای کتێبدا بگەڕی..."
                                             readOnly
+                                            required
                                         />
                                         {activeRelationField === 'book_id' && showRelationDropdown && (
                                             <div className="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
@@ -1050,7 +1194,6 @@ const AdminDashboard = () => {
                                                         value={relationSearchTerm}
                                                         onChange={(e) => setRelationSearchTerm(e.target.value)}
                                                         className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                                        placeholder="Filter books..."
                                                         autoFocus
                                                     />
                                                 </div>
@@ -1071,15 +1214,16 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Author</label>
+                                    <label className="block text-sm font-medium text-gray-700">نووسەر</label>
                                     <div className="relative">
                                         <input
                                             type="text"
                                             value={formData.author_id || ''}
                                             onClick={() => handleRelationSearch('author_id')}
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                            placeholder="Search for author..."
+                                            placeholder="بە دوای نووسەر بگەڕی..."
                                             readOnly
+                                            required
                                         />
                                         {activeRelationField === 'author_id' && showRelationDropdown && (
                                             <div className="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
@@ -1089,7 +1233,6 @@ const AdminDashboard = () => {
                                                         value={relationSearchTerm}
                                                         onChange={(e) => setRelationSearchTerm(e.target.value)}
                                                         className="block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                                                        placeholder="Filter authors..."
                                                         autoFocus
                                                     />
                                                 </div>
@@ -1110,12 +1253,13 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Quote</label>
+                                    <label className="block text-sm font-medium text-gray-700">وتەکە</label>
                                     <textarea
                                         name="quote"
                                         value={formData.quote || ''}
                                         onChange={handleChange}
                                         rows="4"
+                                        placeholder='وتەکە بنووسە '
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         required
                                     ></textarea>
@@ -1123,10 +1267,10 @@ const AdminDashboard = () => {
                             </div>
                         )}
 
-                        {activeTab === 'users' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {activeTab === 'ئەندام' && (
+                            <div dir='rtl' className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Username</label>
+                                    <label className="block text-sm font-medium text-gray-700">نازناو</label>
                                     <input
                                         type="text"
                                         name="username"
@@ -1134,11 +1278,12 @@ const AdminDashboard = () => {
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         required
+                                        placeholder='نازناو بنووسە'
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Email</label>
+                                    <label className="block text-sm font-medium text-gray-700">ئیمەیڵ</label>
                                     <input
                                         type="email"
                                         name="email"
@@ -1146,14 +1291,17 @@ const AdminDashboard = () => {
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                         required
+                                        placeholder='ئیمەیڵ بنووسە'
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Name</label>
+                                    <label className="block text-sm font-medium text-gray-700">ناو</label>
                                     <input
                                         type="text"
                                         name="name"
+                                        required
+                                        placeholder='ناو بنووسە'
                                         value={formData.name || ''}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -1161,24 +1309,25 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Role</label>
+                                    <label className="block text-sm font-medium text-gray-700">پلە</label>
                                     <select
                                         name="role"
                                         value={formData.role || 'user'}
                                         onChange={handleChange}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                                     >
-                                        <option value="user">User</option>
-                                        <option value="admin">Admin</option>
+                                        <option value="user">ئەندام</option>
+                                        <option value="admin">ئادمین</option>
                                     </select>
                                 </div>
 
                                 {modalMode === 'add' && (
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">Password</label>
+                                        <label className="block text-sm font-medium text-gray-700">وشەی نهێنی</label>
                                         <input
                                             type="password"
                                             name="password_hash"
+                                            placeholder='وشەی نهێنی بنووسە'
                                             value={formData.password_hash || ''}
                                             onChange={handleChange}
                                             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
@@ -1188,9 +1337,10 @@ const AdminDashboard = () => {
                                 )}
 
                                 <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700">Bio</label>
+                                    <label className="block text-sm font-medium text-gray-700">ژیاننامە</label>
                                     <textarea
                                         name="bio"
+                                        placeholder='ژیاننامە بنووسە'
                                         value={formData.bio || ''}
                                         onChange={handleChange}
                                         rows="4"
@@ -1199,7 +1349,7 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div className="col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700">Profile Image</label>
+                                    <label className="block text-sm font-medium text-gray-700">وێنە</label>
                                     <input
                                         type="file"
                                         name="profilepic"
@@ -1220,19 +1370,19 @@ const AdminDashboard = () => {
                             </div>
                         )}
 
-                        <div className="mt-6 flex justify-end space-x-3">
+                        <div dir='rtl' className="mt-6 flex flex-row-reverse justify-end space-x-3">
                             <button
                                 type="button"
                                 onClick={() => setShowModal(false)}
                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400"
                             >
-                                Cancel
+                                بگەڕێوە
                             </button>
                             <button
                                 type="submit"
                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                             >
-                                {modalMode === 'add' ? 'Add' : 'Update'}
+                                {modalMode === 'add' ? 'زیادکردن' : 'تازەکردنەوە'}
                             </button>
                         </div>
                     </form>
@@ -1246,35 +1396,41 @@ const AdminDashboard = () => {
     const booksOptions = books.map(book => ({ value: book.id, label: book.title }));
     const genreOptions = Array.isArray(genres) ? genres.map(genre => ({ value: genre, label: genre })) : [];
     const languageOptions = [
-        { value: '', label: 'all' },
-        { value: 'Kurdish', label: 'Kurdish' },
-        { value: 'English', label: 'English' }
+        { value: '', label: 'هەمووی' },
+        { value: 'Kurdish', label: 'کوردی' },
+        { value: 'English', label: 'ئینگلیزی' }
     ];
     const roleOptions = [
-        { value: 'user', label: 'User' },
-        { value: 'admin', label: 'Admin' }
+        { value: 'user', label: 'ئەندام' },
+        { value: 'admin', label: 'ئەدمین' }
     ];
     const seriesStateOptions = [
         { value: 'بەردەوامە', label: 'بەردەوامە' },
         { value: 'تەواوبوە', label: 'تەواوبوە' }
     ]
 
+    const seeDetails = (id) => {
+        const reviews = comments.filter(review => review.id === id);
+        setSelectedComment(reviews[0]);
+        setIsModalOpenComments(true);
+    };
+
     const renderTable = () => {
         const data = filteredData();
 
         switch (activeTab) {
-            case 'books':
+            case 'کتێب':
                 return (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cover</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Series</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئایدی</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وێنە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ناوی کتێب</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نووسەر</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">زنجیرەی</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کاتی زیادکردن</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کردارەکان</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -1294,26 +1450,26 @@ const AdminDashboard = () => {
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{book.title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{book?.title?.length > 25 ? `${book.title.slice(0, 25)}...` : book.title}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {book.name || 'Unknown'}
+                                        {book?.name?.length > 25 ? `${book.name.slice(0, 25)}...` : book.name || 'Unknown'}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {book.series_title || 'N/A'}
+                                        {book?.series_title?.length > 25 ? `${book.series_title.slice(0, 25)}...` : book.series_title || `نیەتی`}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(book.created_at).toLocaleDateString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => handleEdit(book)}
-                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                            className="text-green-600 hover:text-indigo-900 ml-3"
                                         >
-                                            Edit
+                                            گۆڕین
                                         </button>
                                         <button
                                             onClick={() => handleDelete(book.id)}
                                             className="text-red-600 hover:text-red-900"
                                         >
-                                            Delete
+                                            سڕینەوە
                                         </button>
                                     </td>
                                 </tr>
@@ -1322,17 +1478,17 @@ const AdminDashboard = () => {
                     </table>
                 );
 
-            case 'authors':
+            case 'نووسەر':
                 return (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Photo</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Books</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئایدی</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وێنە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ناوی نووسەر</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ژ.کتێب</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کاتی زیادکردن</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کردارەکان</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -1354,7 +1510,7 @@ const AdminDashboard = () => {
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{author.name}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{author?.name?.length > 30 ? `${author.name.slice(0, 30)}...` : author.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {author.totalbooks || 0}
                                         </td>
@@ -1362,15 +1518,15 @@ const AdminDashboard = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <button
                                                 onClick={() => handleEdit(author)}
-                                                className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                                className="text-green-600 hover:text-indigo-900 ml-3"
                                             >
-                                                Edit
+                                                گۆڕین
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(author.id)}
                                                 className="text-red-600 hover:text-red-900"
                                             >
-                                                Delete
+                                                سڕینەوە
                                             </button>
                                         </td>
                                     </tr>
@@ -1380,17 +1536,17 @@ const AdminDashboard = () => {
                     </table>
                 );
 
-            case 'bookSeries':
+            case 'زنجیرە کتێب':
                 return (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">state</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Books</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئایدی</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وێنە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ناوی زنجیرە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">دۆخ</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ژ.کتێب</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کردارەکان</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -1410,7 +1566,7 @@ const AdminDashboard = () => {
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{series.series_title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{series?.series_title?.length > 40 ? `${series.series_title.slice(0, 40)}...` : series.series_title}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{series.state}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {series.totalbooks || 0}
@@ -1418,15 +1574,15 @@ const AdminDashboard = () => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => handleEdit(series)}
-                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                            className="text-green-600 hover:text-indigo-900 ml-3"
                                         >
-                                            Edit
+                                            گۆرین
                                         </button>
                                         <button
                                             onClick={() => handleDelete(series.id)}
                                             className="text-red-600 hover:text-red-900"
                                         >
-                                            Delete
+                                            سڕینەوە
                                         </button>
                                     </td>
                                 </tr>
@@ -1435,17 +1591,17 @@ const AdminDashboard = () => {
                     </table>
                 );
 
-            case 'news':
+            case 'هەواڵ':
                 return (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئایدی</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وێنە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">سەردێڕ</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">بینەر</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کاتی زیادکردن</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کردارەکان</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -1465,21 +1621,21 @@ const AdminDashboard = () => {
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item?.title?.length > 50 ? `${item.title.slice(0, 50)}...` : item.title}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.views}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(item.created_at).toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => handleEdit(item)}
-                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                            className="text-green-600 hover:text-indigo-900 ml-3"
                                         >
-                                            Edit
+                                            گۆرین
                                         </button>
                                         <button
                                             onClick={() => handleDelete(item.id)}
                                             className="text-red-600 hover:text-red-900"
                                         >
-                                            Delete
+                                            سڕینەوە
                                         </button>
                                     </td>
                                 </tr>
@@ -1488,17 +1644,17 @@ const AdminDashboard = () => {
                     </table>
                 );
 
-            case 'quotes':
+            case 'وتە':
                 return (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book Cover</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quote</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئایدی</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وێنە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وتە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ناوی کتێب</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ناوی نووسەر</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کردارەکان</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -1524,23 +1680,23 @@ const AdminDashboard = () => {
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{quote.quote.length > 50 ? quote.quote.substring(0, 50) + '...' : quote.quote}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {books.find(b => b.id === quote.book_id)?.title || 'Unknown'}
+                                        {books.find(b => b.id === quote.book_id)?.title?.length > 20 ? books.find(b => b.id === quote.book_id)?.title.substring(0, 20) + '...' : books.find(b => b.id === quote.book_id)?.title || 'Unknown'}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                        {authors.find(a => a.id === quote.author_id)?.name || 'Unknown'}
+                                        {authors.find(a => a.id === quote.author_id)?.name?.length > 20 ? authors.find(a => a.id === quote.author_id)?.name.substring(0, 20) + '...' : authors.find(a => a.id === quote.author_id)?.name || 'Unknown'}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => handleEdit(quote)}
-                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                            className="text-green-600 hover:text-indigo-900 ml-3"
                                         >
-                                            Edit
+                                            گۆرین
                                         </button>
                                         <button
                                             onClick={() => handleDelete(quote.id)}
                                             className="text-red-600 hover:text-red-900"
                                         >
-                                            Delete
+                                            سرینەوە
                                         </button>
                                     </td>
                                 </tr>
@@ -1549,19 +1705,19 @@ const AdminDashboard = () => {
                     </table>
                 );
 
-            case 'users':
+            case 'ئەندام':
                 return (
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avatar</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئایدی</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وێنە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نازناو</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئیمەیڵ</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ناو</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">پلە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کاتی زیادکردن</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کردارەکان</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -1571,7 +1727,7 @@ const AdminDashboard = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex-shrink-0 h-10 w-10">
                                             {user.coverImgURL ? (
-                                                <img className="h-10 w-10 rounded-full" src={user.coverImgURL} alt={user.username} />
+                                                <img className="h-10 w-10 rounded-full" src={user.coverImgURL} />
                                             ) : (
                                                 <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1581,27 +1737,82 @@ const AdminDashboard = () => {
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.name || '-'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user?.username?.length > 25 ? user.username.substring(0, 25) + '...' : user.username}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email.length > 25 ? user.email.substring(0, 25) + '...' : user.email}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user?.name?.length > 15 ? user.name.substring(0, 15) + '...' : user.name || '-'}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}`}>
-                                            {user.role}
+                                            {user.role === 'admin' ? 'ئەدمین' : 'ئەندام'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(user.created_at).toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => handleEdit(user)}
-                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                            className="text-green-600 hover:text-indigo-900 ml-3"
                                         >
-                                            Edit
+                                            گۆرین
                                         </button>
                                         <button
                                             onClick={() => handleDelete(user.id)}
                                             className="text-red-600 hover:text-red-900"
                                         >
-                                            Delete
+                                            سرینەوە
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                );
+
+            case 'هەڵسەنگاندن':
+                return (
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئایدی</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وێنە</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نازناو</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ناوی کتێب</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ئایا سپۆیلەرە؟</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کاتی زیادکردن</th>
+                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">کردارەکان</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {data.sort((a, b) => b.id - a.id).map(user => (
+                                <tr key={user.id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.id}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex-shrink-0 h-10 w-10">
+                                            {user.coverImgURL ? (
+                                                <img className="h-10 w-10 rounded-full" src={user.coverImgURL} alt={user.username.slice(0, 2)} />
+                                            ) : (
+                                                <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.username.length > 20 ? `${user.username.slice(0, 20)}...` : user.username}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.title.length > 30 ? `${user.title.slice(0, 30)}...` : user.title}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.isSpoiler ? 'بەڵێ' : 'نەخێر'}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(user.created_at).toLocaleString()}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button
+                                            onClick={() => seeDetails(user.id)}
+                                            className="text-green-600 hover:text-indigo-900 ml-3"
+                                        >
+                                            بینینی زیاتر
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(user.id)}
+                                            className="text-red-600 hover:text-red-900"
+                                        >
+                                            سرینەوە
                                         </button>
                                     </td>
                                 </tr>
@@ -1611,273 +1822,282 @@ const AdminDashboard = () => {
                 );
 
             default:
-                return <div>No data available</div>;
+                return <div>هیچ داتایەک بەردەست نییە</div>;
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <header className="bg-white shadow">
-                <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-                </div>
-            </header>
+        <div>
+            <BookstoreNavigation />
+            <div dir='rtl' className="min-h-screen bg-gray-50 pt-20">
+                <header className="bg-white shadow">
+                    <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+                        <h1 className="text-3xl font-bold text-gray-900">داشبۆردی ئەدمین</h1>
+                    </div>
+                </header>
 
-            <DeleteConfirmationModal
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                onConfirm={confirmDelete}
-                itemType={
-                    activeTab === 'books'
-                        ? 'book'
-                        : activeTab === 'authors'
-                            ? 'author'
-                            : activeTab === 'bookSeries'
-                                ? 'series'
-                                : activeTab === 'news'
-                                    ? 'news article'
-                                    : activeTab === 'quotes'
-                                        ? 'quote'
-                                        : activeTab === 'users'
-                                            ? 'user'
-                                            : 'item'
-                }
-            />
+                <DeleteConfirmationModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    onConfirm={confirmDelete}
+                    itemType={
+                        activeTab === 'کتێب'
+                            ? 'کتێب'
+                            : activeTab === 'نووسەر'
+                                ? 'نووسەر'
+                                : activeTab === 'زنجیرە کتێب'
+                                    ? 'زنجیرە کتێب'
+                                    : activeTab === 'هەواڵ'
+                                        ? 'هەواڵ'
+                                        : activeTab === 'هەڵسەنگاندن'
+                                            ? 'هەڵسەنگاندن'
+                                            : activeTab === 'وتە'
+                                                ? 'وتە'
+                                                : activeTab === 'ئەندام'
+                                                    ? 'ئەندام'
+                                                    : 'item'
+                    }
+                />
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div className="mb-6 border-b border-gray-200">
-                    <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                        {['books', 'authors', 'bookSeries', 'news', 'quotes', 'users'].map(tab => (
-                            <button
-                                key={tab}
-                                onClick={() => {
-                                    setActiveTab(tab);
-                                    setSearchTerm('');
-                                }}
-                                className={`${activeTab === tab
-                                    ? 'border-indigo-500 text-indigo-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize`}
-                            >
-                                {tab === 'bookSeries' ? 'Book Series' : tab}
-                            </button>
-                        ))}
-                    </nav>
-                </div>
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="mb-6 border-b border-gray-200">
+                        <nav className="-mb-px flex gap-x-6" aria-label="Tabs">
+                            {['کتێب', 'نووسەر', 'زنجیرە کتێب', 'هەواڵ', 'وتە', 'هەڵسەنگاندن', 'ئەندام'].map(tab => (
+                                <button
+                                    key={tab}
+                                    onClick={() => {
+                                        setActiveTab(tab);
+                                        setSearchTerm('');
+                                    }}
+                                    className={`${activeTab === tab
+                                        ? 'border-indigo-500 text-indigo-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                        } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize`}
+                                >
+                                    {tab === 'زنجیرە کتێب' ? 'زنجیرە کتێب' : tab}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
 
-                {(() => {
-                    switch (activeTab) {
-                        case 'books':
-                            return (
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
-                                        <Select
-                                            isClearable
-                                            options={authorOptions}
-                                            value={selectedAuthor}
-                                            onChange={setSelectedAuthor}
-                                            placeholder="Filter by author"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Series</label>
-                                        <Select
-                                            isClearable
-                                            options={seriesOptions}
-                                            value={selectedSeries}
-                                            onChange={setSelectedSeries}
-                                            placeholder="Filter by series"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
-                                        <Select
-                                            isClearable
-                                            options={genreOptions}
-                                            value={selectedGenre}
-                                            onChange={setSelectedGenre}
-                                            placeholder="Filter by genre"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">language</label>
-                                        <Select
-                                            isClearable
-                                            options={languageOptions}
-                                            value={selectedLanguage}
-                                            onChange={setSelectedLanguage}
-                                            placeholder="Filter by genre"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        case 'authors':
-                            return (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">language</label>
-                                        <Select
-                                            isClearable
-                                            options={languageOptions}
-                                            value={selectedLanguageAuthor}
-                                            onChange={setSelectedLanguageAuthor}
-                                            placeholder="Filter by genre"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        case 'bookSeries':
-                            return (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">series state</label>
-                                        <Select
-                                            isClearable
-                                            options={seriesStateOptions}
-                                            value={selectedState}
-                                            onChange={setSelectedState}
-                                            placeholder="Filter by series state"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        case 'news':
-                            return (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <input
-                                                type="date"
-                                                value={dateRange.start}
-                                                onChange={(e) => setDateRange({ ...dateRange, start: e.target.value })}
-                                                className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2"
+                    {(() => {
+                        switch (activeTab) {
+                            case 'کتێب':
+                                return (
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">نووسەر</label>
+                                            <Select
+                                                isClearable
+                                                options={authorOptions}
+                                                value={selectedAuthor}
+                                                onChange={setSelectedAuthor}
+                                                placeholder="گەڕان بە ناوی نووسەر"
+                                                className="basic-single"
+                                                classNamePrefix="select"
                                             />
-                                            <input
-                                                type="date"
-                                                value={dateRange.end}
-                                                onChange={(e) => setDateRange({ ...dateRange, end: e.target.value })}
-                                                className="w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 px-3 py-2"
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">زنجیرە</label>
+                                            <Select
+                                                isClearable
+                                                options={seriesOptions}
+                                                value={selectedSeries}
+                                                onChange={setSelectedSeries}
+                                                placeholder="گەڕان بە ناوی زنجیرە"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">چەشن</label>
+                                            <Select
+                                                isClearable
+                                                options={genreOptions}
+                                                value={selectedGenre}
+                                                onChange={setSelectedGenre}
+                                                placeholder="گەڕان بە چەشن"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">زمان</label>
+                                            <Select
+                                                isClearable
+                                                options={languageOptions}
+                                                value={selectedLanguage}
+                                                onChange={setSelectedLanguage}
+                                                placeholder="گەڕان بە زمان"
+                                                className="basic-single"
+                                                classNamePrefix="select"
                                             />
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        case 'quotes':
-                            return (
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
-                                        <Select
-                                            isClearable
-                                            options={authorOptions}
-                                            value={selectedAuthoQuote}
-                                            onChange={setSelectedAuthorQuote}
-                                            placeholder="Filter by author"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
+                                );
+                            case 'نووسەر':
+                                return (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">زمان</label>
+                                            <Select
+                                                isClearable
+                                                options={languageOptions}
+                                                value={selectedLanguageAuthor}
+                                                onChange={setSelectedLanguageAuthor}
+                                                placeholder="گەڕان بە زمان"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Book</label>
-                                        <Select
-                                            isClearable
-                                            options={booksOptions}
-                                            value={selectedBook}
-                                            onChange={setSelectedBook}
-                                            placeholder="Filter by series"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
+                                );
+                            case 'زنجیرە کتێب':
+                                return (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">دۆخ</label>
+                                            <Select
+                                                isClearable
+                                                options={seriesStateOptions}
+                                                value={selectedState}
+                                                onChange={setSelectedState}
+                                                placeholder="گەڕان بە دۆخی زنجیرە"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Book Series</label>
-                                        <Select
-                                            isClearable
-                                            options={seriesOptions}
-                                            value={selectedSeriesQuote}
-                                            onChange={setSelectedSeriesQuote}
-                                            placeholder="Filter by series"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
+                                );
+                            case 'وتە':
+                                return (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">نوسەر</label>
+                                            <Select
+                                                isClearable
+                                                options={authorOptions}
+                                                value={selectedAuthoQuote}
+                                                onChange={setSelectedAuthorQuote}
+                                                placeholder="گەڕان بە ناوی نووسەر"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">کتێب</label>
+                                            <Select
+                                                isClearable
+                                                options={booksOptions}
+                                                value={selectedBook}
+                                                onChange={setSelectedBook}
+                                                placeholder="گەڕان بە ناوی نووسەر"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">زنجیرە</label>
+                                            <Select
+                                                isClearable
+                                                options={seriesOptions}
+                                                value={selectedSeriesQuote}
+                                                onChange={setSelectedSeriesQuote}
+                                                placeholder="گەڕان بە ناوی زنجیرە"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        case 'users':
-                            return (
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                                        <Select
-                                            isClearable
-                                            options={roleOptions}
-                                            value={selectedRole}
-                                            onChange={setSelectedRole}
-                                            placeholder="Filter by role"
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                        />
+                                );
+                            case 'ئەندام':
+                                return (
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">پلە</label>
+                                            <Select
+                                                isClearable
+                                                options={roleOptions}
+                                                value={selectedRole}
+                                                onChange={setSelectedRole}
+                                                placeholder="گەڕان بە پلە"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        default:
-                            return null;
-                    }
-                })()}
+                                );
+                            case 'هەڵسەنگاندن':
+                                return (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">کتێب</label>
+                                            <Select
+                                                isClearable
+                                                options={booksOptions}
+                                                value={selectedBookComments}
+                                                onChange={setSelectedBookComments}
+                                                placeholder="گەڕان بە ناوی کتێب"
+                                                className="basic-single"
+                                                classNamePrefix="select"
+                                            />
+                                        </div>
+                                    </div>
+                                )
+                            default:
+                                return null;
+                        }
+                    })()}
 
-                <div className="flex flex-col md:flex-row md:justify-between mb-6 space-y-4 md:space-y-0">
-                    <div className="w-full md:w-1/3">
-                        <div className="relative">
-                            <input
-                                type="text"
-                                placeholder={`Search ${activeTab === 'bookSeries' ? 'by series title or ID' : activeTab === 'users' ? 'by name or username or email or ID' : activeTab === 'news' ? 'by title or ID' : activeTab === 'quotes' ? 'by quote or ID' : activeTab === 'authors' ? 'by name or ID' : 'by Title or ID'}`}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                            />
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
+                    <div className="flex flex-col md:flex-row md:justify-between mb-6 space-y-4 md:space-y-0">
+                        <div className="w-full md:w-1/3">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder={`گەڕان بە ${activeTab === 'زنجیرە کتێب' ? 'ناوی زنجیرە یان ئایدی' : activeTab === 'ئەندام' ? 'ناو یان نازناو یان ئیمەیڵ' :
+                                        activeTab === 'هەوال' ? 'سەردێر یان ئایدی' : activeTab === 'وتە' ? 'وتەکە یان ئایدی' :
+                                            activeTab === 'نووسەر' ? 'ناو یان ئایدی' : activeTab === 'هەڵسەنگاندن' ? 'نازناو یان ئایدی' : 'ناو یان ئایدی'}`}
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                />
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                </div>
                             </div>
+                        </div>
+
+                        <div className={`${activeTab === 'هەڵسەنگاندن' ? 'hidden' : ''}`}>
+                            <button
+                                onClick={handleAdd}
+                                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                </svg>
+                                زیادکردنی {activeTab}
+                            </button>
                         </div>
                     </div>
 
-                    <div>
-                        <button
-                            onClick={handleAdd}
-                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            Add New {activeTab.slice(0, -1)}
-                        </button>
+                    <div className="bg-white shadow overflow-hidden rounded-lg">
+                        <div className="overflow-x-auto">
+                            {renderTable()}
+                        </div>
                     </div>
-                </div>
+                </main>
 
-                <div className="bg-white shadow overflow-hidden rounded-lg">
-                    <div className="overflow-x-auto">
-                        {renderTable()}
-                    </div>
-                </div>
-            </main>
-
-            {showModal && <ModalForm />}
+                <CommentDetailsModal
+                    isOpen={isModalOpenComments}
+                    onClose={() => setIsModalOpenComments(false)}
+                    comment={selectedComment}
+                />
+                {showModal && <ModalForm />}
+                <ToastContainer transition={Slide} />
+            </div>
+            <Footer />
         </div>
     );
 };

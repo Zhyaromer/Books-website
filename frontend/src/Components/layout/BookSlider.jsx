@@ -38,7 +38,7 @@ const BookSlider = ({ data }) => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg pt-20">
+    <div className="w-full max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
       <div className="relative mb-8">
         <div className="overflow-hidden">
           <div

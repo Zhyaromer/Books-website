@@ -46,12 +46,17 @@ axiosInstance.interceptors.request.use(async req => {
 
 const useCheckAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const res = await axiosInstance.get('/auth/verifyAuth');
         if (res.status === 200 && res.data.isAuthenticated) {
           setIsAuthenticated(true);
+        }
+
+        if (res.status === 200 && res.data.role) {
+          setUserRole(res.data.role);
         }
       } catch (error) {
         setIsAuthenticated(false);
@@ -61,7 +66,7 @@ const useCheckAuth = () => {
     checkAuth();
   }, [isAuthenticated]);
 
-  return { isAuthenticated, setIsAuthenticated }; 
+  return { isAuthenticated, setIsAuthenticated, userRole };
 };
 
 const logout = async (setIsAuthenticated) => {

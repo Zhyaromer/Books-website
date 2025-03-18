@@ -8,6 +8,7 @@ const { upload, getFilePath } = createUploader("book_cover", {
 
 const addNewBook = async (req, res) => {
     const { title, author_id, series_id, part_num, language, published_date, page_count, description, genre } = req.body;
+    console.log(req.body)
     if (!req.file) {
         return res.status(400).json({ message: 'No cover image uploaded' });
     }

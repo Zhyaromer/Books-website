@@ -37,7 +37,7 @@ const Main = () => {
     const [getquotes, setquotes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
 
     useEffect(() => {
         const fetchAllData = async () => {
@@ -95,7 +95,9 @@ const Main = () => {
             ) : (
                 <div>
                     <BookstoreNavigation />
-                    <BookSlider data={sliderbooks} />
+                    <div className="pt-20">
+                        <BookSlider data={sliderbooks} />
+                    </div>
                     <BookCardMain data={kurdishbooks} text="نوێترین کتێبە کوردیەکان" path="/books?language=Kurdish" />
                     <BookCardMain data={englishbooks} text="نوێترین کتێبە ئینگلیزیەکان" path="/books?language=English" />
                     <BookCardMain data={trendingbooks} text="کتێبی تریندینگ" path="/Books" />

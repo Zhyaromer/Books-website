@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 
 /**
- * Creates a multer upload middleware configured for a specific upload type
+ * a multer upload middleware configured for a specific upload type
  * 
  * @param {string} folderName - The subfolder name to store files in (e.g., 'profilepic', 'book_cover')
  * @param {object} options - Configuration options
