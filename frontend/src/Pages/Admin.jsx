@@ -53,7 +53,6 @@ const AdminDashboard = () => {
     const [selectedState, setSelectedState] = useState(null);
     const [isModalOpenComments, setIsModalOpenComments] = useState(false);
     const [selectedComment, setSelectedComment] = useState(null);
-    const [addingbookgenre, setaddingbookgenre] = useState();
 
     useEffect(() => {
         const fetchbooks = async () => {
@@ -351,7 +350,6 @@ const AdminDashboard = () => {
 
         const handleChange = (e) => {
             const { name, value, type, files } = e.target;
-            console.log(e.target)
             if (type === 'file' && files[0]) {
                 setFilePreview(URL.createObjectURL(files[0]));
                 setFormData({

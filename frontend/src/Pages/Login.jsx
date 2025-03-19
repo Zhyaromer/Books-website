@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
-import { axiosInstance,useCheckAuth } from "../context/AxiosInstance";
+import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
+import { toast } from 'react-toastify';
 
 const KurdishLoginForm = () => {
-    const {isAuthenticated} = useCheckAuth();
-    console.log(isAuthenticated);
+    const { isAuthenticated } = useCheckAuth();
     if (isAuthenticated === true) {
         window.location.href = '/';
     }
@@ -32,7 +32,6 @@ const KurdishLoginForm = () => {
         }, { withCredentials: true })
             .then(response => {
                 if (response.status === 200) {
-                    console.log(response.data);
                     const token = response.data.token;
                     const userId = response.data.userId;
                     localStorage.setItem('token', token);
@@ -40,8 +39,8 @@ const KurdishLoginForm = () => {
                     window.location.href = '/';
                 }
             })
-            .catch(error => {
-                console.error(error);
+            .catch(_ => {
+                toast.error('هەڵەیەک ڕوویدا تکایە هەوڵبدەوە');
             });
     };
 

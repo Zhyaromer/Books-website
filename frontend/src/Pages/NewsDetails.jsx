@@ -1,38 +1,37 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import LoadingUi from "@/Components/my-ui/Loading";
 import { Eye, Calendar } from 'lucide-react';
 import LatestNewsCard from '../Components/layout/LatestNewsCard';
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+import { axiosInstance } from "../context/AxiosInstance";
 
 const NewsDetails = () => {
   const { id } = useParams();
   const [news, setNews] = useState(null);
   const [latestNews, setLatestNews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setError(null);
 
-        const res1 = await axios.get(`http://localhost:3000/news/getNewsById/${id}`);
-        const res2 = await axios.get('http://localhost:3000/news/getnewestnews');
+        const res1 = await axiosInstance.get(`http://localhost:3000/news/getNewsById/${id}`);
+        const res2 = await axiosInstance.get('http://localhost:3000/news/getnewestnews');
 
         if (res1.status === 200 && res2.status === 200) {
           setNews(res1.data);
           setLoading(false);
           const filteredNews = res2.data.filter(item => item.id !== parseInt(id));
           setLatestNews(filteredNews);
-          await axios.get(`http://localhost:3000/news/incrementnewsview/${id}`);
+          await axiosInstance.get(`http://localhost:3000/news/incrementnewsview/${id}`);
         }
-      } catch (err) {
-        console.error('Error details:', err);
-        setError(err.message);
+      } catch {
+        toast.error('something went wrong');
       } finally {
         setLoading(false);
       }
@@ -107,6 +106,7 @@ const NewsDetails = () => {
         </div>
       )}
       <Footer />
+      <ToastContainer transition={Slide} />
     </div>
   );
 };

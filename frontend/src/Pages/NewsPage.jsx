@@ -3,9 +3,11 @@ import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import LoadingUi from "@/Components/my-ui/Loading";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import Pagination from "../Components/my-ui/Pagination";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+import { axiosInstance } from "../context/AxiosInstance";
 
 const NewsPage = () => {
   const [news, setNews] = useState([]);
@@ -49,7 +51,7 @@ const NewsPage = () => {
     const fetchNews = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `http://localhost:3000/news/getallnews?category=${category || ''}&sorting=${sort || ''}&page=${currentPage}&limit=${newsPerPage}`
         );
 
@@ -62,8 +64,8 @@ const NewsPage = () => {
           setTotalNews(response.data.length);
           setTotalPages(Math.ceil(response.data.length / newsPerPage));
         }
-      } catch (error) {
-        console.error(error);
+      } catch {
+        toast.error('هەڵەیەک ڕوویدا تکایە هەوڵبدەوە');
         setNews([]);
         setTotalNews(0);
         setTotalPages(1);
@@ -107,6 +109,8 @@ const NewsPage = () => {
           </div>
         </>
       )}
+
+      <ToastContainer transition={Slide} />
     </div>
   );
 };

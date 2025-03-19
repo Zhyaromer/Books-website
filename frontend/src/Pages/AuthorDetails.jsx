@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
 import LoadingUi from '../Components/my-ui/Loading';
 import DetailedBookCard from '../Components/layout/DetailedBookCard';
+import { axiosInstance } from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const AuthorDetails = () => {
   const { id } = useParams();
@@ -20,18 +22,21 @@ const AuthorDetails = () => {
     const fetchAuthor = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:3000/authors/getAuthorById/${id}`, { signal });
-
+        const response = await axiosInstance.get(`http://localhost:3000/authors/getAuthorById/${id}`, { signal });
         if (response.data && response.data.author && response.data.books) {
           setAuthor(response.data.author[0] || null);
           setBooks(response.data.books || []);
         } else {
+          toast.error(response.data.message)
           setAuthor(null);
           setBooks([]);
         }
       } catch (error) {
+        toast.error(error.response.data.message)
+        if (error.response.status === 404) {
+          navigate('/404');
+        }
         if (error.name !== 'CanceledError') {
-          console.error(error);
           setAuthor(null);
           setBooks([]);
         }
@@ -42,9 +47,9 @@ const AuthorDetails = () => {
 
     const incrementViewCount = async () => {
       try {
-        await axios.get(`http://localhost:3000/authors/incrementauthorview/${id}`);
-      } catch (error) {
-        console.error('Failed to increment view count', error);
+        await axiosInstance.get(`http://localhost:3000/authors/incrementauthorview/${id}`);
+      } catch {
+        // silent ignore
       }
     }
 
@@ -104,10 +109,11 @@ const AuthorDetails = () => {
             </div>
           </div>
 
-          <DetailedBookCard books={books} author={author.name} />
+          <DetailedBookCard books={books} endpoint='author' author={author.name} />
         </div>
       </div>
       <Footer />
+      <ToastContainer transition={Slide} />
     </div>
   );
 };

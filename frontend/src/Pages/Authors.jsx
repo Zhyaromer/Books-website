@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import AuthorCard from "../Components/layout/AuthordetailsCard";
-import axios from "axios";
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import { sortOptionsAuthors, languageOptions } from "../Helpers/options";
@@ -8,6 +7,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Pagination from "../Components/my-ui/Pagination";
 import FilterSection from "../Components/my-ui/FilterSection";
 import LoadingUi from '../Components/my-ui/Loading';
+import 'react-toastify/dist/ReactToastify.css'
+import { axiosInstance } from "../context/AxiosInstance";
 
 const Authors = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -74,7 +75,7 @@ const Authors = () => {
         const foundLanguage = languageOptions.find(option => option.value === languageParam);
         setLanguage(foundLanguage?.value);
 
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `http://localhost:3000/authors/getallauthors?language=${foundLanguage?.value || languageParam || ''}&sorting=${Sort || ''}&page=${currentPage}&limit=${authorsPerPage}`,
           { signal }
         );
@@ -89,8 +90,7 @@ const Authors = () => {
           setTotalPages(Math.ceil(response.data.length / authorsPerPage));
         }
       } catch (error) {
-        if (!axios.isCancel(error)) {
-          console.error(error);
+        if (!axiosInstance.isCancel(error)) {
           setAuthors([]);
           setTotalAuthors(0);
           setTotalPages(1);

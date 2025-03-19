@@ -80,7 +80,6 @@ const BookDetail = () => {
   const handleDeleteReview = async (delId) => {
     try {
       const res = await axiosInstance.delete(`/user/removeReview/${delId}`);
-
       const updatedComments = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
       setComments(updatedComments.data);
     } catch (error) {

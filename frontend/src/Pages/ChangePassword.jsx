@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Lock, Eye, EyeOff, Check } from 'lucide-react';
 import { axiosInstance } from "../context/AxiosInstance";
 import { useParams } from 'react-router-dom';
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const PasswordResetPage = () => {
     const { token } = useParams();
@@ -15,7 +17,6 @@ const PasswordResetPage = () => {
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [resetSuccess, setResetSuccess] = useState(false);
-    const [resetError, setResetError] = useState('');
 
     const validationRules = [
         { id: 'length', label: 'لانیکەم ٨ پیت', test: pwd => pwd.length >= 8 },
@@ -54,20 +55,17 @@ const PasswordResetPage = () => {
         }
 
         setIsSubmitting(true);
-        setResetError('');
-
         try {
             const res = await axiosInstance.post('/auth/resetPassword', { token: formData.token, password: formData.password, confirmPassword: formData.confirmPassword });
 
             if (res.status === 200) {
-                console.log('Password reset successfully');
+                toast.success('Password reset successfully');
             } else {
-                console.error(res.data.error);
                 throw new Error('Password reset failed');
             }
             setResetSuccess(true);
-        } catch (error) {
-            setResetError(error.response.data.error);
+        } catch {
+           toast.error('Password reset failed');
         } finally {
             setIsSubmitting(false);
         }
@@ -118,12 +116,6 @@ const PasswordResetPage = () => {
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {resetError && (
-                            <div className="bg-red-50 p-3 rounded-md text-red-700 text-center">
-                                {resetError}
-                            </div>
-                        )}
-
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                                 وشەی نهێنی نوێ
@@ -209,6 +201,7 @@ const PasswordResetPage = () => {
                     </form>
                 )}
             </div>
+            <ToastContainer transition={Slide} />
         </div>
     );
 };

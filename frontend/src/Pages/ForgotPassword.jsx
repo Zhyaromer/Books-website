@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Lock, Send } from 'lucide-react';
 import {axiosInstance} from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -13,16 +15,14 @@ const ForgotPassword = () => {
     console.log(res.data);
     if (res.status === 200) {
       setIsSubmitted(true);
-      console.log('Email sent successfully');
+      toast.success('Email sent successfully');
     } else if (res.status === 400) {
-      console.log(res.data.error);
+      toast.error('bad request');
     } else if (res.status === 404) {
-      console.log(res.data.error);
-    } else {
-      console.log(res.data.error);
-    }
-   } catch (error) {
-    console.error(error);
+      toast.error('not found');
+    } 
+   } catch {
+    toast.error('something went wrong');
    }
   };
 
@@ -90,6 +90,7 @@ const ForgotPassword = () => {
           </a>
         </div>
       </div>
+      <ToastContainer transition={Slide} />
     </div>
   );
 };

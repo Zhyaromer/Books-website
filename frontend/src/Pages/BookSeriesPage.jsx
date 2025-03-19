@@ -1,11 +1,11 @@
 import SeriesCard from "../Components/layout/SeriesCard";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import { useNavigate } from 'react-router-dom';
 import Pagination from "../Components/my-ui/Pagination";
 import { useLocation } from 'react-router-dom';
+import { axiosInstance } from "../context/AxiosInstance";
 
 const BookSeriesPage = () => {
   const navigate = useNavigate();
@@ -37,18 +37,20 @@ const BookSeriesPage = () => {
   useEffect(() => {
     const fetchBookSeries = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/bookseries/getAllBookSeries?page=${currentPage}&limit=${seriesPerPage}`);
-        console.log(res.data);
+        const res = await axiosInstance.get(`http://localhost:3000/bookseries/getAllBookSeries?page=${currentPage}&limit=${seriesPerPage}`);
         if (res.data && res.status === 200) {
           setBookSeries(res.data.bookseries);
           setTotalPages(Math.ceil((res.data.total || 0) / seriesPerPage));
           setSeriesLength(res.data.total);
         } else {
           setBookSeries([]);
+          setTotalPages(0);
+          setSeriesLength(0);
         }
-      } catch (error) {
-        console.error(error);
+      } catch {
         setBookSeries([]);
+        setTotalPages(0);
+        setSeriesLength(0);
       }
     }
 

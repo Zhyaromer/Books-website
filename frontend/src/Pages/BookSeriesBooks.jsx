@@ -1,24 +1,25 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
 import LoadingUi from '../Components/my-ui/Loading';
 import DetailedBookCard from '../Components/layout/DetailedBookCard';
 import { Card } from "@/Components/ui/card";
 import { BookOpen } from "lucide-react";
+import { axiosInstance } from "../context/AxiosInstance";
 
 const BookSeriesBooks = () => {
     const { id } = useParams();
     const [books, setBooks] = useState([]);
+    const navigate = useNavigate();
     const [series, setSeries] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    
     useEffect(() => {
         const fetchBooks = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`http://localhost:3000/bookseries/getBookSeriesById/${id}`);
+                const response = await axiosInstance.get(`http://localhost:3000/bookseries/getBookSeriesById/${id}`);
                 if (response.data && response.status === 200) {
                     setBooks(response.data.books);
                     setSeries(response?.data?.series);
@@ -26,8 +27,11 @@ const BookSeriesBooks = () => {
                     setBooks([]);
                 }
             } catch (error) {
-                console.error(error);
+                if (error.response.status === 404) {
+                    navigate('/404');
+                  }
                 setBooks([]);
+                setSeries([]);
             } finally {
                 setLoading(false);
             }
