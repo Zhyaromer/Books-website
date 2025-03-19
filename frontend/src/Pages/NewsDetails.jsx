@@ -30,8 +30,8 @@ const NewsDetails = () => {
           setLatestNews(filteredNews);
           await axiosInstance.get(`http://localhost:3000/news/incrementnewsview/${id}`);
         }
-      } catch {
-        toast.error('something went wrong');
+      } catch (error) {
+        toast.error(error.response.data.message || "Something went wrong");
       } finally {
         setLoading(false);
       }

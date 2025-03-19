@@ -3,7 +3,9 @@ import BookCardMain from "../Components/layout/BookCardMain";
 import Footer from "../Components/layout/Footer";
 import LoadingUi from "@/Components/my-ui/Loading";
 import { useState, useEffect } from "react";
-import {axiosInstance} from "../context/AxiosInstance";
+import { axiosInstance } from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Suggestions = () => {
     const [books, setBooks] = useState([]);
@@ -20,8 +22,8 @@ const Suggestions = () => {
                 setBooks([]);
             }
         } catch (error) {
+            toast.error(error.response?.data?.message || "Something went wrong");
             if (error.name !== "CanceledError") {
-                console.error(error);
                 setBooks([]);
             }
         } finally {
@@ -34,12 +36,12 @@ const Suggestions = () => {
         setController(abortController);
         fetchBooksData(abortController);
 
-        return () => abortController.abort(); 
+        return () => abortController.abort();
     }, []);
 
     const handleFetchBooks = () => {
         if (controller) {
-            controller.abort(); 
+            controller.abort();
         }
         const newController = new AbortController();
         setController(newController);
@@ -55,8 +57,8 @@ const Suggestions = () => {
             <BookstoreNavigation />
             <div className="py-20">
                 <div className="flex justify-end px-4 md:px-0 py-4 max-w-7xl mx-auto">
-                    <button 
-                        onClick={handleFetchBooks} 
+                    <button
+                        onClick={handleFetchBooks}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
                     >
                         پێشنیاری نوێ
@@ -65,6 +67,7 @@ const Suggestions = () => {
                 <BookCardMain data={books} path={"/Books"} text={"پێشنیاری ئێمە"} />
             </div>
             <Footer />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </>
     );
 }

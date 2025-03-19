@@ -7,6 +7,8 @@ import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import Pagination from "../Components/my-ui/Pagination";
 import { useLocation } from "react-router-dom";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UserProfile = () => {
     const navigate = useNavigate();
@@ -33,12 +35,12 @@ const UserProfile = () => {
                 if (res.status === 200) {
                     setUserData(res.data);
                 } else if (res.status === 401) {
-                    console.log("unauthorized");
+                    toast.error('You are not authorized to view this page');
                 } else if (res.status === 404) {
-                    console.log("not found");
+                    toast.error('not found');
                 }
             } catch (error) {
-                console.error(error);
+                toast.error(error.response?.data?.message || "Something went wrong");
             }
         }
 
@@ -54,7 +56,7 @@ const UserProfile = () => {
                     setTotalPages(0);
                 }
             } catch (error) {
-                console.error("Error fetching saved books:", error);
+                toast.error(error.response?.data?.message || "Something went wrong");
                 setSavedBooks([]);
                 setTotalPages(0);
             }
@@ -72,7 +74,9 @@ const UserProfile = () => {
                     setTotalPages(0);
                 }
             } catch (error) {
-                console.error(error);
+                toast.error(error.response?.data?.message || "Something went wrong");
+                setReadBooks([]);
+                setTotalPages(0);
             }
         }
 
@@ -88,7 +92,9 @@ const UserProfile = () => {
                     setTotalPages(0);
                 }
             } catch (error) {
-                console.error(error);
+                toast.error(error.response?.data?.message || "Something went wrong");
+                setcomments([]);
+                setTotalPages(0);
             }
         }
 
@@ -311,6 +317,7 @@ const UserProfile = () => {
 
             </div>
             <Footer />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     );
 };

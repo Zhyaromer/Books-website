@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Lock, Send } from 'lucide-react';
-import {axiosInstance} from "../context/AxiosInstance";
+import { axiosInstance } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -10,20 +10,20 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   try {
-    const res = await axiosInstance.post('/auth/forgotPassword', { email });
-    console.log(res.data);
-    if (res.status === 200) {
-      setIsSubmitted(true);
-      toast.success('Email sent successfully');
-    } else if (res.status === 400) {
-      toast.error('bad request');
-    } else if (res.status === 404) {
-      toast.error('not found');
-    } 
-   } catch {
-    toast.error('something went wrong');
-   }
+    try {
+      const res = await axiosInstance.post('/auth/forgotPassword', { email });
+      console.log(res.data);
+      if (res.status === 200) {
+        setIsSubmitted(true);
+        toast.success('Email sent successfully');
+      } else if (res.status === 400) {
+        toast.error('bad request');
+      } else if (res.status === 404) {
+        toast.error('not found');
+      }
+    } catch {
+      toast.error('something went wrong');
+    }
   };
 
   return (
@@ -33,10 +33,10 @@ const ForgotPassword = () => {
           <div className="bg-blue-100 p-3 rounded-full mb-4">
             <Lock className="h-8 w-8 text-blue-600" />
           </div>
-          <img 
-            src="https://img.freepik.com/free-vector/forgot-password-concept-illustration_114360-1095.jpg" 
-            alt="وێنەی بیرچوونی وشەی نهێنی" 
-            className="h-40 w-auto mb-4" 
+          <img
+            src="https://img.freepik.com/free-vector/forgot-password-concept-illustration_114360-1095.jpg"
+            alt="وێنەی بیرچوونی وشەی نهێنی"
+            className="h-40 w-auto mb-4"
           />
           <h1 className="text-2xl font-bold text-gray-800">
             وشەی نهێنیت لەبیر چووە؟
@@ -49,8 +49,8 @@ const ForgotPassword = () => {
         {!isSubmitted ? (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label 
-                htmlFor="email" 
+              <label
+                htmlFor="email"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 ئیمەیڵ
@@ -90,7 +90,7 @@ const ForgotPassword = () => {
           </a>
         </div>
       </div>
-      <ToastContainer transition={Slide} />
+      <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
     </div>
   );
 };

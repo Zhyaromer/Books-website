@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from "../Components/my-ui/Pagination";
 import { useLocation } from 'react-router-dom';
 import { axiosInstance } from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const BookSeriesPage = () => {
   const navigate = useNavigate();
@@ -43,11 +45,13 @@ const BookSeriesPage = () => {
           setTotalPages(Math.ceil((res.data.total || 0) / seriesPerPage));
           setSeriesLength(res.data.total);
         } else {
+          toast.error(res?.data?.message || "Something went wrong");
           setBookSeries([]);
           setTotalPages(0);
           setSeriesLength(0);
         }
-      } catch {
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Something went wrong");
         setBookSeries([]);
         setTotalPages(0);
         setSeriesLength(0);
@@ -78,6 +82,7 @@ const BookSeriesPage = () => {
         </div>
       </div>
       <Footer />
+      <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
     </div>
   );
 };

@@ -4,30 +4,32 @@ import QuotesCards from '../Components/layout/QuotesCards';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import LoadingUi from '../Components/my-ui/Loading';
 import { axiosInstance } from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Quotes = () => {
     const [quotes, setQuotes] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+
     const fetchQuotes = async () => {
         try {
             setLoading(true);
             const response = await axiosInstance.get('/books/getBookQuotes');
-    
+
             if (response.data && response.status === 200) {
                 setQuotes(response.data);
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
     };
-    
+
     useEffect(() => {
         fetchQuotes();
     }, []);
-    
+
     return (
         <>
             <BookstoreNavigation />
@@ -51,6 +53,7 @@ const Quotes = () => {
                 </div>
             )}
             <Footer />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </>
     );
 };

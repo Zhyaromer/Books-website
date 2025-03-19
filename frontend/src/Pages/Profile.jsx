@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import Pagination from "../Components/my-ui/Pagination";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -43,12 +45,12 @@ const Profile = () => {
                 if (res.status === 200) {
                     setUserData(res.data);
                 } else if (res.status === 401) {
-                    console.log("unauthorized");
+                    toast.error("unaothorized");
                 } else if (res.status === 404) {
-                    console.log("not found");
+                    toast.error("not found");
                 }
             } catch (error) {
-                console.error(error);
+                toast.error(error.response?.data?.message || "Something went wrong");
             }
         }
 
@@ -63,7 +65,8 @@ const Profile = () => {
                     setSavedBooks([]);
                     setTotalPages(0);
                 }
-            } catch {
+            } catch (error) {
+                toast.error(error.response?.data?.message || "Something went wrong");
                 setSuggestionBooks([]);
                 setTotalPages(0);
             }
@@ -82,7 +85,7 @@ const Profile = () => {
                     setTotalPages(0);
                 }
             } catch (error) {
-                console.error("Error fetching saved books:", error);
+                toast.error(error.response?.data?.message || "Something went wrong");
                 setSavedBooks([]);
                 setTotalPages(0);
             }
@@ -100,14 +103,13 @@ const Profile = () => {
                     setTotalPages(0);
                 }
             } catch (error) {
-                console.error(error);
+                toast.error(error.response?.data?.message || "Something went wrong");
             }
         }
 
         const fetchComments = async () => {
             try {
                 const res = await axiosInstance.get(`/user/getUserComments?page=${currentPage}&limit=${commentsPerPage}`);
-                console.log(res.data);
                 if (res.data.comments && Array.isArray(res.data.comments)) {
                     setcomments(res.data.comments);
                     setcommentsTotal(res.data.total || 0);
@@ -117,7 +119,7 @@ const Profile = () => {
                     setTotalPages(0);
                 }
             } catch (error) {
-                console.error(error);
+                toast.error(error.response?.data?.message || "Something went wrong");
             }
         }
 
@@ -150,7 +152,7 @@ const Profile = () => {
         try {
             await axiosInstance.delete(`/user/removeReview/${id}`);
         } catch (error) {
-            console.error(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             setOpenMenuId(null);
         }
@@ -184,12 +186,12 @@ const Profile = () => {
         if (!editingReview) return;
 
         if (editFormData.comment.trim() === '') {
-            console.log('Please enter a comment');
+            toast.error("Please enter a comment");
             return;
         }
 
         if (editFormData.comment.length > 3000 || editFormData.comment.length < 1) {
-            console.log('Comment must be between 1 and 3000 characters');
+            toast.error("Comment must be between 1 and 3000 characters");
             return;
         }
         try {
@@ -213,7 +215,7 @@ const Profile = () => {
                 handleModalClose();
             }
         } catch (error) {
-            console.error("Error updating comment:", error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         }
     };
 
@@ -570,6 +572,7 @@ const Profile = () => {
 
             </div>
             <Footer />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     );
 };

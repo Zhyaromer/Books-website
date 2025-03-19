@@ -7,6 +7,8 @@ import DetailedBookCard from '../Components/layout/DetailedBookCard';
 import { Card } from "@/Components/ui/card";
 import { BookOpen } from "lucide-react";
 import { axiosInstance } from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookSeriesBooks = () => {
     const { id } = useParams();
@@ -14,7 +16,7 @@ const BookSeriesBooks = () => {
     const navigate = useNavigate();
     const [series, setSeries] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+
     useEffect(() => {
         const fetchBooks = async () => {
             try {
@@ -29,7 +31,8 @@ const BookSeriesBooks = () => {
             } catch (error) {
                 if (error.response.status === 404) {
                     navigate('/404');
-                  }
+                }
+                toast.error(error.response?.data?.message || "Something went wrong");
                 setBooks([]);
                 setSeries([]);
             } finally {
@@ -91,6 +94,7 @@ const BookSeriesBooks = () => {
                 <DetailedBookCard books={books} />
             </div>
             <Footer />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     )
 }

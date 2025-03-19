@@ -1,10 +1,12 @@
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import { useState } from "react";
-import { axiosInstance,useCheckAuth } from "../context/AxiosInstance";
+import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp = () => {
-    const {isAuthenticated} = useCheckAuth();
+    const { isAuthenticated } = useCheckAuth();
     console.log(isAuthenticated);
     if (isAuthenticated === true) {
         window.location.href = '/';
@@ -96,10 +98,9 @@ const SignUp = () => {
                 if (res.status === 201) {
                     window.location.href = "/";
                 } else if (res.status === 400) {
-                    console.log(res.data.error);
+                    setErrors({ error: res.data.message });
                 }
-            } catch (error) {
-                console.error(error);
+            } catch {
                 setErrors({ error: "An error occurred while signing up" });
             }
         }
@@ -256,6 +257,7 @@ const SignUp = () => {
                 </div>
             </div>
             <Footer />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     );
 };

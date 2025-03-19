@@ -65,7 +65,7 @@ const PasswordResetPage = () => {
             }
             setResetSuccess(true);
         } catch {
-           toast.error('Password reset failed');
+            toast.error('Password reset failed');
         } finally {
             setIsSubmitting(false);
         }
@@ -201,7 +201,7 @@ const PasswordResetPage = () => {
                     </form>
                 )}
             </div>
-            <ToastContainer transition={Slide} />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     );
 };

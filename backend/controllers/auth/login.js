@@ -7,13 +7,13 @@ const login = (req, res, next) => {
     req.body.email = xss(req.body.email);
     req.body.password = xss(req.body.password);
 
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err, user) => {
         if (err) {
             return res.status(500).json({ message: "Internal Server Error" });
         }
 
         if (!user) {
-            return res.status(401).json({ message: "Unauthorized", info });
+            return res.status(401).json({ message: "wrong credentials" });
         }
 
         const token = jwt.sign({ id: user.id , role: user.role }, process.env.ACCESS_TOKEN, { expiresIn: "10m" });

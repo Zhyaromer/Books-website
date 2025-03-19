@@ -3,7 +3,8 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
-import { toast } from 'react-toastify';
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const KurdishLoginForm = () => {
     const { isAuthenticated } = useCheckAuth();
@@ -39,8 +40,8 @@ const KurdishLoginForm = () => {
                     window.location.href = '/';
                 }
             })
-            .catch(_ => {
-                toast.error('هەڵەیەک ڕوویدا تکایە هەوڵبدەوە');
+            .catch(error => {
+                toast.error(error.response.data.message || "Something went wrong");
             });
     };
 
@@ -136,6 +137,7 @@ const KurdishLoginForm = () => {
                 </div>
             </div>
             <Footer />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     );
 };

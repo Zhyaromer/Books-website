@@ -47,13 +47,13 @@ const BookDetail = () => {
 
     const fetchBook = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/books/getBookById/${id}`);
+        const response = await axiosInstance.get(`http://localhost:3000/books/getBookById/${id}`);
         if (response.status === 200) {
           setFetchBook(response.data.book);
           setSeries(response.data.series);
           setBooksSeries(response.data.seriesBooks);
           setSimilarBooks(response.data.similarBooks);
-        } 
+        }
       } catch (error) {
         if (error.response.status === 404) {
           navigate('/404');
@@ -74,7 +74,7 @@ const BookDetail = () => {
           setHasRead(false);
         }
       } catch (error) {
-        console.log(error);
+        toast.error(error.response?.data?.message || "Something went wrong");
       }
     }
 
@@ -87,7 +87,7 @@ const BookDetail = () => {
           setHasSaved(false);
         }
       } catch (error) {
-        console.log(error);
+        toast.error(error.response?.data?.message || "Something went wrong");
       }
     }
 
@@ -100,7 +100,7 @@ const BookDetail = () => {
           setHasSuggested(false);
         }
       } catch (error) {
-        console.log(error);
+        toast.error(error.response?.data?.message || "Something went wrong");
       }
     }
 
@@ -109,7 +109,7 @@ const BookDetail = () => {
         const response = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
         setComments(response.data);
       } catch (error) {
-        console.log(error);
+        toast.error(error.response?.data?.message || "Something went wrong");
       }
     }
 

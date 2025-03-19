@@ -8,6 +8,8 @@ import SeriesCard from "../Components/layout/SeriesCard";
 import { useState, useEffect } from "react";
 import LoadingUi from '../Components/my-ui/Loading';
 import { axiosInstance } from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const Main = () => {
     const [sliderbooks, setsliderbooks] = useState([]);
@@ -66,7 +68,7 @@ const Main = () => {
     }, []);
 
     if (error) {
-        return <div className="error-message">{error}</div>;
+        toast.error(error);
     }
 
     return (
@@ -109,6 +111,7 @@ const Main = () => {
                     <Footer />
                 </div>
             )}
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     );
 };

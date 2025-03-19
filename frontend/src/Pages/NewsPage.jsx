@@ -64,8 +64,8 @@ const NewsPage = () => {
           setTotalNews(response.data.length);
           setTotalPages(Math.ceil(response.data.length / newsPerPage));
         }
-      } catch {
-        toast.error('هەڵەیەک ڕوویدا تکایە هەوڵبدەوە');
+      } catch (error) {
+        toast.error(error.response.data.message || 'Something went wrong');
         setNews([]);
         setTotalNews(0);
         setTotalPages(1);
@@ -110,7 +110,7 @@ const NewsPage = () => {
         </>
       )}
 
-      <ToastContainer transition={Slide} />
+      <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
     </div>
   );
 };

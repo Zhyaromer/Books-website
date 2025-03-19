@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
 import LoadingUi from '../Components/my-ui/Loading';
 import { useNavigate } from "react-router-dom";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SettingsPage = () => {
     const navigate = useNavigate();
@@ -29,12 +31,12 @@ const SettingsPage = () => {
                     })
                     setImage(res.data.coverImgURL);
                 } else if (res.status === 401) {
-                    console.log("unauthorized");
+                    toast.error('You are not authorized to view this page')
                 } else if (res.status === 404) {
-                    console.log("not found");
+                    toast.error('not found')
                 }
             } catch (error) {
-                console.error(error);
+                toast.error(error.response?.data?.message || "Something went wrong");
             } finally {
                 setLoading(false);
             }
@@ -92,17 +94,17 @@ const SettingsPage = () => {
 
     const changeName = async () => {
         if (!formData.name) {
-            console.log('Please enter a name');
+            toast.error('Please enter a name');
             return;
         }
 
         if (formData.name.trim() === '') {
-            console.log('Please enter a valid name');
+            toast.error('Please enter a valid name');
             return;
         }
 
         if (formData.name.length < 1 || formData.name.length > 35) {
-            console.log('Name must be between 1 and 35 characters');
+            toast.error('Name must be between 1 and 35 characters');
             return;
         }
         try {
@@ -112,7 +114,7 @@ const SettingsPage = () => {
                 location.reload();
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -120,17 +122,17 @@ const SettingsPage = () => {
 
     const changeUsername = async () => {
         if (!formData.username) {
-            console.log('Please enter a username');
+            toast.error('Please enter a username');
             return;
         }
 
         if (formData.username.trim() === '') {
-            console.log('Please enter a valid username');
+            toast.error('Please enter a valid username');
             return;
         }
 
         if (formData.username.length < 1 || formData.username.length > 35) {
-            console.log('username must be between 1 and 35 characters');
+            toast.error('username must be between 1 and 35 characters');
             return;
         }
         try {
@@ -140,7 +142,7 @@ const SettingsPage = () => {
                 location.reload();
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -148,18 +150,18 @@ const SettingsPage = () => {
 
     const changeEmail = async () => {
         if (!formData.email) {
-            console.log('Please enter a email');
+            toast.error('Please enter a email');
             return;
         }
 
         if (formData.email.trim() === '') {
-            console.log('Please enter a valid email');
+            toast.error('Please enter a valid email');
             return;
         }
 
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(formData.email)) {
-            console.log('Please enter a valid email');
+            toast.error('Please enter a valid email');
             return;
         }
         try {
@@ -169,7 +171,7 @@ const SettingsPage = () => {
                 location.reload();
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -177,17 +179,17 @@ const SettingsPage = () => {
 
     const changeBio = async () => {
         if (!formData.bio) {
-            console.log('Please enter a bio');
+            toast.error('Please enter a bio');
             return;
         }
 
         if (formData.bio.trim() === '') {
-            console.log('Please enter a valid bio');
+            toast.error('Please enter a valid bio');
             return;
         }
 
         if (formData.bio.length < 1 || formData.bio.length > 100) {
-            console.log('bio must be between 1 and 100 characters');
+            toast.error('bio must be between 1 and 100 characters');
             return;
         }
         try {
@@ -197,7 +199,7 @@ const SettingsPage = () => {
                 location.reload();
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -205,16 +207,17 @@ const SettingsPage = () => {
 
     const changePassword = async () => {
         if (!formData.currentPassword || !formData.password || !formData.confirmPassword) {
-            console.log('Please enter a current password, new password, and confirm password');
+            toast.error('Please enter a current password, new password, and confirm password');
             return;
         }
 
         if (formData.currentPassword.trim() === '' || formData.password.trim() === '' || formData.confirmPassword.trim() === '') {
-            console.log('Please enter a valid current password, new password, and confirm password');
+            toast.error('Please enter a valid current password, new password, and confirm password');
+            return;
         }
 
         if ((formData.password.length < 3 || formData.password.length > 35) || (formData.confirmPassword.length < 3 || formData.confirmPassword.length > 35)) {
-            console.log('password and confirm password must be between 3 and 35 characters');
+            toast.error('password and confirm password must be between 3 and 35 characters');
             return;
         }
         try {
@@ -224,7 +227,7 @@ const SettingsPage = () => {
                 location.reload();
             }
         } catch (error) {
-            console.error(error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -244,7 +247,7 @@ const SettingsPage = () => {
 
     const changeprofilepic = async () => {
         if (!image) {
-            console.log('Please select an image');
+            toast.error('Please select an image');
             return;
         }
 
@@ -259,12 +262,10 @@ const SettingsPage = () => {
             if (res.status === 200) {
                 location.reload();
             }
-            console.log("Upload successful:", res.data);
         } catch (error) {
-            console.error("Upload failed:", error);
+            toast.error(error.response?.data?.message || "Something went wrong");
         }
     };
-
 
     if (loading) {
         return <LoadingUi />;
@@ -443,7 +444,7 @@ const SettingsPage = () => {
                                                 <div className="rounded-full flex items-center justify-center mb-4">
                                                     {image ? (
                                                         <img
-                                                            src={previewImage || image }
+                                                            src={previewImage || image}
                                                             alt="Selected Cover"
                                                             className="w-64 h-64 object-cover rounded-full"
                                                         />
@@ -589,6 +590,7 @@ const SettingsPage = () => {
                 </div>
             </div>
             <Footer />
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     );
 };
