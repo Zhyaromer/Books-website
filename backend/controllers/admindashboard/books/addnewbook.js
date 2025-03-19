@@ -28,11 +28,9 @@ const addNewBook = async (req, res) => {
         } else {
             return res.status(500).json({ message: 'Error adding book' });
         }
-    } catch (error) {
-        console.error(error);
+    } catch {
         return res.status(500).json({ message: 'Internal server error' });
     }
-
 }
 
 const uploadMiddleware = upload.single("cover_image");

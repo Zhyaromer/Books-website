@@ -3,13 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../UI
 import { Avatar, AvatarImage, AvatarFallback } from "../UI/avatar";
 
 const AuthorCard = ({ name, imageUrl, bio, id, className }) => {
-  const getInitials = (authorName) => {
-    return authorName
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
-  };
+  const getInitials = (authorName = "") =>
+    authorName
+      .split(/\s+/) // Handles extra spaces
+      .map((word) => word[0]?.toUpperCase() || "")
+      .join("");
+
 
   return (
     <div>
@@ -18,7 +17,7 @@ const AuthorCard = ({ name, imageUrl, bio, id, className }) => {
         <CardHeader className="flex flex-col items-center pb-2 relative z-10">
           <div className="transform transition-transform duration-500 ease-out hover:scale-105">
             <Avatar className="h-28 w-28 mb-3 ring-4 ring-white dark:ring-slate-700 shadow-md transition-all duration-300 ease-in-out hover:ring-blue-200 dark:hover:ring-blue-800">
-              <AvatarImage src={imageUrl} alt={name} />
+              <AvatarImage src={imageUrl || "/default-avatar.png"} loading="lazy" alt={name} />
               <AvatarFallback className="text-xl font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-white">
                 {getInitials(name)}
               </AvatarFallback>

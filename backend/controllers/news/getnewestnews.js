@@ -9,10 +9,9 @@ const getnewestnews = async (req, res) => {
         if (news.length === 0) {
             res.status(404).json({ message: 'No news found' });
         }
-        console.log("news")
         res.status(200).json(news);
-    } catch (error) {
-        
+    } catch {
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 

@@ -7,16 +7,16 @@ const getSavedBooks = async (req, res) => {
     const user_id = req?.user?.id;
 
     if (!user_id) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
         const [countResult] = await db.promise().query(
-            "SELECT COUNT(*) as total FROM user_saves WHERE user_id = ?", 
+            "SELECT COUNT(*) as total FROM user_saves WHERE user_id = ?",
             [user_id]
         );
         const total = countResult[0].total;
-        
+
         if (total === 0) {
             return res.status(200).json({
                 foundBooks: [],
@@ -27,7 +27,7 @@ const getSavedBooks = async (req, res) => {
         }
 
         const [savedBooks] = await db.promise().query(
-            "SELECT book_id FROM user_saves WHERE user_id = ? LIMIT ? OFFSET ?", 
+            "SELECT book_id FROM user_saves WHERE user_id = ? LIMIT ? OFFSET ?",
             [user_id, limit, offset]
         );
 
@@ -58,9 +58,8 @@ const getSavedBooks = async (req, res) => {
             currentPage: parseInt(page),
             totalPages: Math.ceil(total / limit)
         });
-    } catch (error) {
-        console.error("Error fetching saved books:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+    } catch {
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 

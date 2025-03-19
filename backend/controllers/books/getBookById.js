@@ -69,8 +69,6 @@ const getBookById = (req, res) => {
 
             db.query(sql2, [book?.series_id, sanitizedId], (err, seriesBooks) => {
                 if (err) {
-                    console.log(err);
-
                     return res.status(500).json({ message: 'Internal Server Error' });
                 }
 
@@ -79,7 +77,6 @@ const getBookById = (req, res) => {
 
                 db.query(sql3, [book?.series_id], (err, series) => {
                     if (err) {
-                        console.log(err);
                         return res.status(500).json({ message: 'Internal Server Error' });
                     }
 
@@ -91,7 +88,6 @@ const getBookById = (req, res) => {
 
                         db.query(sql5, [sanitizedId], (err, reviews) => {
                             if (err) {
-                                console.log(err);
                                 return res.status(500).json({ message: 'Internal Server Error' });
                             }
 
@@ -103,8 +99,7 @@ const getBookById = (req, res) => {
             });
         });
 
-    } catch (error) {
-        console.log(error);
+    } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };

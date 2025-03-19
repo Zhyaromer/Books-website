@@ -46,7 +46,7 @@ const getRandomBooks = (req, res) => {
 
             return res.status(200).json(result);
         });
-    } catch (error) {
+    } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };

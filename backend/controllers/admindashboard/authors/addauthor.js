@@ -1,19 +1,17 @@
 const db = require('../../../config/SQL/sqlconfig');
-const createUploader = require("../../../Middleware/uplode"); 
+const createUploader = require("../../../Middleware/uplode");
 
 const { upload, getFilePath } = createUploader("author_cover", {
-    fileSize: 3 * 1024 * 1024, 
-    allowedTypes: /jpeg|jpg|png|webp/ 
+    fileSize: 3 * 1024 * 1024,
+    allowedTypes: /jpeg|jpg|png|webp/
 });
 
 const addAuthor = async (req, res) => {
-    const {name, bio, language, dateOfBirth, country} = req.body;
-    console.log(name, bio, language, dateOfBirth, country);
+    const { name, bio, language, dateOfBirth, country } = req.body;
 
     if (!name || !bio || !language || !dateOfBirth || !country) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
-    console.log(req.file);
     if (!req.file) {
         return res.status(400).json({ message: 'No cover image uploaded' });
     }
@@ -35,8 +33,7 @@ const addAuthor = async (req, res) => {
         } else {
             return res.status(500).json({ message: 'Error adding author' });
         }
-    } catch (error) {
-        console.error(error);
+    } catch {
         return res.status(500).json({ message: 'Internal server error' });
     }
 }

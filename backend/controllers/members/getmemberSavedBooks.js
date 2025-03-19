@@ -7,7 +7,7 @@ const getmemberSavedBooks = async (req, res) => {
     const username  = xss(req?.query?.username);
 
     if (!username) {
-        return res.status(404).json({ error: "not found" });
+        return res.status(404).json({ message: "not found" });
     }
 
     try {
@@ -15,7 +15,7 @@ const getmemberSavedBooks = async (req, res) => {
         const [result] = await db.promise().query(sql, [username]);
 
         if (result.length === 0) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         const user_id = result[0].id;
@@ -67,9 +67,8 @@ const getmemberSavedBooks = async (req, res) => {
             currentPage: parseInt(page),
             totalPages: Math.ceil(total / limit)
         });
-    } catch (error) {
-        console.error("Error fetching saved books:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+    } catch{
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 

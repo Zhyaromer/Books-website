@@ -60,7 +60,7 @@ const updateseries = async (req, res) => {
 
         await promiseDb.commit();
         return res.status(200).json({ message: 'Series updated successfully' });
-    } catch (error) {
+    } catch {
         await promiseDb.rollback();
         return res.status(500).json({ message: 'Internal server error' });
     }

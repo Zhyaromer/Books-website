@@ -1,5 +1,4 @@
 const db = require('../../config/SQL/sqlconfig');
-const xss = require('xss');
 
 const getFamousAuthors = (req, res) => {
     try {
@@ -18,7 +17,7 @@ const getFamousAuthors = (req, res) => {
 
             return res.status(200).json(result);
         });
-    } catch (error) {
+    } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }

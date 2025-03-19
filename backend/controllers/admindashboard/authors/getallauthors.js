@@ -11,9 +11,8 @@ const getAllAuthors = async (req, res) => {
         }
 
         return res.status(200).json(authors);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal server error' });
+    } catch {
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 

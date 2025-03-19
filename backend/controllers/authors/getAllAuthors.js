@@ -43,7 +43,6 @@ const getAllAuthors = (req, res) => {
 
         db.query(countSql, values, (countErr, countResult) => {
             if (countErr) {
-                console.error('Count query error:', countErr);
                 return res.status(500).json({ message: 'Internal Server Error' });
             }
 
@@ -51,7 +50,6 @@ const getAllAuthors = (req, res) => {
 
             db.query(sql, paginationValues, (err, result) => {
                 if (err) {
-                    console.error('Main query error:', err);
                     return res.status(500).json({ message: 'Internal Server Error' });
                 }
 
@@ -73,8 +71,7 @@ const getAllAuthors = (req, res) => {
                 });
             });
         });
-    } catch (error) {
-        console.error('Error:', error);
+    } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };

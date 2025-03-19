@@ -10,7 +10,6 @@ const { upload, getFilePath } = createUploader("profilepic", {
 
 const adduser = async (req, res) => {
     const { username, email, password, name, role, bio } = req.body;
-    console.log(req.body);
 
     if (!username || !email || !password || !name || !role) {
         return res.status(400).json({ message: 'All fields are required' });
@@ -22,7 +21,7 @@ const adduser = async (req, res) => {
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
-        return res.status(400).json({ error: "Password must contain at least one uppercase letter, one number, and one special character and at least 8 characters" });
+        return res.status(400).json({ message: "Password must contain at least one uppercase letter, one number, and one special character and at least 8 characters" });
     }
 
     if (!req.file) {
@@ -58,8 +57,7 @@ const adduser = async (req, res) => {
         } else {
             return res.status(500).json({ message: 'Error adding user' });
         }
-    } catch (error) {
-        console.error(error);
+    } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }

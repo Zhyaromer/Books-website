@@ -30,7 +30,7 @@ const getAllNews = async (req, res) => {
         } else if (sorting === 'views') {
             sql += ' ORDER BY views DESC';
         } else {
-            sql += ' ORDER BY created_at DESC'; 
+            sql += ' ORDER BY created_at DESC';
         }
 
         sql += ' LIMIT ? OFFSET ?';
@@ -57,8 +57,7 @@ const getAllNews = async (req, res) => {
             currentPage: parseInt(page),
             totalPages: Math.ceil(total / limit)
         });
-    } catch (error) {
-        console.error('Error:', error);
+    } catch {
         res.status(500).json({ message: 'Internal server error' });
     }
 };

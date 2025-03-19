@@ -11,22 +11,19 @@ const addReview = async (req, res) => {
     rating = parseInt(xss(rating).trim(), 10);
 
     if (!user_id || !book_id) {
-        console.log("user_id and book_id are required");
-        return res.status(400).json({ error: "user_id and book_id are required" });
+        return res.status(400).json({ message: "user_id and book_id are required" });
     }
 
     if (!rating || !comment || hasSpoiler == null || hasSpoiler == undefined) {
-        console.log("rating and comment are required");
-        return res.status(400).json({ error: "rating and comment are required" });
+        return res.status(400).json({ message: "rating and comment are required" });
     }
 
     if (isNaN(rating) || rating < 1 || rating > 5) {
-        console.log("Rating must be a number between 1 and 5.");
-        return res.status(400).json({ error: "Rating must be a number between 1 and 5." });
+        return res.status(400).json({ message: "Rating must be a number between 1 and 5." });
     }
 
     if (comment.trim().length < 1 || comment.trim().length > 5000) {
-        return res.status(400).json({ error: "Comment must be between 1 and 5000 characters." });
+        return res.status(400).json({ message: "Comment must be between 1 and 5000 characters." });
     }
 
     try {
@@ -35,7 +32,7 @@ const addReview = async (req, res) => {
             [user_id, book_id]
         );
         if (existingReview.length > 0) {
-            return res.status(400).json({ error: "You have already reviewed this book" });
+            return res.status(400).json({ message: "You have already reviewed this book" });
         }
 
         const [result] = await db.promise().query(
@@ -46,9 +43,9 @@ const addReview = async (req, res) => {
         if (result.affectedRows > 0) {
             return res.status(201).json({ message: "Review added successfully" });
         }
-        return res.status(500).json({ error: "Error adding review" });
-    } catch (error) {
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ message: "Error adding review" });
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 

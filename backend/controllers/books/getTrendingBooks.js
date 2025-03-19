@@ -14,7 +14,6 @@ const getTrendingBooks = (req, res) => {
 
         db.query(sql, (err, result) => {
             if (err) {
-                console.error(err);
                 return res.status(500).json({ message: 'Internal Server Error' });
             }
             if (result.length === 0) {
@@ -23,7 +22,7 @@ const getTrendingBooks = (req, res) => {
 
             return res.status(200).json(result);
         });
-    } catch (error) {
+    } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }

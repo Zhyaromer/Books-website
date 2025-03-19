@@ -62,9 +62,8 @@ const updatenews = async (req, res) => {
 
         await promiseDb.commit();
         return res.status(200).json({ message: 'News updated successfully' });
-    } catch (error) {
+    } catch {
         await promiseDb.rollback();
-        console.error(error);
         return res.status(500).json({ message: 'Error updating news' });
     }
 }

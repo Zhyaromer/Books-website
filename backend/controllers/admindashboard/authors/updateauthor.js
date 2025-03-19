@@ -11,7 +11,7 @@ const updateAuthor = async (req, res) => {
     const { id } = req.params;
     const authorId = parseInt(id, 10);
     if (isNaN(authorId)) {
-        return res.status(400).json({ error: "Valid author ID is required" });
+        return res.status(400).json({ message: "Valid author ID is required" });
     }
 
     const filename = req.file ? getFilePath(req.file.filename) : null;
@@ -32,7 +32,7 @@ const updateAuthor = async (req, res) => {
         if (filename) {
             const [userResult] = await promiseDb.query("SELECT imgURL FROM authors WHERE id = ?", [authorId]);
             if (userResult.length === 0) {
-                return res.status(404).json({ error: "Author not found" });
+                return res.status(404).json({ message: "Author not found" });
             }
             oldCoverPath = userResult[0].imgURL ? path.join(uploadDir, path.basename(userResult[0].imgURL)) : null;
             updatedFields += `, imgURL = ?`;
@@ -45,7 +45,7 @@ const updateAuthor = async (req, res) => {
         
         if (result.affectedRows === 0) {
             await promiseDb.rollback();
-            return res.status(404).json({ error: "Author not found" });
+            return res.status(404).json({ message: "Author not found" });
         }
         
         if (oldCoverPath && fs.existsSync(oldCoverPath)) {
@@ -54,10 +54,9 @@ const updateAuthor = async (req, res) => {
 
         await promiseDb.commit();
         return res.status(200).json({ message: "Author updated successfully" });
-    } catch (error) {
+    } catch {
         await promiseDb.rollback();
-        console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 };
 

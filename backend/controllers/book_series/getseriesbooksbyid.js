@@ -4,7 +4,7 @@ const xss = require('xss');
 const getseriesbooksbyid = async (req, res) => {
     const id = xss(req.params.id);
     if (!id) {
-        return res.status(400).json({ error: 'Book Series ID is required' });
+        return res.status(400).json({ message: 'Book Series ID is required' });
     }
 
     try {
@@ -24,9 +24,8 @@ const getseriesbooksbyid = async (req, res) => {
         }
 
         return res.status(200).json({books : result, series : result2[0]});
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal server error' });
+    } catch {
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 

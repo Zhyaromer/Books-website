@@ -5,7 +5,7 @@ const suggestionscheck = async (req, res) => {
     const user_id = req?.user?.id;
 
     if (!user_id || !book_id) {
-        return res.status(400).json({ error: "user_id and book_id are required" });
+        return res.status(400).json({ message: "user_id and book_id are required" });
     }
 
     try {
@@ -18,11 +18,9 @@ const suggestionscheck = async (req, res) => {
         } else {
             return res.status(200).json({ success: false, message: "suggestions not added" });
         }
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
-
 }
 
 module.exports = suggestionscheck;

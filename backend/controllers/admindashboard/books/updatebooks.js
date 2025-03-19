@@ -13,7 +13,7 @@ const updateBook = async (req, res) => {
     const bookId = parseInt(id);
 
     if (!bookId || isNaN(bookId)) {
-        return res.status(400).json({ error: 'Valid Book ID is required' });
+        return res.status(400).json({ message: 'Valid Book ID is required' });
     }
 
     const filename = req?.file?.filename ? getFilePath(req.file.filename) : null;
@@ -57,7 +57,7 @@ const updateBook = async (req, res) => {
             const [userResult] = await promiseDb.query("SELECT cover_image FROM books WHERE id = ?", [bookId]);
             if (userResult.length === 0) {
                 await promiseDb.rollback();
-                return res.status(404).json({ error: "Book not found" });
+                return res.status(404).json({ message: "Book not found" });
             }
 
             oldCoverPath = path.join(uploadDir, path.basename(userResult[0].cover_image));
@@ -81,9 +81,8 @@ const updateBook = async (req, res) => {
             await promiseDb.rollback();
             return res.status(500).json({ message: 'Error updating book' });
         }
-    } catch (error) {
+    } catch {
         await promiseDb.rollback();
-        console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 };

@@ -8,19 +8,19 @@ const changeusername = async (req, res) => {
     const userId = req?.user?.id;
 
     if (!sanUserName) {
-        return res.status(400).json({ error: "username is required" });
+        return res.status(400).json({ message: "username is required" });
     }
 
     if (!userId) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return res.status(401).json({ message: "Unauthorized" });
     }
 
     if (sanUserName.trim() === '') {
-        return res.status(400).json({ error: "enter a valid username" });
+        return res.status(400).json({ message: "enter a valid username" });
     }
 
     if (sanUserName.length < 1 || sanUserName.length > 35) {
-        return res.status(400).json({ error: "username must be between 1 and 35 characters" });
+        return res.status(400).json({ message: "username must be between 1 and 35 characters" });
     }
 
     try {
@@ -29,29 +29,29 @@ const changeusername = async (req, res) => {
         const user = updateUsername[0];
 
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         if (user.username === sanUserName) {
-            return res.status(400).json({ error: "New username cannot be the same as the old username" });
+            return res.status(400).json({ message: "New username cannot be the same as the old username" });
         }
 
         const [checkUserName] = await db.promise().query("SELECT username FROM users WHERE username = ?", [sanUserName]);
 
         if (checkUserName.length > 0) {
-            return res.status(400).json({ error: "Username already exists, please choose another one" });
+            return res.status(400).json({ message: "Username already exists, please choose another one" });
         }
 
         const [updateResult] = await db.promise().query("UPDATE users SET username = ? WHERE id = ?", [sanUserName, userId]);
 
         if (updateResult.affectedRows === 0) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         sendEmail.changeusername(user.email, { name: sanUserName });
         return res.status(200).json({ message: "username updated successfully" });
-    } catch (error) {
-        return res.status(500).json({ error: "Internal server error" });
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
   
 }

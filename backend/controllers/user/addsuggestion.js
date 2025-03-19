@@ -5,7 +5,7 @@ const addsuggestion = async (req, res) => {
     const user_id = req?.user?.id;
 
     if (!user_id || !book_id) {
-        return res.status(400).json({ error: "user_id and book_id are required" });
+        return res.status(400).json({ message: "user_id and book_id are required" });
     }
 
     try {
@@ -29,11 +29,10 @@ const addsuggestion = async (req, res) => {
             if (result.affectedRows > 0) {
                 return res.status(201).json({ message: "suggestions added" });
             }
-            return res.status(500).json({ error: "Error to read list book" });
+            return res.status(500).json({ message: "Error to read list book" });
         }
     } catch (error) {
-        console.error("Error toggling to read list status:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 

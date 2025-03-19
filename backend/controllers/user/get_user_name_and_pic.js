@@ -4,7 +4,7 @@ const getusernameandpic = async (req, res) => {
     const user_id = req?.user?.id;
 
     if (!user_id) {
-        return res.status(400).json({ error: "user_id and book_id are required" });
+        return res.status(400).json({ message: "user_id and book_id are required" });
     }
 
     try {
@@ -13,13 +13,12 @@ const getusernameandpic = async (req, res) => {
         const [results] = await db.promise().query(sql, [user_id]);
 
         if (results.length === 0) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         return res.status(200).json(results[0]);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
 

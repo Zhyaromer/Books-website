@@ -7,19 +7,19 @@ const { upload, getFilePath , uploadDir } = createUploader("profilepic");
 
 const changepic = async (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
+        return res.status(400).json({ message: "No file uploaded" });
     }
     const filename = getFilePath(req.file.filename);
 
     const userId = req?.user?.id;
     if (!userId) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
         const [userResult] = await db.promise().query("SELECT coverImgURL FROM users WHERE id = ?", [userId]);
         if (userResult.length === 0) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
 
         const oldPic = userResult[0].coverImgURL;
@@ -37,13 +37,12 @@ const changepic = async (req, res) => {
             .query("UPDATE users SET coverImgURL = ? WHERE id = ?", [filename, userId]);
 
         if (updateProfilePic.affectedRows === 0) {
-            return res.status(500).json({ error: "Profile picture update failed" });
+            return res.status(500).json({ message: "Profile picture update failed" });
         }
 
         return res.status(200).json({ message: "Profile picture updated successfully", filename: filename });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
 };
 

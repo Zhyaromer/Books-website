@@ -1,10 +1,10 @@
 const db = require('../../config/SQL/sqlconfig');
 
 const getallreviews = async (req, res) => {
-    const {book_id} = req?.query;
+    const { book_id } = req?.query;
 
     if (!book_id) {
-        return res.status(401).json({ error: "book id is required" });
+        return res.status(401).json({ message: "book id is required" });
     }
 
     try {
@@ -21,9 +21,8 @@ const getallreviews = async (req, res) => {
         }
 
         return res.status(200).json(comments);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+    } catch {
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 

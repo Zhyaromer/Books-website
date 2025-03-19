@@ -14,9 +14,8 @@ const searching = async (req, res) => {
         const [users] = await db.promise().query(sql3 , [search , search]);
 
         return res.status(200).json({ authors, books, users });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+    } catch {
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 

@@ -6,6 +6,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import LoadingUi from '../Components/my-ui/Loading';
 import { axiosInstance } from "../context/AxiosInstance";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 const FilterSection = lazy(() => import("../Components/my-ui/FilterSection"));
 const Pagination = lazy(() => import("../Components/my-ui/Pagination"));
 const Footer = lazy(() => import("../Components/layout/Footer"));
@@ -116,6 +118,7 @@ const Books = () => {
                     setTotalPages(Math.ceil((response.data.total || 0) / booksPerPage));
                 }
             } catch (error) {
+                toast.error(error.response?.data?.message || 'Something went wrong');
                 if (error.name !== 'AbortError') {
                     setBooks([]);
                     setTotalBooks(0);
@@ -149,7 +152,7 @@ const Books = () => {
                     sort={Sort}
                     onSortChange={handleSortChange}
                 />
-                
+
                 <BookCardMain data={books} text={`هەموو کتێبەکان (${totalBooks})`} path="/Books" />
 
                 <Suspense fallback={<LoadingUi />}>
@@ -158,6 +161,7 @@ const Books = () => {
                 <Suspense fallback={<LoadingUi />}>
                     <Footer />
                 </Suspense>
+                <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
             </>
         )
     );

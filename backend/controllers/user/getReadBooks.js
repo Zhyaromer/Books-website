@@ -7,7 +7,7 @@ const getReadBooks = async (req, res) => {
     const user_id = req?.user?.id;
 
     if (!user_id) {
-        return res.status(401).json({ error: "Unauthorized" });
+        return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
@@ -58,9 +58,8 @@ const getReadBooks = async (req, res) => {
             currentPage: parseInt(page),
             totalPages: Math.ceil(total / limit)
         });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal Server Error" });
+    } catch {
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 }
 

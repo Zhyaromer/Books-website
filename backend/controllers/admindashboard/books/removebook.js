@@ -9,7 +9,7 @@ const removeBook = async (req, res) => {
     const bookId = parseInt(req.params.id);
 
     if (!bookId || isNaN(bookId)) {
-        return res.status(400).json({ error: 'Valid Book ID is required' });
+        return res.status(400).json({ message: 'Valid Book ID is required' });
     }
 
     try {
@@ -19,7 +19,7 @@ const removeBook = async (req, res) => {
         const [result] = await db.promise().query(sql, [bookId]);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Book not found' });
+            return res.status(404).json({ message: 'Book not found' });
         }
 
         const oldPic = picture[0].cover_image;
@@ -33,9 +33,8 @@ const removeBook = async (req, res) => {
         }
 
         return res.status(200).json({ message: 'Book removed successfully' });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal server error' });
+    } catch {
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 

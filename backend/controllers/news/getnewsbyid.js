@@ -5,7 +5,7 @@ const getNewsById = async (req, res) => {
     const id = xss(req.params.id);
 
     if (!id) {
-        return res.status(400).json({ error: 'News ID is required' });
+        return res.status(400).json({ message: 'News ID is required' });
     }
 
     try {
@@ -18,9 +18,8 @@ const getNewsById = async (req, res) => {
         }
 
         return res.status(200).json(result[0]);
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal server error' });
+    } catch {
+        return res.status(500).json({ message : 'Internal server error' });
     }
 }
 

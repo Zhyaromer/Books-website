@@ -27,12 +27,12 @@ const AuthorDetails = () => {
           setAuthor(response.data.author[0] || null);
           setBooks(response.data.books || []);
         } else {
-          toast.error(response.data.message)
+          toast.error(response.data.message || "Something went wrong");
           setAuthor(null);
           setBooks([]);
         }
       } catch (error) {
-        toast.error(error.response.data.message)
+        toast.error(error.response?.data?.message || "Something went wrong");
         if (error.response.status === 404) {
           navigate('/404');
         }
@@ -113,7 +113,7 @@ const AuthorDetails = () => {
         </div>
       </div>
       <Footer />
-      <ToastContainer transition={Slide} />
+      <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
     </div>
   );
 };

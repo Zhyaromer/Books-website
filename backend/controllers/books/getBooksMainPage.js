@@ -37,7 +37,6 @@ const getBooksMainPage = (req, res) => {
 
         db.query(sql, values, (err, result) => {
             if (err) {
-                console.error(err);
                 return res.status(500).json({ message: 'Internal Server Error' });
             }
 
@@ -47,7 +46,7 @@ const getBooksMainPage = (req, res) => {
 
             return res.status(200).json(result);
         });
-    } catch (error) {
+    } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }

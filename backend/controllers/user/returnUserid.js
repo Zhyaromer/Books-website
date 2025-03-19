@@ -5,7 +5,7 @@ const userID = async (req, res) => {
     const review_id = req.params.id;
 
     if (!user_id || !review_id) {
-        return res.status(400).json({ error: "user_id and review_id are required" });
+        return res.status(400).json({ message: "user_id and review_id are required" });
     }
 
     try {
@@ -13,7 +13,7 @@ const userID = async (req, res) => {
         const [result] = await db.promise().query(sql, [review_id]);
 
         if (result.length === 0) {
-            return res.status(404).json({ error: "Review not found" });
+            return res.status(404).json({ message: "Review not found" });
         }
 
         const review_owner_id = result[0].user_id;
@@ -21,9 +21,8 @@ const userID = async (req, res) => {
         const canModify = parseInt(user_id) === parseInt(review_owner_id);
         
         return res.status(200).json({ canModify });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: "Internal server error" });
+    } catch {
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
 

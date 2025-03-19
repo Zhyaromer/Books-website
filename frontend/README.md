@@ -10,4 +10,16 @@ Currently, two official plugins are available:
 
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+
+<ToastContainer draggable={true} transition={Slide} autoClose={2000} />
+
 import { axiosInstance } from "../context/AxiosInstance";
+
+const FilterSection = lazy(() => import("../Components/my-ui/FilterSection"));
+const Pagination = lazy(() => import("../Components/my-ui/Pagination"));
+const Footer = lazy(() => import("../Components/layout/Footer"));
+
+toast.error(error.response?.data?.message || "Something went wrong");
+
+ <Suspense fallback={<LoadingUi />}>
+              </Suspense>

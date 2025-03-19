@@ -18,8 +18,7 @@ const addquote = async (req, res) => {
         } else {
             return res.status(500).json({ message: 'Error adding quote' });
         }
-    } catch (error) {
-        console.error(error);
+    } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }

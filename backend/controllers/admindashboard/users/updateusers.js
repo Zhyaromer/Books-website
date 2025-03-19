@@ -9,35 +9,29 @@ const updateuser = async (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-        console.log("here 0");
         return res.status(400).json({ message: 'User ID is required' });
     }
 
     const { username, email, name, role, bio } = req.body;
 
     if (!username || !email || !bio || !name || !role) {
-        console.log("here 1");
         return res.status(400).json({ message: 'All fields are required' });
     }
 
     if (username < 1 || username > 35) {
-        console.log("here 2");
-        return res.status(400).json({ error: "username must be between 1 and 35 characters" });
+        return res.status(400).json({ message: "username must be between 1 and 35 characters" });
     }
 
     if (name < 1 || name > 35) {
-        console.log("here 3");
-        return res.status(400).json({ error: "Name must be between 1 and 35 characters" });
+        return res.status(400).json({ message: "Name must be between 1 and 35 characters" });
     }
 
     if (!validateEmail(email)) {
-        console.log("here 4");
         return res.status(400).json({ message: 'Invalid email format' });
     }
 
     if (bio >= 100) {
-        console.log("here 5");
-        return res.status(400).json({ error: "no more than 100 characters" });
+        return res.status(400).json({ message: "no more than 100 characters" });
     }
 
     const image = req.file ? getFilePath(req.file.filename) : null;
