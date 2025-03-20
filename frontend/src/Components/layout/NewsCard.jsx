@@ -22,6 +22,7 @@ const NewsCard = ({ data }) => {
           <img
             src={cover_image}
             alt={title}
+            loading="lazy"
             className="w-full h-full object-cover"
             onError={(e) => {
               e.target.src = 'https://via.placeholder.com/400x200?text=No+Image';

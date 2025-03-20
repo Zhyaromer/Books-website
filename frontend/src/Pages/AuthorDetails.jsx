@@ -7,6 +7,7 @@ import DetailedBookCard from '../Components/layout/DetailedBookCard';
 import { axiosInstance } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import NotFound from './NotFound';
 
 const AuthorDetails = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const AuthorDetails = () => {
   const navigate = useNavigate();
   const [author, setAuthor] = useState([]);
   const [books, setBooks] = useState([]);
+  const [hasfound, setHasFound] = useState(true);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -22,7 +24,7 @@ const AuthorDetails = () => {
     const fetchAuthor = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get(`http://localhost:3000/authors/getAuthorById/${id}`, { signal });
+        const response = await axiosInstance.get(`/authors/getAuthorById/${id}`, { signal });
         if (response.data && response.data.author && response.data.books) {
           setAuthor(response.data.author[0] || null);
           setBooks(response.data.books || []);
@@ -34,7 +36,7 @@ const AuthorDetails = () => {
       } catch (error) {
         toast.error(error.response?.data?.message || "Something went wrong");
         if (error.response.status === 404) {
-          navigate('/404');
+          setHasFound(false);
         }
         if (error.name !== 'CanceledError') {
           setAuthor(null);
@@ -47,7 +49,7 @@ const AuthorDetails = () => {
 
     const incrementViewCount = async () => {
       try {
-        await axiosInstance.get(`http://localhost:3000/authors/incrementauthorview/${id}`);
+        await axiosInstance.get(`/authors/incrementauthorview/${id}`);
       } catch {
         // silent ignore
       }
@@ -60,6 +62,10 @@ const AuthorDetails = () => {
       controller.abort();
     };
   }, [id]);
+
+  if (!hasfound) {
+    return <NotFound />
+  }
 
   if (loading) {
     return <LoadingUi />

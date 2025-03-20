@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect,useCallback } from 'react';
 import { useNavigate } from "react-router-dom";
-import { Edit, Trash, Flag, AlertTriangle, MoreVertical } from "lucide-react";
+import { Edit, Trash, AlertTriangle, MoreVertical } from "lucide-react";
 import { axiosInstance } from "../../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import StarRating from "../my-ui/StarRating";
@@ -29,12 +29,10 @@ const CommentsSection = ({ bookId }) => {
   const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
-  const [isReportOpen, setIsReportOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
   const [message, setMessage] = useState("");
   const [rating, setRating] = useState(0);
   const [hasSpoiler, setHasSpoiler] = useState(false);
-  const [reportMessage, setReportMessage] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [reviewPermissions, setReviewPermissions] = useState({});
   const scrollContainer = useRef(null);
@@ -78,16 +76,6 @@ const CommentsSection = ({ bookId }) => {
     }
   };
 
-  const handleReport = () => {
-    setReportMessage("");
-    setIsReportOpen(false);
-  };
-
-  const handleOpenReport = (review) => {
-    setSelectedReview(review);
-    setIsReportOpen(true);
-  };
-
   const userID = async (reviewId) => {
     try {
       const response = await axiosInstance.get(`/user/returnUserid/${reviewId}`);
@@ -116,10 +104,10 @@ const CommentsSection = ({ bookId }) => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${bookId}`);
+        const response = await axiosInstance.get(`/user/getallreviews?book_id=${bookId}`);
         setComments(response.data);
       } catch (error) {
-        console.log(error);
+        toast.error(error.response?.data?.message || "Something went wrong");
       }
     };
 
@@ -137,10 +125,9 @@ const CommentsSection = ({ bookId }) => {
       return;
     }
     try {
-      let response;
 
       if (editMode && selectedReview) {
-        response = await axiosInstance.patch(
+        await axiosInstance.patch(
           `/user/updateReview?review_id=${selectedReview.id}`,
           {
             rating,
@@ -149,8 +136,8 @@ const CommentsSection = ({ bookId }) => {
           }
         );
       } else {
-        response = await axiosInstance.post(
-          `http://localhost:3000/user/addReview/${bookId}`,
+        await axiosInstance.post(
+          `/user/addReview/${bookId}`,
           {
             rating,
             comment: message,
@@ -161,8 +148,10 @@ const CommentsSection = ({ bookId }) => {
 
       setIsAddReviewOpen(false);
 
-      const updatedComments = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${bookId}`);
-      setComments(updatedComments.data);
+      setTimeout(async () => {
+        const updatedComments = await axiosInstance.get(`/user/getallreviews?book_id=${bookId}`);
+        setComments(updatedComments.data);
+      }, 100);
 
       return true;
     } catch (error) {
@@ -179,7 +168,7 @@ const CommentsSection = ({ bookId }) => {
     setRevealedSpoilers((prev) => ({ ...prev, [reviewId]: false }));
   };
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (!scrollContainer.current) return;
 
     const container = scrollContainer.current;
@@ -190,7 +179,7 @@ const CommentsSection = ({ bookId }) => {
     if (newIndex !== activeIndex && newIndex >= 0 && newIndex < comments.length) {
       setActiveIndex(newIndex);
     }
-  };
+  }, [activeIndex, comments.length]);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -229,7 +218,7 @@ const CommentsSection = ({ bookId }) => {
       container.addEventListener('scroll', handleScroll);
       return () => container.removeEventListener('scroll', handleScroll);
     }
-  }, [activeIndex]);
+  }, [activeIndex, handleScroll]);
 
   return (
     <div dir="rtl" className="w-full max-w-7xl mx-auto p-0 md:p-4 font-sans">
@@ -288,7 +277,7 @@ const CommentsSection = ({ bookId }) => {
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
+                        <Button className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`} variant="ghost" size="sm">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -296,10 +285,6 @@ const CommentsSection = ({ bookId }) => {
                         <DropdownMenuItem onClick={() => handleEditReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`}>
                           <Edit className="ml-2 h-4 w-4" />
                           دەستکاری
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleOpenReport(review.id)} className={`cursor-pointer`}>
-                          <Flag className="ml-2 h-4 w-4" />
-                          ڕاپۆرت
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDeleteReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`} >
                           <Trash className="ml-2 h-4 w-4 text-red-500" />
@@ -425,35 +410,6 @@ const CommentsSection = ({ bookId }) => {
             <Button className="bg-indigo-500 hover:bg-indigo-600 text-white" onClick={handleAddComment}>
               {editMode ? "نوێکردنەوە" : "ناردن"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
-        <DialogContent>
-          <DialogHeader className={"pt-4"}>
-            <DialogTitle>ڕاپۆرتکردنی هەڵسەنگاندن</DialogTitle>
-            <DialogDescription>
-              تکایە هۆکاری ڕاپۆرتەکە ڕوون بکەرەوە.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div dir='rtl'>
-            <label className="block mb-2 text-sm font-medium">هۆکار</label>
-            <Textarea
-              dir='rtl'
-              value={reportMessage}
-              onChange={(e) => setReportMessage(e.target.value)}
-              rows={4}
-              placeholder="هۆکاری ڕاپۆرتەکە بنووسە..."
-            />
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsReportOpen(false)}>
-              پاشگەزبوونەوە
-            </Button>
-            <Button onClick={handleReport}>ناردنی ڕاپۆرت</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

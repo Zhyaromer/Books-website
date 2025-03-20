@@ -15,7 +15,7 @@ const Suggestions = () => {
     const fetchBooksData = async (abortController) => {
         try {
             setLoading(true);
-            const res = await axiosInstance.get("http://localhost:3000/books/getRandomBooks", { signal: abortController.signal });
+            const res = await axiosInstance.get("/books/getRandomBooks", { signal: abortController.signal });
             if (res.data && res.status === 200) {
                 setBooks(res.data);
             } else {

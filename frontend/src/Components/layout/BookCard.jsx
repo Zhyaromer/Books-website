@@ -32,6 +32,7 @@ const BookCollection = ({ data, text, path }) => {
                                 <img
                                     src={book.cover_image}
                                     alt={`Cover of ${book.title}`}
+                                    loading="lazy"
                                     className="w-full h-full object-fill rounded-lg transition-transform duration-500 group-hover:scale-105"
                                 />
 

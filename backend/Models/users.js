@@ -11,6 +11,8 @@ const users = () => {
     coverImgURL TEXT,
     passsowrdResetToken VARCHAR(50),
     passwordResetDate datetime,
+    role varchar(70) DEFAULT 'user',
+    bio TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`
 

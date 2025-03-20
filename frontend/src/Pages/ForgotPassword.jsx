@@ -12,7 +12,6 @@ const ForgotPassword = () => {
     e.preventDefault();
     try {
       const res = await axiosInstance.post('/auth/forgotPassword', { email });
-      console.log(res.data);
       if (res.status === 200) {
         setIsSubmitted(true);
         toast.success('Email sent successfully');

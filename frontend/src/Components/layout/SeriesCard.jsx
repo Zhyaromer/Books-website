@@ -15,6 +15,7 @@ const SeriesCard = ({ series }) => {
                 <img
                     src={series.cover_img}
                     alt={series.series_title}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-l from-black/90 to-black/60" />

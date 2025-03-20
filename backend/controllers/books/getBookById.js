@@ -35,16 +35,15 @@ const getBookById = (req, res) => {
         `;
 
         const sql4 = `
-        SELECT 
-        books.id,books.language,books.page_count, books.title, books.author_id, 
-        books.genre, books.part_num,
-        books.cover_image, 
+        SELECT books.id, books.language, books.page_count, books.title, books.author_id, 
+        books.genre, books.part_num, books.cover_image, 
         authors.name, authors.imgURL
         FROM books
         INNER JOIN authors ON books.author_id = authors.id
-        WHERE books.id NOT IN (?) AND books.genre = ? AND books.language = ?
-        AND books.id >= (SELECT FLOOR(MAX(id) * RAND()) FROM books)
-        LIMIT 6
+        WHERE books.id NOT IN (?) 
+        AND books.genre = ? 
+        AND books.language = ?
+        ORDER BY RAND() LIMIT 6
         `;
 
         const sql5 = `
@@ -82,7 +81,6 @@ const getBookById = (req, res) => {
 
                     db.query(sql4, [forbidId, book?.genre, book?.language], (err, similarBooks) => {
                         if (err) {
-                           
                             return res.status(500).json({ message: 'Internal Server Error' });
                         }
 
@@ -98,7 +96,6 @@ const getBookById = (req, res) => {
 
             });
         });
-
     } catch {
         return res.status(500).json({ message: 'Internal Server Error' });
     }

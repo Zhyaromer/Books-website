@@ -14,6 +14,7 @@ const LatestNewsCard = ({ news }) => {
         <img
           src={news.cover_image}
           alt={news.title}
+          loading="lazy"
           className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
           onError={(e) => {
             e.target.src = 'https://via.placeholder.com/400x200?text=No+Image';

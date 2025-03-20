@@ -79,7 +79,7 @@ const Authors = () => {
         setLanguage(foundLanguage?.value);
 
         const response = await axiosInstance.get(
-          `http://localhost:3000/authors/getallauthors?language=${foundLanguage?.value || languageParam || ''}&sorting=${Sort || ''}&page=${currentPage}&limit=${authorsPerPage}`,
+          `/authors/getallauthors?language=${foundLanguage?.value || languageParam || ''}&sorting=${Sort || ''}&page=${currentPage}&limit=${authorsPerPage}`,
           { signal }
         );
 
@@ -94,8 +94,8 @@ const Authors = () => {
           setTotalPages(1);
         }
       } catch (error) {
-        toast.error(error.response?.data.message || 'هەڵەیەک ڕوویدا لە پەیوەندی بە سێرڤەرەکە');
-        if (!axiosInstance.isCancel(error)) {
+        if (error.name !== 'CanceledError') { // Ignore cancellation errors
+          toast.error(error.response?.data.message || 'هەڵەیەک ڕوویدا لە پەیوەندی بە سێرڤەرەکە');
           setAuthors([]);
           setTotalAuthors(0);
           setTotalPages(1);

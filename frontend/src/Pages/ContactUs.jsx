@@ -1,43 +1,8 @@
-import { useState } from 'react';
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
-import { Mail, Facebook, Instagram, Twitter, Send } from 'lucide-react';
+import { Mail, Facebook, Instagram, Twitter} from 'lucide-react';
 
 const ContactUs = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    });
-  };
-
-  const subjectOptions = [
-    { value: '', label: 'هەڵبژاردنی بابەت' },
-    { value: 'suggestion', label: 'پێشنیار' },
-    { value: 'feedback', label: 'ڕەخنە و تێبینی' },
-    { value: 'error', label: 'ڕاپۆرتی هەڵە' },
-    { value: 'collaboration', label: 'هاوکاری' },
-    { value: 'other', label: 'بابەتی تر' }
-  ];
-
   const socialLinks = [
     {
       icon: <Facebook className="w-6 h-6" />,
@@ -78,7 +43,7 @@ const ContactUs = () => {
           <div className="container mx-auto text-center relative z-10">
             <h1 className="text-3xl md:text-5xl font-bold mb-4">پەیوەندیمان پێوە بکە</h1>
             <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto">
-              لە ڕێگەی سۆشیاڵ میدیا یان فۆرمی پەیوەندیکردنەوە پەیوەندیمان پێوە بکە
+              لە ڕێگەی سۆشیاڵ میدیا پەیوەندیمان پێوە بکە
             </p>
           </div>
         </div>
@@ -108,90 +73,7 @@ const ContactUs = () => {
             </div>
           </div>
         </div>
-
-        <div className="py-12 md:py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto">
-              <div className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 rounded-2xl p-6 md:p-8 shadow-lg">
-                <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-900">ناردنی پەیام</h2>
-                <form onSubmit={handleSubmit} className="space-y-6" dir="rtl">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="relative">
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">ناو</label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all bg-white/50 backdrop-blur-sm"
-                        required
-                        placeholder="ناوی تەواو"
-                      />
-                    </div>
-                    <div className="relative">
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">ئیمەیڵ</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all bg-white/50 backdrop-blur-sm"
-                        required
-                        placeholder="example@email.com"
-                      />
-                    </div>
-                  </div>
-                  <div className="relative">
-                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">بابەت</label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all bg-white/50 backdrop-blur-sm appearance-none"
-                      required
-                    >
-                      {subjectOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute left-4 top-[42px] pointer-events-none">
-                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="relative">
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">پەیام</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows="6"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none bg-white/50 backdrop-blur-sm"
-                      required
-                      placeholder="پەیامەکەت لێرە بنووسە..."
-                    ></textarea>
-                  </div>
-                  <div className="text-center">
-                    <button
-                      type="submit"
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-500 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      <Send className="w-5 h-5 ml-2" />
-                      ناردنی پەیام
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
+     
       </div>
       <Footer />
     </div>

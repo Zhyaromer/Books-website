@@ -52,7 +52,7 @@ const NewsPage = () => {
       setLoading(true);
       try {
         const response = await axiosInstance.get(
-          `http://localhost:3000/news/getallnews?category=${category || ''}&sorting=${sort || ''}&page=${currentPage}&limit=${newsPerPage}`
+          `/news/getallnews?category=${category || ''}&sorting=${sort || ''}&page=${currentPage}&limit=${newsPerPage}`
         );
 
         if (response.data.news) {

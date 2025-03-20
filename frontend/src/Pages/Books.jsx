@@ -108,7 +108,7 @@ const Books = () => {
                     setLanguage(foundLanguage?.value);
                 }
 
-                const url = `http://localhost:3000/books/getAllBooks?genre=${genreParams}&sorting=${Sort || ''}&language=${foundLanguage?.value || languageParam || ''}&page=${currentPage}&limit=${booksPerPage}`;
+                const url = `/books/getAllBooks?genre=${genreParams}&sorting=${Sort || ''}&language=${foundLanguage?.value || languageParam || ''}&page=${currentPage}&limit=${booksPerPage}`;
 
                 const response = await axiosInstance.get(url, { signal });
 

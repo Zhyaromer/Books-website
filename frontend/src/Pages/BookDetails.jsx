@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaBookmark, FaRegBookmark, FaShare } from 'react-icons/fa';
-import axios from 'axios';
 import BookCollection from '../Components/layout/BookCard';
 import CommentsSection from '../Components/layout/ReviewSection';
 import BookstoreNavigation from '../Components/layout/Navigation';
@@ -12,6 +11,7 @@ import LoadingUi from '../Components/my-ui/Loading';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { useNavigate } from "react-router-dom";
+import NotFound from './NotFound';
 
 const BookDetail = () => {
   const navigate = useNavigate();
@@ -25,21 +25,12 @@ const BookDetail = () => {
   const [hasRead, setHasRead] = useState(false);
   const [hasSaved, setHasSaved] = useState(false);
   const [hasSuggested, setHasSuggested] = useState(false);
-  const [comments, setComments] = useState([]);
-
-  const userID = async (reviewId) => {
-    try {
-      const response = await axiosInstance.get(`/user/returnUserid/${reviewId}`);
-      return response.data.canModify
-    } catch {
-      return false
-    }
-  }
+  const [hasfound, setHasFound] = useState(true);
 
   useEffect(() => {
     const incrementViewCount = async () => {
       try {
-        await axiosInstance.get(`http://localhost:3000/books/incrementbookview/${id}`);
+        await axiosInstance.get(`/books/incrementbookview/${id}`);
       } catch {
         // silent ignore
       }
@@ -47,7 +38,7 @@ const BookDetail = () => {
 
     const fetchBook = async () => {
       try {
-        const response = await axiosInstance.get(`http://localhost:3000/books/getBookById/${id}`);
+        const response = await axiosInstance.get(`/books/getBookById/${id}`);
         if (response.status === 200) {
           setFetchBook(response.data.book);
           setSeries(response.data.series);
@@ -56,7 +47,7 @@ const BookDetail = () => {
         }
       } catch (error) {
         if (error.response.status === 404) {
-          navigate('/404');
+          setHasFound(false);
         }
         toast.error(error.response?.data?.message || "Something went wrong");
         setLoading(false);
@@ -104,23 +95,12 @@ const BookDetail = () => {
       }
     }
 
-    const fetchComments = async () => {
-      try {
-        const response = await axiosInstance.get(`http://localhost:3000/user/getallreviews?book_id=${id}`);
-        setComments(response.data);
-      } catch (error) {
-        toast.error(error.response?.data?.message || "Something went wrong");
-      }
-    }
-
     incrementViewCount();
     fetchBook();
     bookreadsCheck();
     booksavesCheck();
     booksuggestedCheck();
-    fetchComments();
-    userID();
-  }, [id, comments.length]);
+  }, [id]);
 
   const addBooktoRead = async () => {
     try {
@@ -146,7 +126,7 @@ const BookDetail = () => {
 
   const handleaddSuggestion = async () => {
     try {
-      const response = await axiosInstance.post(`http://localhost:3000/user/addsuggestion/${id}`);
+      const response = await axiosInstance.post(`/user/addsuggestion/${id}`);
       if (response.status === 201 || response.status === 200) {
         setHasSuggested(!hasSuggested);
       }
@@ -159,6 +139,10 @@ const BookDetail = () => {
     navigator.clipboard.writeText(window.location.href);
     toast.success("Link copied to clipboard");
   };
+
+  if (!hasfound) {
+    return <NotFound />
+  }
 
   if (loading) {
     return <LoadingUi />

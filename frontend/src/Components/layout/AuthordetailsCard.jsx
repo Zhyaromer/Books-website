@@ -5,7 +5,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "../UI/avatar";
 const AuthorCard = ({ name, imageUrl, bio, id, className }) => {
   const getInitials = (authorName = "") =>
     authorName
-      .split(/\s+/) // Handles extra spaces
+      .split(/\s+/)
       .map((word) => word[0]?.toUpperCase() || "")
       .join("");
 

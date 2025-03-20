@@ -20,15 +20,15 @@ const NewsDetails = () => {
       try {
         setLoading(true);
 
-        const res1 = await axiosInstance.get(`http://localhost:3000/news/getNewsById/${id}`);
-        const res2 = await axiosInstance.get('http://localhost:3000/news/getnewestnews');
+        const res1 = await axiosInstance.get(`/news/getNewsById/${id}`);
+        const res2 = await axiosInstance.get('/news/getnewestnews');
 
         if (res1.status === 200 && res2.status === 200) {
           setNews(res1.data);
           setLoading(false);
           const filteredNews = res2.data.filter(item => item.id !== parseInt(id));
           setLatestNews(filteredNews);
-          await axiosInstance.get(`http://localhost:3000/news/incrementnewsview/${id}`);
+          await axiosInstance.get(`/news/incrementnewsview/${id}`);
         }
       } catch (error) {
         toast.error(error.response.data.message || "Something went wrong");

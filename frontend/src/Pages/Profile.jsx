@@ -75,7 +75,6 @@ const Profile = () => {
         const fetchSavedBooks = async () => {
             try {
                 const res = await axiosInstance.get(`/user/getSavedBooks?page=${currentPage}&limit=${booksPerPage}`);
-                console.log(res.data);
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setSavedBooks(res.data.foundBooks);
                     setBooksTotal(res.data.total || 0);
@@ -151,6 +150,7 @@ const Profile = () => {
     const handleDelete = async (id) => {
         try {
             await axiosInstance.delete(`/user/removeReview/${id}`);
+            setcomments(comments.filter(comment => comment.id !== id));
         } catch (error) {
             toast.error(error.response?.data?.message || "Something went wrong");
         } finally {

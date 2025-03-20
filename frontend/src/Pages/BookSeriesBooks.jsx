@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import BookstoreNavigation from '../Components/layout/Navigation';
 import Footer from '../Components/layout/Footer';
 import LoadingUi from '../Components/my-ui/Loading';
@@ -9,19 +9,20 @@ import { BookOpen } from "lucide-react";
 import { axiosInstance } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import NotFound from './NotFound';
 
 const BookSeriesBooks = () => {
     const { id } = useParams();
     const [books, setBooks] = useState([]);
-    const navigate = useNavigate();
     const [series, setSeries] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [hasfound, setHasFound] = useState(true);
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
                 setLoading(true);
-                const response = await axiosInstance.get(`http://localhost:3000/bookseries/getBookSeriesById/${id}`);
+                const response = await axiosInstance.get(`/bookseries/getBookSeriesById/${id}`);
                 if (response.data && response.status === 200) {
                     setBooks(response.data.books);
                     setSeries(response?.data?.series);
@@ -30,7 +31,7 @@ const BookSeriesBooks = () => {
                 }
             } catch (error) {
                 if (error.response.status === 404) {
-                    navigate('/404');
+                    setHasFound(false);
                 }
                 toast.error(error.response?.data?.message || "Something went wrong");
                 setBooks([]);
@@ -42,6 +43,10 @@ const BookSeriesBooks = () => {
 
         fetchBooks();
     }, [id]);
+
+    if (!hasfound) {
+        return <NotFound />
+    }
 
     if (loading) {
         return <LoadingUi />;

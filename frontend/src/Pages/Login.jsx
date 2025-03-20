@@ -5,11 +5,13 @@ import Footer from "../Components/layout/Footer";
 import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
 
 const KurdishLoginForm = () => {
+    const navigate = useNavigate();
     const { isAuthenticated } = useCheckAuth();
     if (isAuthenticated === true) {
-        window.location.href = '/';
+        navigate('/');
     }
     const [credentials, setCredentials] = useState({
         user_login_email: '',
@@ -27,7 +29,7 @@ const KurdishLoginForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axiosInstance.post('http://localhost:3000/auth/login', {
+        axiosInstance.post('/auth/login', {
             email: credentials.user_login_email,
             password: credentials.user_login_password
         }, { withCredentials: true })
@@ -37,7 +39,7 @@ const KurdishLoginForm = () => {
                     const userId = response.data.userId;
                     localStorage.setItem('token', token);
                     localStorage.setItem('userId', userId);
-                    window.location.href = '/';
+                    navigate('/');
                 }
             })
             .catch(error => {

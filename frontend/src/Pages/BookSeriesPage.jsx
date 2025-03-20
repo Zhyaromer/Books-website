@@ -39,7 +39,7 @@ const BookSeriesPage = () => {
   useEffect(() => {
     const fetchBookSeries = async () => {
       try {
-        const res = await axiosInstance.get(`http://localhost:3000/bookseries/getAllBookSeries?page=${currentPage}&limit=${seriesPerPage}`);
+        const res = await axiosInstance.get(`/bookseries/getAllBookSeries?page=${currentPage}&limit=${seriesPerPage}`);
         if (res.data && res.status === 200) {
           setBookSeries(res.data.bookseries);
           setTotalPages(Math.ceil((res.data.total || 0) / seriesPerPage));

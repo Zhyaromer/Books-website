@@ -8,6 +8,8 @@ const authors = () => {
     bio TEXT,
     imgURL TEXT,
     views INT DEFAULT 0,
+    dateOfBirth DATE,
+    country VARCHAR(100),
     language VARCHAR(50) CHECK (language IN ('Kurdish', 'English')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`

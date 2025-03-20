@@ -2,14 +2,13 @@ import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
 import { useState } from "react";
 import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
-import { Slide, ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+    const navigate = useNavigate();
     const { isAuthenticated } = useCheckAuth();
-    console.log(isAuthenticated);
     if (isAuthenticated === true) {
-        window.location.href = '/';
+        navigate("/");
     }
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -87,7 +86,7 @@ const SignUp = () => {
         e.preventDefault();
         if (validateForm()) {
             try {
-                const res = await axiosInstance.post("http://localhost:3000/auth/signup", {
+                const res = await axiosInstance.post("/auth/signup", {
                     username: formData.username,
                     name: formData.name,
                     email: formData.email,
@@ -96,7 +95,7 @@ const SignUp = () => {
                 });
 
                 if (res.status === 201) {
-                    window.location.href = "/";
+                    navigate("/login");
                 } else if (res.status === 400) {
                     setErrors({ error: res.data.message });
                 }
@@ -257,7 +256,6 @@ const SignUp = () => {
                 </div>
             </div>
             <Footer />
-            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
         </div>
     );
 };

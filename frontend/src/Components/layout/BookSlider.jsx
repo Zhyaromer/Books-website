@@ -57,6 +57,7 @@ const BookSlider = ({ data }) => {
                   <img
                     src={book.cover_image}
                     alt={`Cover of ${book.title}`}
+                    loading="lazy"
                     className="w-full object-cover aspect-[2/3]"
                   />
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">

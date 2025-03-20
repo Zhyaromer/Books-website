@@ -9,6 +9,7 @@ import Pagination from "../Components/my-ui/Pagination";
 import { useLocation } from "react-router-dom";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import NotFound from './NotFound';
 
 const UserProfile = () => {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ const UserProfile = () => {
     const [savedBooks, setSavedBooks] = useState([]);
     const [readBooks, setReadBooks] = useState([]);
     const [comments, setcomments] = useState([]);
+    const [hasfound, setHasFound] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [booksTotal, setBooksTotal] = useState(0);
     const [readbooksTotal, setreadbooksTotal] = useState(0);
@@ -36,10 +38,11 @@ const UserProfile = () => {
                     setUserData(res.data);
                 } else if (res.status === 401) {
                     toast.error('You are not authorized to view this page');
-                } else if (res.status === 404) {
-                    toast.error('not found');
                 }
             } catch (error) {
+                if (error.response.status === 404) {
+                    setHasFound(false);
+                }
                 toast.error(error.response?.data?.message || "Something went wrong");
             }
         }
@@ -149,6 +152,10 @@ const UserProfile = () => {
             pathname: location.pathname,
             search: newParams.toString()
         }, { replace: true });
+    }
+
+    if (!hasfound) {
+        return <NotFound />
     }
 
     return (

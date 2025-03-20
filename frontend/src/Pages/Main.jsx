@@ -10,8 +10,10 @@ import LoadingUi from '../Components/my-ui/Loading';
 import { axiosInstance } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import { useNavigate } from "react-router-dom";
 
 const Main = () => {
+    const navigate = useNavigate();
     const [sliderbooks, setsliderbooks] = useState([]);
     const [kurdishbooks, setkurdishbooks] = useState([]);
     const [englishbooks, setenglishbooks] = useState([]);
@@ -21,12 +23,10 @@ const Main = () => {
     const [series, setseries] = useState([]);
     const [getquotes, setquotes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchAllData = async () => {
             setIsLoading(true);
-            setError(null);
 
             try {
                 const [
@@ -39,14 +39,14 @@ const Main = () => {
                     quotesResponse,
                     seriesResponse
                 ] = await Promise.all([
-                    axiosInstance.get("http://localhost:3000/books/getnwewestbooks"),
-                    axiosInstance.get("http://localhost:3000/books/getBooksMainPage/?language=kurdish"),
-                    axiosInstance.get("http://localhost:3000/books/getBooksMainPage/?language=English"),
-                    axiosInstance.get("http://localhost:3000/books/getTrendingBooks"),
-                    axiosInstance.get("http://localhost:3000/books/getBooksMainPage/?genre=ڕۆمانس"),
-                    axiosInstance.get("http://localhost:3000/authors/getfamousauthors"),
-                    axiosInstance.get("http://localhost:3000/books/getBookQuotes"),
-                    axiosInstance.get("http://localhost:3000/bookseries/getseriesmainpage")
+                    axiosInstance.get("/books/getnwewestbooks"),
+                    axiosInstance.get("/books/getBooksMainPage/?language=kurdish"),
+                    axiosInstance.get("/books/getBooksMainPage/?language=English"),
+                    axiosInstance.get("/books/getTrendingBooks"),
+                    axiosInstance.get("/books/getBooksMainPage/?genre=ڕۆمانس"),
+                    axiosInstance.get("/authors/getfamousauthors"),
+                    axiosInstance.get("/books/getBookQuotes"),
+                    axiosInstance.get("/bookseries/getseriesmainpage")
                 ]);
 
                 setsliderbooks(sliderResponse.data);
@@ -58,7 +58,7 @@ const Main = () => {
                 setquotes(Array.isArray(quotesResponse.data) ? quotesResponse.data : []);
                 setseries(seriesResponse.data);
             } catch {
-                setError("Failed to load data. Please try again later.");
+               toast.error("هەڵەیەک ڕوویدا، تکایە دووبارە هەوڵ بدە")
             } finally {
                 setIsLoading(false);
             }
@@ -66,10 +66,6 @@ const Main = () => {
 
         fetchAllData();
     }, []);
-
-    if (error) {
-        toast.error(error);
-    }
 
     return (
         <div>
@@ -93,7 +89,7 @@ const Main = () => {
                             </div>
                             <div >
                                 <p
-                                    onClick={() => (window.location.href = "/bookseries")}
+                                    onClick={() => navigate("/bookseries")}
                                     className="text-sm lg:text-base font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"
                                 >
                                     بینینی هەمووی

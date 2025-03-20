@@ -38,8 +38,6 @@ const getUserComments = async (req, res) => {
             return res.status(200).json({ message: "No comments found" });
         }
 
-        console.log(comments);
-
         return res.status(200).json({
             comments,
             total: total,
