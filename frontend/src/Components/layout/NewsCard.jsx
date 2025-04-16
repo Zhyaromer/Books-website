@@ -7,7 +7,7 @@ const NewsCard = ({ data }) => {
 
   if (!data) {
     return (
-      <div className="bg-red-100 p-4 rounded-lg">
+      <div className="bg-red-100 p-4 rounded-lg text-white">
         هیچ هەوالێک نیە
       </div>
     );
@@ -16,7 +16,7 @@ const NewsCard = ({ data }) => {
   const { id, cover_image, title, description, views, created_at } = data;
   
   return (
-    <div className="bg-transparent rounded-lg shadow-lg overflow-hidden transition duration-300 transform hover:scale-[1.04] rtl border border-gray-200 min-h-[300px] w-full max-w-sm mx-auto my-4">
+    <div className="bg-transparent bg-[#1a1a1a] rounded-lg shadow-lg overflow-hidden transition duration-300 transform hover:scale-[1.04] rtl min-h-[300px] w-full max-w-sm mx-auto my-4">
       <div className="h-48 relative bg-gray-100">
         {cover_image ? (
           <img
@@ -45,14 +45,14 @@ const NewsCard = ({ data }) => {
       
       <div className="p-4 text-right bg-transparent">
         <div className="mb-2">
-          <h3 className="text-xl font-semibold line-clamp-2 text-gray-800 w-full">{title?.length > 30 ? title.slice(0, 30) + '...' : title || 'No Title'}</h3>
+          <h3 className="text-xl font-semibold line-clamp-2 text-gray-100 w-full">{title?.length > 30 ? title.slice(0, 30) + '...' : title || 'No Title'}</h3>
         </div>
-        <p className="text-gray-600 text-sm line-clamp-3 mb-3">{description || 'No Description'}</p>
+        <p className="text-gray-300 text-sm line-clamp-3 mb-3">{description || 'No Description'}</p>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">{new Date(created_at).toLocaleDateString() || 'No Date'}</span>
+          <span className="text-sm text-gray-400">{new Date(created_at).toLocaleDateString() || 'No Date'}</span>
           <button 
             onClick={() => navigate(`/newsdetails/${id}`)}
-            className="text-blue-600 hover:text-blue-800 px-4 py-2 flex items-center group"
+            className="text-[#1db954] hover:text-[#1ed760] px-4 py-2 flex items-center group"
           >
             <span>زیاتر ببینە</span>
             <span className="transform rotate-180 transition-transform duration-200 group-hover:-translate-x-1">

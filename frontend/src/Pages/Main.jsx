@@ -58,7 +58,7 @@ const Main = () => {
                 setquotes(Array.isArray(quotesResponse.data) ? quotesResponse.data : []);
                 setseries(seriesResponse.data);
             } catch {
-               toast.error("هەڵەیەک ڕوویدا، تکایە دووبارە هەوڵ بدە")
+                toast.error("هەڵەیەک ڕوویدا، تکایە دووبارە هەوڵ بدە")
             } finally {
                 setIsLoading(false);
             }
@@ -82,28 +82,30 @@ const Main = () => {
                     <BookCardMain data={trendingbooks} text="کتێبی تریندینگ" path="/Books" />
                     <BookCardMain data={romancebooks} text="کتێبی ڕۆمانس" path="/books?genre=ڕۆمانس" />
                     <Quotes quotes={getquotes} />
-                    <div>
-                        <div className={`flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-8 md:px-24`}>
+                    <div className="flex items-center flex-col max-w-[85rem] mx-auto pb-8">
+                        <div className={`flex pb-4 md:pb-8 flex-row-reverse items-end justify-between w-full`}>
                             <div>
-                                <h1 className="font-sans text-base md:text-2xl font-bold text-indigo-700">زنجیرە کتێبەکان</h1>
+                                <h1 className="font-sans text-base md:text-2xl font-bold text-white">زنجیرە کتێبەکان</h1>
                             </div>
                             <div >
                                 <p
                                     onClick={() => navigate("/bookseries")}
-                                    className="text-sm lg:text-base font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"
+                                    className="text-sm lg:text-base font-bold text-muted-foreground cursor-pointer"
                                 >
                                     بینینی هەمووی
                                 </p>
                             </div>
                         </div>
 
-                        <div dir="rtl" className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 px-8 md:px-20">
+                        <div dir="rtl" className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                             {series.map((series) => (
                                 <SeriesCard key={series.id} series={series} />
                             ))}
                         </div>
                     </div>
-                    <MultipleAuthorsCard data={famousauthors} />
+                    <div className="pb-8">
+                        <MultipleAuthorsCard data={famousauthors} />
+                    </div>
                     <Footer />
                 </div>
             )}

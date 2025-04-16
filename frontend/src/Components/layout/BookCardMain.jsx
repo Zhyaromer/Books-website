@@ -2,11 +2,11 @@ import PropTypes from "prop-types";
 
 const BookCardMain = ({ data, text, path }) => {
     return (
-        <div className="pt-6 md:pt-12 bg-gradient-to-b from-indigo-50 to-white w-full flex justify-center items-center flex-col">
+        <div className="pt-6 md:pt-12 bg-[#121212] w-full flex justify-center items-center flex-col">
             {path == "/Books" ?
                 <div className={`flex pb-4 md:pb-8 justify-end px-4 md:px-8 w-full max-w-[85rem]`}>
                     <div>
-                        <h1 className="font-sans text-base md:text-xl font-bold text-indigo-700">{text}</h1>
+                        <h1 className="font-sans text-base md:text-xl font-bold text-white">{text}</h1>
                     </div>
                 </div>
                 :
@@ -14,13 +14,13 @@ const BookCardMain = ({ data, text, path }) => {
                     <div>
                         <p
                             onClick={() => (window.location.href = path)}
-                            className="text-sm md:text-base lg:text-lg font-bold text-indigo-500 cursor-pointer hover:text-indigo-700 transition-colors"
+                            className="text-sm md:text-base lg:text-lg font-bold text-muted-foreground cursor-pointer"
                         >
                             بینینی هەمووی
                         </p>
                     </div>
                     <div>
-                        <h1 className="font-sans text-base md:text-xl font-bold text-indigo-700">{text}</h1>
+                        <h1 className="font-sans text-base md:text-xl font-bold text-white">{text}</h1>
                     </div>
                 </div>
             }
@@ -54,15 +54,15 @@ const BookCardMain = ({ data, text, path }) => {
                             </div>
 
                             <div className="text-center mt-2">
-                                <h6 className="cursor-pointer text-sm md:text-lg font-bold text-gray-600 md:mb-2 
-                                    group-hover:text-indigo-700 transition-colors duration-300 line-clamp-2 "
+                                <h6 className="cursor-pointer text-sm md:text-lg font-bold text-gray-300 md:mb-2 
+                                    group-hover:text-gray-200 transition-colors duration-200 line-clamp-2 "
                                     onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                                 >
                                     {book?.title?.length > 20 ? `${book.title.slice(0, 20)}...` : book.title}
                                 </h6>
 
                                 <div className="flex items-center justify-center">
-                                    <span onClick={() => (window.location.href = `/AuthorDetails/${book.author_id}`)} className="text-xs cursor-pointer text-indigo-800 font-medium hover:text-indigo-600 transition-colors">
+                                    <span onClick={() => (window.location.href = `/AuthorDetails/${book.author_id}`)} className="text-xs cursor-pointer text-gray-300 font-medium hover:text-gray-200 transition-colors duration-200">
                                         -{book.name}-
                                     </span>
                                 </div>
@@ -70,7 +70,7 @@ const BookCardMain = ({ data, text, path }) => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-center text-sm md:text-base font-bold text-gray-700 md:pb-56">هیچ کتێبێک نەدۆزرایەوە نییە</p>
+                    <p className="text-center text-sm md:text-base font-bold text-white md:pb-56">هیچ کتێبێک نەدۆزرایەوە نییە</p>
                 )}
             </div>
         </div>

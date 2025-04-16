@@ -8,7 +8,6 @@ const BookstoreNavigation = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
     const [homeDropdownOpen, setHomeDropdownOpen] = useState(false);
     const [booksDropdownOpen, setBooksDropdownOpen] = useState(false);
     const [bestSellerDropdownOpen, setBestSellerDropdownOpen] = useState(false);
@@ -126,15 +125,6 @@ const BookstoreNavigation = () => {
 
         profilePic();
     }, [isAuthenticated]);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -261,13 +251,13 @@ const BookstoreNavigation = () => {
     return (
         <div>
             {isLoading ? <LoadingUi /> :
-                <nav dir="rtl" className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-sm shadow-md' : 'bg-white'}`}>
+                <nav dir="rtl" className={`fixed w-full z-50 transition-all duration-300 bg-[#1a1a1a]`}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between h-16 items-center">
                             <div className="flex items-center">
                                 <a href="/" className="flex items-center">
-                                    <Book className="h-8 w-8 text-indigo-600" />
-                                    <span className="mr-2 text-xl font-bold text-gray-900">خانەی کتێب</span>
+                                    <Book className="h-8 w-8 text-[#1db954]" />
+                                    <span className="mr-2 text-xl font-bold text-gray-100">خانەی کتێب</span>
                                 </a>
                             </div>
 
@@ -276,7 +266,7 @@ const BookstoreNavigation = () => {
                                     {navLinks.map((link, index) => (
                                         <div key={link.name} className="relative dropdown-container">
                                             <div
-                                                className="flex items-center cursor-pointer text-gray-700 hover:text-indigo-600 transition-colors px-3 py-2 text-sm font-medium"
+                                                className="flex items-center cursor-pointer text-gray-100 hover:bg-[#1db954] rounded-xl transition-colors px-3 py-2 text-sm font-medium"
                                                 onClick={(e) => handleDropdownToggle(e, link, index)}
                                             >
                                                 <span>{link.name}</span>
@@ -284,13 +274,13 @@ const BookstoreNavigation = () => {
                                             </div>
 
                                             {link.hasDropdown && link.dropdownOpen && (
-                                                <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                                                <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-[#1a1a1a] ring-1 ring-black ring-opacity-5 z-50">
                                                     <div className="py-1" role="menu" aria-orientation="vertical">
                                                         {link.dropdownItems.map((item) => (
                                                             <a
                                                                 key={item.name}
                                                                 href={item.href}
-                                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                                                                className="block px-4 py-2 text-sm text-gray-100 hover:bg-[#1db954]"
                                                                 role="menuitem"
                                                             >
                                                                 {item.name}
@@ -358,7 +348,7 @@ const BookstoreNavigation = () => {
                                         <input
                                             type="text"
                                             placeholder="گەڕان بۆ کتێب..."
-                                            className="w-full pr-10 pl-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                            className="w-full text-gray-300 bg-black placeholder:text-gray-400 pr-10 pl-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1db954]"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                             onFocus={() => searchTerm}
@@ -369,22 +359,22 @@ const BookstoreNavigation = () => {
                                     </div>
 
                                     {showResults && (
-                                        <div className="absolute left-0 mt-2 w-[470px] bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
-                                            <div className="flex border-b border-gray-200">
+                                        <div className="absolute left-0 mt-2 w-[470px] bg-[#1a1a1a] rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
+                                            <div className="flex border-b border-[#1db954]">
                                                 <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-[#1db954] border-b-2 border-[#1db954]' : 'text-gray-100 hover:text-gray-300'}`}
                                                     onClick={() => setActiveTab('books')}
                                                 >
                                                     کتێبەکان ({results.books.length})
                                                 </button>
                                                 <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'authors' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'authors' ? 'text-[#1db954] border-b-2 border-[#1db954]' : 'text-gray-100 hover:text-gray-300'}`}
                                                     onClick={() => setActiveTab('authors')}
                                                 >
                                                     نووسەرەکان ({results.authors.length})
                                                 </button>
                                                 <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'users' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
+                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'users' ? 'text-[#1db954] border-b-2 border-[#1db954]' : 'text-gray-100 hover:text-gray-300'}`}
                                                     onClick={() => setActiveTab('users')}
                                                 >
                                                     بەکارهێنەران ({results.users.length})
@@ -394,9 +384,9 @@ const BookstoreNavigation = () => {
                                             <div className="max-h-80 overflow-y-auto">
                                                 {searchLoading && (
                                                     <div className="flex flex-col gap-2 items-center justify-center py-12">
-                                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1db954]"></div>
                                                         <div>
-                                                            <p>تکایە چاوەڕوانبە...</p>
+                                                            <p className='text-gray-100'>تکایە چاوەڕوانبە...</p>
                                                         </div>
                                                     </div>
                                                 )}
@@ -407,10 +397,10 @@ const BookstoreNavigation = () => {
                                                             results.books.map(book => (
                                                                 <div
                                                                     key={book.id}
-                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    className="flex items-center p-4 hover:bg-[#121212] cursor-pointer border-b border-gray-100"
                                                                     onClick={() => handleResultClick(book.id, 'book')}
                                                                 >
-                                                                    <div className="flex-shrink-0 w-16 h-20 bg-gradient-to-b from-indigo-200 to-indigo-400 rounded flex items-center justify-center shadow-md">
+                                                                    <div className="flex-shrink-0 w-16 h-20 bg-[#1db954] rounded flex items-center justify-center shadow-md">
                                                                         {book.cover_image ? (
                                                                             <img src={book.cover_image} alt={book.title} className="w-16 h-20 object-cover rounded" />
                                                                         ) : (
@@ -418,7 +408,7 @@ const BookstoreNavigation = () => {
                                                                         )}
                                                                     </div>
                                                                     <div className="mr-4 flex-1">
-                                                                        <div className="text-base font-bold text-gray-900 mb-1">{book.title}</div>
+                                                                        <div className="text-base font-bold text-gray-100 mb-1">{book.title}</div>
                                                                         <div className="flex items-center space-x-2 space-x-reverse mb-2">
                                                                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                                                                                 {book.genre}
@@ -427,12 +417,12 @@ const BookstoreNavigation = () => {
                                                                                 {book.language}
                                                                             </span>
                                                                         </div>
-                                                                        <div className="text-xs text-gray-600 line-clamp-2">{book.description}</div>
+                                                                        <div className="text-xs text-gray-100 line-clamp-2">{book.description}</div>
                                                                     </div>
                                                                 </div>
                                                             ))
                                                         ) : (
-                                                            <div className="py-8 text-center text-gray-500">
+                                                            <div className="py-8 text-center text-gray-100">
                                                                 هیچ کتێبێک نەدۆزرایەوە
                                                             </div>
                                                         )}
@@ -445,10 +435,10 @@ const BookstoreNavigation = () => {
                                                             results.authors.map(author => (
                                                                 <div
                                                                     key={author.id}
-                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    className="flex items-center p-4 hover:bg-[#121212] cursor-pointer border-b border-gray-100"
                                                                     onClick={() => handleResultClick(author.id, 'authors')}
                                                                 >
-                                                                    <div className="flex-shrink-0 w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center shadow-md">
+                                                                    <div className="flex-shrink-0 w-14 h-14 bg-[#1db954] rounded-full flex items-center justify-center shadow-md">
                                                                         {author.imgURL ? (
                                                                             <img src={author.imgURL} className="w-14 h-14 object-cover rounded-full" />
                                                                         ) : (
@@ -456,13 +446,13 @@ const BookstoreNavigation = () => {
                                                                         )}
                                                                     </div>
                                                                     <div className="mr-4 flex-1">
-                                                                        <div className="text-base font-bold text-gray-900">{author.name}</div>
-                                                                        <div className="text-xs text-gray-600 mt-1 line-clamp-2">{truncateBio(author.bio)}</div>
+                                                                        <div className="text-base font-bold text-gray-100">{author.name}</div>
+                                                                        <div className="text-xs text-gray-200 mt-1 line-clamp-2">{truncateBio(author.bio)}</div>
                                                                     </div>
                                                                 </div>
                                                             ))
                                                         ) : (
-                                                            <div className="py-8 text-center text-gray-500">
+                                                            <div className="py-8 text-center text-gray-100">
                                                                 هیچ نووسەرێک نەدۆزرایەوە
                                                             </div>
                                                         )}
@@ -475,10 +465,10 @@ const BookstoreNavigation = () => {
                                                             results.users.map(user => (
                                                                 <div
                                                                     key={user.username}
-                                                                    className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                    className="flex items-center p-4 hover:bg-[#121212] cursor-pointer border-b border-gray-100"
                                                                     onClick={() => handleResultClick(user.username, 'users')}
                                                                 >
-                                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-indigo-500'}`}>
+                                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-[#1db954]'}`}>
                                                                         {user.coverImgURL ? (
                                                                             <img src={user.coverImgURL} alt={user.username} className="w-12 h-12 object-cover rounded-full" />
                                                                         ) : (
@@ -486,13 +476,13 @@ const BookstoreNavigation = () => {
                                                                         )}
                                                                     </div>
                                                                     <div className="mr-4 flex-1">
-                                                                        <div className="text-base font-bold text-gray-900">{user.name}</div>
-                                                                        <div className="text-xs text-gray-500">@{user.username}</div>
+                                                                        <div className="text-base font-bold text-gray-100">{user.name}</div>
+                                                                        <div className="text-xs text-gray-400">@{user.username}</div>
                                                                     </div>
                                                                 </div>
                                                             ))
                                                         ) : (
-                                                            <div className="py-8 text-center text-gray-500">
+                                                            <div className="py-8 text-center text-gray-100">
                                                                 هیچ بەکارهێنەرێک نەدۆزرایەوە
                                                             </div>
                                                         )}
@@ -524,13 +514,13 @@ const BookstoreNavigation = () => {
                                     )}
 
                                     {userDropdownOpen && (
-                                        <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                                        <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-[#1a1a1a] ring-1 ring-black ring-opacity-5 z-50">
                                             <div className="py-1" role="menu" aria-orientation="vertical">
                                                 {userDropdownItems.map((item) => (
                                                     <p
                                                         key={item.name}
                                                         onClick={item.onClick}
-                                                        className="cursor-pointer flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                                                        className="cursor-pointer flex items-center px-4 py-2 text-sm text-gray-100 hover:bg-[#1db954] hover:text-gray-200"
                                                         role="menuitem"
                                                     >
                                                         {item.icon}
@@ -687,9 +677,9 @@ const BookstoreNavigation = () => {
                                                                 className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
                                                                 onClick={() => handleResultClick(user.username, 'users')}
                                                             >
-                                                                <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-indigo-500'}`}>
+                                                                <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-[#1db954]'}`}>
                                                                     {user.coverImgURL ? (
-                                                                        <img src={user.coverImgURL} alt={user.username} className="w-12 h-12 object-cover rounded-full" />
+                                                                        <img src={user.coverImgURL} className="w-12 h-12 object-cover rounded-full" />
                                                                     ) : (
                                                                         <span className="text-base font-bold text-white">{user.username.charAt(0)}</span>
                                                                     )}

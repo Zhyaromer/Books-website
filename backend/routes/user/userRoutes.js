@@ -18,6 +18,7 @@ const get_user_name_and_pic = require('../../controllers/user/get_user_name_and_
 const addsuggestion = require('../../controllers/user/addsuggestion');
 const getSuggestion = require('../../controllers/user/getsuggestions');
 const suggestionscheck = require('../../controllers/user/suggestionscheck');
+const contactEmail = require('../../controllers/user/contactEmail');
 const { changepic, upload } = require('../../controllers/user/changeprofilepic');
 const  Searching = require('../../controllers/user/Searching');
 
@@ -43,6 +44,7 @@ router.post('/addSaveBook/:book_id', addsaveBook);
 router.post('/addsuggestion/:book_id', addsuggestion);
 router.post("/upload", upload, changepic);
 router.patch('/updateReview', updateReview);
+router.post('/contactEmail', contactEmail);
 
 router.delete('/removeReview/:review_id', removeReview);
 

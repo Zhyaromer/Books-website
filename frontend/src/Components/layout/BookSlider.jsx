@@ -38,7 +38,7 @@ const BookSlider = ({ data }) => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
+    <div className="w-full max-w-4xl mx-auto p-6 bg-[#1a1a1a] rounded-lg shadow-lg shadow-gray-900">
       <div className="relative mb-8">
         <div className="overflow-hidden">
           <div
@@ -52,7 +52,7 @@ const BookSlider = ({ data }) => {
                   }`}
                 onClick={() => handleBookClick(book)}
               >
-                <div className={`relative rounded-lg overflow-hidden shadow-md ${selectedBook.id === book.id ? 'ring-4 ring-blue-500' : ''
+                <div className={`relative rounded-lg overflow-hidden shadow-md ${selectedBook.id === book.id ? 'ring-4 ring-[#1db954]' : ''
                   }`}>
                   <img
                     src={book.cover_image}
@@ -73,7 +73,7 @@ const BookSlider = ({ data }) => {
         <button
           onClick={prevSlide}
           disabled={currentIndex === 0}
-          className={`absolute left-0 top-1/2 -translate-y-1/2 -ml-4 bg-white rounded-full p-2 shadow-lg ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100 hover:bg-gray-100'
+          className={`absolute left-0 text-white top-1/2 -translate-y-1/2 -ml-4 bg-[rgb(18,18,10)] rounded-full p-2 shadow-lg ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
             }`}
         >
           <ChevronLeft size={24} />
@@ -82,14 +82,14 @@ const BookSlider = ({ data }) => {
         <button
           onClick={nextSlide}
           disabled={currentIndex === maxIndex}
-          className={`absolute right-0 top-1/2 -translate-y-1/2 -mr-4 bg-white rounded-full p-2 shadow-lg ${currentIndex === maxIndex ? 'opacity-30 cursor-not-allowed' : 'opacity-100 hover:bg-gray-100'
+          className={`absolute right-0 top-1/2 -translate-y-1/2 -mr-4 text-white bg-[rgb(18,18,10)] rounded-full p-2 shadow-lg ${currentIndex === maxIndex ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
             }`}
         >
           <ChevronRight size={24} />
         </button>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-[#1a1a1a] p-6 rounded-lg shadow-md">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/3 h-[400px]">
             <img
@@ -99,29 +99,29 @@ const BookSlider = ({ data }) => {
             />
           </div>
           <div className="md:w-2/3">
-            <h2 onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="text-2xl font-bold text-gray-800 mb-2 cursor-pointer">{selectedBook.title}</h2>
-            <p onClick={() => navigate(`/AuthorDetails/${selectedBook.author_id}`)} className="text-lg text-gray-600 mb-1 cursor-pointer">{selectedBook.name}</p>
-            <p className="text-gray-500 mb-4">بڵاوکراوەتەوە لە {new Date(selectedBook.published_date).getFullYear()}</p>
+            <h2 onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="text-2xl font-bold text-white mb-2 cursor-pointer">{selectedBook.title}</h2>
+            <p onClick={() => navigate(`/AuthorDetails/${selectedBook.author_id}`)} className="text-lg text-white mb-1 cursor-pointer">{selectedBook.name}</p>
+            <p className="text-white mb-4">بڵاوکراوەتەوە لە {new Date(selectedBook.published_date).getFullYear()}</p>
 
             <div className="hidden md:flex gap-4 mb-4">
               <div onClick={() => navigate(`/books?genre=${selectedBook.genre}`)} className="flex items-center cursor-pointer">
                 <Tag size={16} className="text-blue-600 mr-1" />
-                <span className="text-sm text-gray-700">{selectedBook.genre}</span>
+                <span className="text-sm text-white">{selectedBook.genre}</span>
               </div>
               <div onClick={() => navigate(`/books?language=${selectedBook.language}`)} className="flex items-center cursor-pointer">
                 <Globe size={16} className="text-green-600 mr-1" />
-                <span className="text-sm text-gray-700">{selectedBook.language}</span>
+                <span className="text-sm text-white">{selectedBook.language}</span>
               </div>
               <div className="flex items-center">
                 <Book size={16} className="text-purple-600 mr-1" />
-                <span className="text-sm text-gray-700">{selectedBook.page_count} pages</span>
+                <span className="text-sm text-white">{selectedBook.page_count} pages</span>
               </div>
             </div>
 
-            <p className="text-gray-700">{selectedBook.description}</p>
+            <p className="text-white">{selectedBook.description}</p>
 
             <div className="mt-6">
-              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3">
+              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="bg-[#1db954] text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3">
                 بینینی زیاتر
               </button>
             </div>
@@ -134,7 +134,7 @@ const BookSlider = ({ data }) => {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'
+            className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-[#1db954]' : 'bg-white hover:bg-gray-200'
               }`}
             aria-label={`Go to slide ${index + 1}`}
           />

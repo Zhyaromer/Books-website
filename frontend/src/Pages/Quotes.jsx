@@ -33,27 +33,42 @@ const Quotes = () => {
     return (
         <>
             <BookstoreNavigation />
-            {loading ? (
-                <>
-                    <LoadingUi />
-                </>
-            ) : (
-                <div>
-                    <div className='py-32 md:py-48'>
-                        <div className='flex justify-center'>
-                            <button
-                                onClick={() => fetchQuotes()}
-                                className='bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mb-4'
-                            >
-                                وتەی تازە
-                            </button>
-                        </div>
-                        <QuotesCards quotes={quotes} />
+
+            <div className="bg-[#1a1a1a] min-h-screen pt-20">
+                <div className="max-w-7xl mx-auto px-4 pt-8 pb-16">
+                    <div className="max-w-7xl mx-auto flex flex-row justify-between items-center mb-8 border-b border-[#1db954] pb-6">
+                        <h1 className="text-xl md:text-3xl font-bold text-gray-100">وتەی کتێبەکان</h1>
+
+                        <button
+                            onClick={() => fetchQuotes()}
+                            className="bg-[#1db954] hover:bg-[#1ed760] text-white px-4 md:px-6 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 shadow-md"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            وتەی تازە
+                        </button>
                     </div>
+
+                    {loading ? (
+                        <div className="flex justify-center items-center py-16">
+                            <LoadingUi />
+                        </div>
+                    ) : (
+                        <div className="quotes-container mt-8">
+                            <QuotesCards quotes={quotes} />
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
+
             <Footer />
-            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
+            <ToastContainer
+                position="bottom-right"
+                draggable={true}
+                transition={Slide}
+                autoClose={2000}
+            />
         </>
     );
 };

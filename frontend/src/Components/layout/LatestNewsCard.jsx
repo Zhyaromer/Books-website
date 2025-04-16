@@ -21,10 +21,10 @@ const LatestNewsCard = ({ news }) => {
           }}
         />
       </div>
-      <h3 className="font-semibold text-gray-800 group-hover:text-blue-600 transition duration-200 line-clamp-2">
+      <h3 className="font-semibold text-gray-100 group-hover:text-[#1db954] transition duration-200 line-clamp-2">
         {news.title}
       </h3>
-      <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+      <div className="flex items-center gap-4 mt-2 text-sm text-gray-300">
         <span>{new Date(news.created_at).toLocaleDateString()}</span>
         <span className="flex items-center gap-1">
           <Eye size={16} />

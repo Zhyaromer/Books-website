@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const templates = require('../templates/emailTemplates'); 
+const templates = require('../templates/emailTemplates');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -7,8 +7,8 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
-    logger: true, 
-    debug: true  
+    logger: true,
+    debug: true
 });
 
 
@@ -37,4 +37,4 @@ Object.keys(templates).forEach((key) => {
     };
 });
 
-module.exports = sendEmail;
+module.exports = { sendEmail, transporter };

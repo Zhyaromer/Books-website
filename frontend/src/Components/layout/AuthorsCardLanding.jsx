@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 
 const MultipleAuthorsCard = ({ data }) => {
     return (
-        <div className="w-full max-w-6xl mx-auto bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-xl">
-            <h1 className="text-xl md:text-2xl flex justify-end font-bold mb-4 sm:mb-6 md:mb-8 text-gray-800 border-b pb-2 sm:pb-4 border-gray-200">
+        <div className="w-full max-w-6xl mx-auto bg-[#1a1a1a] p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-xl">
+            <h1 className="text-xl md:text-2xl flex justify-end font-bold mb-4 sm:mb-6 md:mb-8 text-white border-b pb-2 sm:pb-4 border-[#1db954]">
                 بەناوبانگترین نوسەرەکان 
             </h1>
             
@@ -30,7 +30,7 @@ const MultipleAuthorsCard = ({ data }) => {
                                 <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2">{author.name.length > 11 ? `${author.name.slice(0, 11)}...` : author.name}</h2>
                                 
                                 <div className="flex justify-end items-center mt-2 sm:mt-4 opacity-0 transform translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-                                    <button className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 bg-white text-gray-900 rounded-full text-xs sm:text-sm font-medium hover:bg-gray-100 transition-colors">
+                                    <button className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 bg-[#1db954] text-white rounded-full text-xs sm:text-sm font-medium hover:bg-[#1ed760] transition-colors">
                                         بینینی پەڕە
                                     </button>
                                 </div>

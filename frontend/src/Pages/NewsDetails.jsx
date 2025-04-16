@@ -62,11 +62,11 @@ const NewsDetails = () => {
                 </div>
 
                 <div className="rtl">
-                  <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                  <h1 className="text-4xl font-bold text-gray-100 mb-4">
                     {news.title}
                   </h1>
 
-                  <div className="flex items-center gap-6 text-gray-600 mb-8 border-b border-gray-200 pb-4">
+                  <div className="flex items-center gap-6 text-gray-300 mb-8 border-b border-[#1db954] pb-4">
                     <div className="flex items-center gap-2">
                       <Calendar size={20} />
                       <span>{new Date(news.created_at).toLocaleDateString()}</span>
@@ -77,15 +77,15 @@ const NewsDetails = () => {
                     </div>
                   </div>
 
-                  <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+                  <div className="prose prose-lg max-w-none text-gray-200 leading-relaxed">
                     <p className="whitespace-pre-wrap">{news.description}</p>
                   </div>
                 </div>
               </div>
 
               <div className="lg:w-1/4">
-                <div className="bg-gray-50 rounded-xl p-6 rtl sticky top-24">
-                  <h2 className="text-xl font-bold mb-6 text-gray-900 border-b border-gray-200 pb-2">
+                <div className="bg-[#1a1a1a] rounded-xl p-6 rtl sticky top-24">
+                  <h2 className="text-xl font-bold mb-6 text-gray-200 border-b border-[#1db954] pb-2">
                     دوایین هەواڵەکان
                   </h2>
                   <div className="space-y-6">
@@ -94,7 +94,7 @@ const NewsDetails = () => {
                         <LatestNewsCard key={item.id} news={item} />
                       ))
                     ) : (
-                      <div className="text-center text-gray-500">
+                      <div className="text-center text-gray-100">
                         هیچ هەواڵێکی تر نییە
                       </div>
                     )}
