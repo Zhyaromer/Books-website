@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from "../Components/my-ui/Pagination";
 import { useLocation } from 'react-router-dom';
 import { axiosInstance } from "../context/AxiosInstance";
+import LoadingUi from '../Components/my-ui/Loading';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -19,6 +20,7 @@ const BookSeriesPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [seriesLength, setSeriesLength] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (pageQuery) {
@@ -27,6 +29,7 @@ const BookSeriesPage = () => {
   }, [pageQuery]);
 
   const handlePageChange = (newPage) => {
+    setLoading(true);
     setCurrentPage(newPage);
     const newParams = new URLSearchParams(location.search);
     newParams.set('page', newPage.toString());
@@ -34,10 +37,12 @@ const BookSeriesPage = () => {
       pathname: location.pathname,
       search: newParams.toString()
     }, { replace: true });
+    setLoading(false);
   };
 
   useEffect(() => {
     const fetchBookSeries = async () => {
+      setLoading(true);
       try {
         const res = await axiosInstance.get(`/bookseries/getAllBookSeries?page=${currentPage}&limit=${seriesPerPage}`);
         if (res.data && res.status === 200) {
@@ -55,19 +60,23 @@ const BookSeriesPage = () => {
         setBookSeries([]);
         setTotalPages(0);
         setSeriesLength(0);
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchBookSeries();
   }, [currentPage]);
 
+  if (loading) return <LoadingUi />
+
   return (
     <div>
       <BookstoreNavigation />
-      <div className="min-h-screen bg-background py-8 px-4 pt-20" dir="rtl">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-xl md:text-3xl font-bold text-right mb-6 md:mb-8 text-primary">
-            زنجیرە کتێبەکان {seriesLength}
+      <div className="!bg-[#121212] min-h-screen bg-background py-8 pt-28" dir="rtl">
+        <div className="max-w-7xl mx-auto w-full px-6">
+          <h1 className="text-xl md:text-3xl !text-gray-100 font-bold text-right mb-6 md:mb-8 text-primary">
+            زنجیرە کتێبەکان ({seriesLength})
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {bookSeries.map((series) => (

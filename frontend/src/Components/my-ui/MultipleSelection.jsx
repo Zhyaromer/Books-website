@@ -78,18 +78,18 @@ const MultipleSelection = ({ options, label, placeholder, onChange, value }) => 
 
     return (
         <div dir='rtl' className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">{label}</label>
+            <label className="text-sm font-medium text-gray-100">{label}</label>
             <div className="relative z-50">
                 <div
-                    className={`flex flex-wrap items-center gap-1 p-2 border rounded-md ${isDropdownOpen ? 'border-blue-500 ring-2 ring-blue-100' : 'border-gray-300'
-                        }`}
+                    tabIndex={0}
+                    className="flex flex-wrap items-center gap-1 p-2 border-[1px] border-gray-700 outline-none focus-within:border-[#1db954] focus-within:border-[2px] rounded-md"
                     onClick={() => inputRef.current.focus()}
                 >
                     {selectedItems.map(item => (
                         <Badge
                             onClick={() => handleRemoveItem(item.value)}
                             key={item.value}
-                            className=" bg-indigo-500 cursor-pointer text-white hover:bg-indigo-700 transform transition-colors duration-300 flex items-center gap-1 py-1 px-2"
+                            className=" bg-[#1db954] cursor-pointer text-white hover:bg-[#1ed760] transform transition-colors duration-300 flex items-center gap-1 py-1 px-2"
                         >
                             {item.label}
                             <X
@@ -104,13 +104,13 @@ const MultipleSelection = ({ options, label, placeholder, onChange, value }) => 
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         onFocus={() => setIsDropdownOpen(true)}
-                        className="flex-grow min-w-20 outline-none text-sm bg-transparent"
+                        className="flex-grow min-w-20 outline-none text-sm bg-transparent placeholder:text-gray-400 text-red-100"
                         placeholder={selectedItems.length ? "" : placeholder}
                     />
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="p-1 h-auto ml-auto"
+                        className="p-1 h-auto ml-auto hover:bg-[#1a1a1a]"
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
                         <ChevronDown className="h-4 w-4 text-gray-400" />
@@ -120,17 +120,17 @@ const MultipleSelection = ({ options, label, placeholder, onChange, value }) => 
                 {isDropdownOpen && (
                     <div
                         ref={dropdownRef}
-                        className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto"
+                        className="absolute z-10 mt-1 w-full bg-[#1a1a1a] rounded-md shadow-lg max-h-60 overflow-auto"
                     >
                         {filteredOptions.length > 0 ? (
                             <div className="py-1">
                                 {filteredOptions.map(option => (
                                     <div
                                         key={option.value}
-                                        className="flex items-center px-3 py-2 text-sm hover:bg-blue-50 cursor-pointer"
+                                        className="flex items-center px-3 py-2 text-sm hover:bg-[#1db954] cursor-pointer"
                                         onClick={() => handleSelectItem(option)}
                                     >
-                                        <span>{option.label}</span>
+                                        <span className='text-gray-100'>{option.label}</span>
                                         {selectedItems.find(i => i.value === option.value) && (
                                             <Check className="ml-auto h-4 w-4 text-blue-500" />
                                         )}

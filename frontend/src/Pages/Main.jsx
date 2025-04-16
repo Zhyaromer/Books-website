@@ -74,37 +74,39 @@ const Main = () => {
             ) : (
                 <div>
                     <BookstoreNavigation />
-                    <div className="pt-20">
-                        <BookSlider data={sliderbooks} />
-                    </div>
-                    <BookCardMain data={kurdishbooks} text="نوێترین کتێبە کوردیەکان" path="/books?language=Kurdish" />
-                    <BookCardMain data={englishbooks} text="نوێترین کتێبە ئینگلیزیەکان" path="/books?language=English" />
-                    <BookCardMain data={trendingbooks} text="کتێبی تریندینگ" path="/Books" />
-                    <BookCardMain data={romancebooks} text="کتێبی ڕۆمانس" path="/books?genre=ڕۆمانس" />
-                    <Quotes quotes={getquotes} />
-                    <div className="flex items-center flex-col max-w-[85rem] mx-auto pb-8">
-                        <div className={`flex pb-4 md:pb-8 flex-row-reverse items-end justify-between w-full`}>
-                            <div>
-                                <h1 className="font-sans text-base md:text-2xl font-bold text-white">زنجیرە کتێبەکان</h1>
-                            </div>
-                            <div >
-                                <p
-                                    onClick={() => navigate("/bookseries")}
-                                    className="text-sm lg:text-base font-bold text-muted-foreground cursor-pointer"
-                                >
-                                    بینینی هەمووی
-                                </p>
-                            </div>
+                    <div className="max-w-7xl mx-auto w-full">
+                        <div className="pt-20">
+                            <BookSlider data={sliderbooks} />
                         </div>
+                        <BookCardMain data={kurdishbooks} text="نوێترین کتێبە کوردیەکان" path="/books?language=Kurdish" />
+                        <BookCardMain data={englishbooks} text="نوێترین کتێبە ئینگلیزیەکان" path="/books?language=English" />
+                        <BookCardMain data={trendingbooks} text="کتێبی تریندینگ" path="/Books" />
+                        <BookCardMain data={romancebooks} text="کتێبی ڕۆمانس" path="/books?genre=ڕۆمانس" />
+                        <Quotes quotes={getquotes} />
+                        <div className="flex items-center flex-col pb-8 px-6">
+                            <div className={`flex pb-4 md:pb-8 flex-row-reverse items-end justify-between w-full`}>
+                                <div>
+                                    <h1 className="font-sans text-base md:text-2xl font-bold text-white">زنجیرە کتێبەکان</h1>
+                                </div>
+                                <div >
+                                    <p
+                                        onClick={() => navigate("/bookseries")}
+                                        className="text-sm lg:text-base font-bold text-muted-foreground cursor-pointer"
+                                    >
+                                        بینینی هەمووی
+                                    </p>
+                                </div>
+                            </div>
 
-                        <div dir="rtl" className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                            {series.map((series) => (
-                                <SeriesCard key={series.id} series={series} />
-                            ))}
+                            <div dir="rtl" className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                                {series.map((series) => (
+                                    <SeriesCard key={series.id} series={series} />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                    <div className="pb-8">
-                        <MultipleAuthorsCard data={famousauthors} />
+                        <div className="pb-8">
+                            <MultipleAuthorsCard data={famousauthors} />
+                        </div>
                     </div>
                     <Footer />
                 </div>

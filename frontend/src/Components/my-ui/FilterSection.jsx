@@ -14,10 +14,10 @@ const FilterSection = ({
     sort,
     onSortChange,
     languageLabel = "زمان",
-    className = "grid grid-cols-1 lg:grid-cols-3 gap-4 w-[80%] md: md:w-[70%] ",
+    className = "grid grid-cols-1 lg:grid-cols-3 gap-4 w-full max-w-7xl mx-auto",
 }) => {
     return (
-        <div className="relative z-30 space-y-6 px-4 sm:px-6 lg:px-8 py-6 pt-20 md:pt-32 flex justify-center">
+        <div className="relative z-30 space-y-6 px-4 sm:px-6 lg:px-8 py-6 pt-28 flex justify-center">
             <div dir="rtl" className={className}>
                 {showGenre && (
                     <div className="w-full">

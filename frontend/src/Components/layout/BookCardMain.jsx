@@ -3,13 +3,13 @@ import PropTypes from "prop-types";
 const BookCardMain = ({ data, text, path }) => {
     return (
         <div className="pt-6 md:pt-12 bg-[#121212] w-full flex justify-center items-center flex-col">
-            {path == "/Books" ?
+            {path == "/Books" ? (
                 <div className={`flex pb-4 md:pb-8 justify-end px-4 md:px-8 w-full max-w-[85rem]`}>
                     <div>
                         <h1 className="font-sans text-base md:text-xl font-bold text-white">{text}</h1>
                     </div>
                 </div>
-                :
+            ) : (
                 <div className={`flex pb-4 md:pb-8 items-center justify-between px-4 md:px-8 w-full max-w-[85rem]`}>
                     <div>
                         <p
@@ -23,9 +23,9 @@ const BookCardMain = ({ data, text, path }) => {
                         <h1 className="font-sans text-base md:text-xl font-bold text-white">{text}</h1>
                     </div>
                 </div>
-            }
+            )}
 
-            <div dir="rtl" className="flex flex-wrap justify-center gap-2 gap-y-8 px-4 md:px-8 pb-6 max-w-[85rem]">
+            <div dir="rtl" className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-4 md:px-8 pb-6 max-w-7xl w-full">
                 {data?.length > 0 ? (
                     data?.map((book) => (
                         <div
@@ -33,7 +33,7 @@ const BookCardMain = ({ data, text, path }) => {
                             className="group flex flex-col h-full"
                         >
                             <div
-                                className="relative w-[175px] md:w-[207px] z-10 h-[250px] lg:h-[350px] md:h-[300px] shadow-md rounded-lg mb-2 md:mb-4 
+                                className="relative w-full aspect-[2/3] z-10 shadow-md rounded-lg mb-2 md:mb-4 
                                 transition-all duration-500 group-hover:shadow-xl transform group-hover:-translate-y-1 cursor-pointer"
                                 onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                             >
@@ -44,10 +44,10 @@ const BookCardMain = ({ data, text, path }) => {
                                     className="w-full h-full object-fill rounded-lg transition-transform duration-500 group-hover:scale-105"
                                 />
 
-                                <div className="absolute w-full h-[250px] lg:h-[350px] md:h-[300px] inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
+                                <div className="absolute w-full h-full inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
 
                                 <div className="absolute z-20 bottom-0 right-0 left-0 flex justify-center transform translate-y-1/2">
-                                    <p className="text-xs sm:text-sm text-white px-2 py-1 bg-purple-500 rounded-full max-w-max shadow-lg">
+                                    <p className="text-xs sm:text-sm text-white px-2 py-1 bg-[#1db954] rounded-full max-w-max shadow-lg">
                                         {book.genre}
                                     </p>
                                 </div>
@@ -70,7 +70,9 @@ const BookCardMain = ({ data, text, path }) => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-center text-sm md:text-base font-bold text-white md:pb-56">هیچ کتێبێک نەدۆزرایەوە نییە</p>
+                    <div className="col-span-full">
+                        <p className="text-center text-sm md:text-base font-bold text-white md:pb-56">هیچ کتێبێک نەدۆزرایەوە نییە</p>
+                    </div>
                 )}
             </div>
         </div>

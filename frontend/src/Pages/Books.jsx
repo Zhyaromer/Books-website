@@ -138,31 +138,34 @@ const Books = () => {
         loading ? (
             <LoadingUi />
         ) : (
-            <>
+            <div>
                 <BookstoreNavigation />
-                <FilterSection
-                    showGenre={true}
-                    genreOptions={genreOptions}
-                    selectedGenres={selectedGenres}
-                    onGenreChange={handleGenreChange}
-                    languageOptions={languageOptions}
-                    language={language}
-                    onLanguageChange={handleLanguageChange}
-                    sortOptions={sortOptions}
-                    sort={Sort}
-                    onSortChange={handleSortChange}
-                />
+                <div className="max-w-7xl mx-auto w-full">
+                    <FilterSection
+                        showGenre={true}
+                        genreOptions={genreOptions}
+                        selectedGenres={selectedGenres}
+                        onGenreChange={handleGenreChange}
+                        languageOptions={languageOptions}
+                        language={language}
+                        onLanguageChange={handleLanguageChange}
+                        sortOptions={sortOptions}
+                        sort={Sort}
+                        onSortChange={handleSortChange}
+                    />
 
-                <BookCardMain data={books} text={`هەموو کتێبەکان (${totalBooks})`} path="/Books" />
+                    <BookCardMain data={books} text={`هەموو کتێبەکان (${totalBooks})`} path="/Books" />
 
-                <Suspense fallback={<LoadingUi />}>
-                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-                </Suspense>
+                    <Suspense fallback={<LoadingUi />}>
+                        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+                    </Suspense>
+
+                </div>
                 <Suspense fallback={<LoadingUi />}>
                     <Footer />
                 </Suspense>
                 <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
-            </>
+            </div>
         )
     );
 
