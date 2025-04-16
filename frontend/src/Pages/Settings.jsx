@@ -10,14 +10,16 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const SettingsPage = () => {
     const navigate = useNavigate();
-    const { isAuthenticated } = useCheckAuth();
-    if (isAuthenticated === false) {
-        navigate('/');
-    }
+    const { isAuthenticated, authLoading } = useCheckAuth();
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, isAuthenticated, navigate]);
+
     const [activeTab, setActiveTab] = useState('name');
     const [UserData, setUserData] = useState([]);
     const [loading, setLoading] = useState(true);
-
 
     useEffect(() => {
         const fetchInfo = async () => {

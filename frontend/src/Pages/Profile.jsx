@@ -11,10 +11,13 @@ import 'react-toastify/dist/ReactToastify.css'
 
 const Profile = () => {
     const navigate = useNavigate();
-    const { isAuthenticated } = useCheckAuth();
-    if (isAuthenticated === false) {
-        navigate('/');
-    }
+    const { isAuthenticated, authLoading } = useCheckAuth();
+    useEffect(() => {
+        if (!authLoading && !isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, isAuthenticated, navigate]);
+
     const [activeTab, setActiveTab] = useState('suggestion');
     const [userData, setUserData] = useState([]);
     const [savedBooks, setSavedBooks] = useState([]);

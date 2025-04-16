@@ -2,6 +2,8 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import LoadingUi from '../Components/my-ui/Loading';
 
 const baseURL = 'http://localhost:3000';
 let accessToken = localStorage.getItem('token') || null;
@@ -47,26 +49,44 @@ axiosInstance.interceptors.request.use(async req => {
 const useCheckAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
+  const [authLoading, setauthLoading] = useState(true);
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const res = await axiosInstance.get('/auth/verifyAuth');
-        if (res.status === 200 && res.data.isAuthenticated) {
-          setIsAuthenticated(true);
-        }
-
-        if (res.status === 200 && res.data.role) {
-          setUserRole(res.data.role);
-        }
+        setIsAuthenticated(res.status === 200 && res.data.isAuthenticated);
+        setUserRole(res.status === 200 ? res.data.role : null);
       } catch (error) {
         setIsAuthenticated(false);
-        console.error(error);
+        setUserRole(null);
+        console.error("Authentication error:", error);
+      } finally {
+        setauthLoading(false);
       }
-    }
-    checkAuth();
-  }, [isAuthenticated]);
+    };
 
-  return { isAuthenticated, setIsAuthenticated, userRole };
+    checkAuth();
+  }, []);
+
+  return { isAuthenticated, setIsAuthenticated, userRole, authLoading };
+};
+
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, userRole, authLoading } = useCheckAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && (!isAuthenticated || userRole !== 'admin')) {
+      navigate('/');
+    }
+  }, [isAuthenticated, userRole, authLoading, navigate]);
+
+  if (authLoading) {
+    return <LoadingUi />;
+  }
+
+  return isAuthenticated && userRole === 'admin' ? children : null;
 };
 
 const logout = async (setIsAuthenticated) => {
@@ -82,4 +102,4 @@ const logout = async (setIsAuthenticated) => {
   }
 };
 
-export { axiosInstance, useCheckAuth, logout };
+export { axiosInstance, useCheckAuth, logout , AdminRoute };

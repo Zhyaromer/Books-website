@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
-const DetailedBookCard = ({ books, author,endpoint }) => {
+const DetailedBookCard = ({ books, author, endpoint }) => {
     const navigate = useNavigate();
     return (
         <div dir='rtl' className={books.length === 0 ? "hidden" : "block"}>
@@ -19,7 +19,7 @@ const DetailedBookCard = ({ books, author,endpoint }) => {
                                 className="w-full h-[248px] object-cover"
                             />
                             <div className={`absolute z-50 top-2 right-2 ${endpoint === 'author' ? 'hidden' : ''}`}>
-                               <p className='bg-indigo-500 text-white py-1 px-2 rounded-full h-8 w-8 flex items-center justify-center'> {index + 1}</p>
+                                <p className='bg-[#1a1a1a] text-white py-1 px-2 rounded-full h-8 w-8 flex items-center justify-center'> {index + 1}</p>
                             </div>
                         </div>
                         <div className="w-2/3 p-4">

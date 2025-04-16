@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
@@ -10,9 +10,12 @@ import { useNavigate } from "react-router-dom";
 const KurdishLoginForm = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useCheckAuth();
-    if (isAuthenticated === true) {
-        navigate('/');
-    }
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+        }
+    }, [isAuthenticated, navigate]);
+
     const [credentials, setCredentials] = useState({
         user_login_email: '',
         user_login_password: ''

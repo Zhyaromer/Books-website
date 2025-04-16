@@ -55,11 +55,10 @@ const BookSeriesBooks = () => {
     return (
         <div>
             <BookstoreNavigation />
-
-            <div className="bg-background py-8 px-4 pt-20" dir="rtl">
-                <div className="max-w-6xl mx-auto">
+            <div className="bg-[#121212] py-8 px-6 pt-20" dir="rtl">
+                <div className="max-w-7xl mx-auto w-full px-6">
                     <Card
-                        className="group relative overflow-hidden h-48 md:h-56"
+                        className="group relative overflow-hidden border-none h-48 md:h-56"
                     >
                         <div className="absolute inset-0">
                             <img

@@ -1,32 +1,15 @@
 import { useState, useEffect } from 'react';
-import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
+import { axiosInstance, AdminRoute } from "../context/AxiosInstance";
 import DeleteConfirmationModal from '../Components/layout/DeleteConfirmationModal';
 import Select from 'react-select';
 import CommentDetailsModal from '../Components/layout/CommentDetailsModal';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { genreOptions as helperGenreOptions } from "../Helpers/options";
-import { useNavigate } from "react-router-dom";
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
-import LoadingUi from '../Components/my-ui/Loading';
 
 const AdminDashboard = () => {
-    const [loading, setLoading] = useState(true)
-    const navigate = useNavigate();
-    const { isAuthenticated, userRole } = useCheckAuth();
-
-    setTimeout(() => {
-        if (loading === true) {
-            return <LoadingUi />
-        } else {
-            setLoading(false)
-            if ((isAuthenticated === false) || (userRole == null || userRole !== 'admin')) {
-                navigate('/');
-            }
-        }
-    }, 3000);
-
     const [books, setBooks] = useState([]);
     const [authors, setAuthors] = useState([]);
     const [bookSeries, setBookSeries] = useState([]);
@@ -1825,278 +1808,280 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div>
-            <BookstoreNavigation />
-            <div dir='rtl' className="min-h-screen bg-gray-50 pt-20">
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-                        <h1 className="text-3xl font-bold text-gray-900">داشبۆردی ئەدمین</h1>
-                    </div>
-                </header>
+        <AdminRoute>
+            <div>
+                <BookstoreNavigation />
+                <div dir='rtl' className="min-h-screen bg-gray-50 pt-20">
+                    <header className="bg-white shadow">
+                        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+                            <h1 className="text-3xl font-bold text-gray-900">داشبۆردی ئەدمین</h1>
+                        </div>
+                    </header>
 
-                <DeleteConfirmationModal
-                    isOpen={isModalOpen}
-                    onClose={closeModal}
-                    onConfirm={confirmDelete}
-                    itemType={
-                        activeTab === 'کتێب'
-                            ? 'کتێب'
-                            : activeTab === 'نووسەر'
-                                ? 'نووسەر'
-                                : activeTab === 'زنجیرە کتێب'
-                                    ? 'زنجیرە کتێب'
-                                    : activeTab === 'هەواڵ'
-                                        ? 'هەواڵ'
-                                        : activeTab === 'هەڵسەنگاندن'
-                                            ? 'هەڵسەنگاندن'
-                                            : activeTab === 'وتە'
-                                                ? 'وتە'
-                                                : activeTab === 'ئەندام'
-                                                    ? 'ئەندام'
-                                                    : 'item'
-                    }
-                />
-
-                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div className="mb-6 border-b border-gray-200">
-                        <nav className="-mb-px flex gap-x-6" aria-label="Tabs">
-                            {['کتێب', 'نووسەر', 'زنجیرە کتێب', 'هەواڵ', 'وتە', 'هەڵسەنگاندن', 'ئەندام'].map(tab => (
-                                <button
-                                    key={tab}
-                                    onClick={() => {
-                                        setActiveTab(tab);
-                                        setSearchTerm('');
-                                    }}
-                                    className={`${activeTab === tab
-                                        ? 'border-indigo-500 text-indigo-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                        } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize`}
-                                >
-                                    {tab === 'زنجیرە کتێب' ? 'زنجیرە کتێب' : tab}
-                                </button>
-                            ))}
-                        </nav>
-                    </div>
-
-                    {(() => {
-                        switch (activeTab) {
-                            case 'کتێب':
-                                return (
-                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">نووسەر</label>
-                                            <Select
-                                                isClearable
-                                                options={authorOptions}
-                                                value={selectedAuthor}
-                                                onChange={setSelectedAuthor}
-                                                placeholder="گەڕان بە ناوی نووسەر"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">زنجیرە</label>
-                                            <Select
-                                                isClearable
-                                                options={seriesOptions}
-                                                value={selectedSeries}
-                                                onChange={setSelectedSeries}
-                                                placeholder="گەڕان بە ناوی زنجیرە"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">چەشن</label>
-                                            <Select
-                                                isClearable
-                                                options={genreOptions}
-                                                value={selectedGenre}
-                                                onChange={setSelectedGenre}
-                                                placeholder="گەڕان بە چەشن"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">زمان</label>
-                                            <Select
-                                                isClearable
-                                                options={languageOptions}
-                                                value={selectedLanguage}
-                                                onChange={setSelectedLanguage}
-                                                placeholder="گەڕان بە زمان"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            case 'نووسەر':
-                                return (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">زمان</label>
-                                            <Select
-                                                isClearable
-                                                options={languageOptions}
-                                                value={selectedLanguageAuthor}
-                                                onChange={setSelectedLanguageAuthor}
-                                                placeholder="گەڕان بە زمان"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            case 'زنجیرە کتێب':
-                                return (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">دۆخ</label>
-                                            <Select
-                                                isClearable
-                                                options={seriesStateOptions}
-                                                value={selectedState}
-                                                onChange={setSelectedState}
-                                                placeholder="گەڕان بە دۆخی زنجیرە"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            case 'وتە':
-                                return (
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">نوسەر</label>
-                                            <Select
-                                                isClearable
-                                                options={authorOptions}
-                                                value={selectedAuthoQuote}
-                                                onChange={setSelectedAuthorQuote}
-                                                placeholder="گەڕان بە ناوی نووسەر"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">کتێب</label>
-                                            <Select
-                                                isClearable
-                                                options={booksOptions}
-                                                value={selectedBook}
-                                                onChange={setSelectedBook}
-                                                placeholder="گەڕان بە ناوی نووسەر"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">زنجیرە</label>
-                                            <Select
-                                                isClearable
-                                                options={seriesOptions}
-                                                value={selectedSeriesQuote}
-                                                onChange={setSelectedSeriesQuote}
-                                                placeholder="گەڕان بە ناوی زنجیرە"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            case 'ئەندام':
-                                return (
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">پلە</label>
-                                            <Select
-                                                isClearable
-                                                options={roleOptions}
-                                                value={selectedRole}
-                                                onChange={setSelectedRole}
-                                                placeholder="گەڕان بە پلە"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            case 'هەڵسەنگاندن':
-                                return (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">کتێب</label>
-                                            <Select
-                                                isClearable
-                                                options={booksOptions}
-                                                value={selectedBookComments}
-                                                onChange={setSelectedBookComments}
-                                                placeholder="گەڕان بە ناوی کتێب"
-                                                className="basic-single"
-                                                classNamePrefix="select"
-                                            />
-                                        </div>
-                                    </div>
-                                )
-                            default:
-                                return null;
+                    <DeleteConfirmationModal
+                        isOpen={isModalOpen}
+                        onClose={closeModal}
+                        onConfirm={confirmDelete}
+                        itemType={
+                            activeTab === 'کتێب'
+                                ? 'کتێب'
+                                : activeTab === 'نووسەر'
+                                    ? 'نووسەر'
+                                    : activeTab === 'زنجیرە کتێب'
+                                        ? 'زنجیرە کتێب'
+                                        : activeTab === 'هەواڵ'
+                                            ? 'هەواڵ'
+                                            : activeTab === 'هەڵسەنگاندن'
+                                                ? 'هەڵسەنگاندن'
+                                                : activeTab === 'وتە'
+                                                    ? 'وتە'
+                                                    : activeTab === 'ئەندام'
+                                                        ? 'ئەندام'
+                                                        : 'item'
                         }
-                    })()}
+                    />
 
-                    <div className="flex flex-col md:flex-row md:justify-between mb-6 space-y-4 md:space-y-0">
-                        <div className="w-full md:w-1/3">
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    placeholder={`گەڕان بە ${activeTab === 'زنجیرە کتێب' ? 'ناوی زنجیرە یان ئایدی' : activeTab === 'ئەندام' ? 'ناو یان نازناو یان ئیمەیڵ' :
-                                        activeTab === 'هەوال' ? 'سەردێر یان ئایدی' : activeTab === 'وتە' ? 'وتەکە یان ئایدی' :
-                                            activeTab === 'نووسەر' ? 'ناو یان ئایدی' : activeTab === 'هەڵسەنگاندن' ? 'نازناو یان ئایدی' : 'ناو یان ئایدی'}`}
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                                />
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                        <div className="mb-6 border-b border-gray-200">
+                            <nav className="-mb-px flex gap-x-6" aria-label="Tabs">
+                                {['کتێب', 'نووسەر', 'زنجیرە کتێب', 'هەواڵ', 'وتە', 'هەڵسەنگاندن', 'ئەندام'].map(tab => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => {
+                                            setActiveTab(tab);
+                                            setSearchTerm('');
+                                        }}
+                                        className={`${activeTab === tab
+                                            ? 'border-indigo-500 text-indigo-600'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize`}
+                                    >
+                                        {tab === 'زنجیرە کتێب' ? 'زنجیرە کتێب' : tab}
+                                    </button>
+                                ))}
+                            </nav>
+                        </div>
+
+                        {(() => {
+                            switch (activeTab) {
+                                case 'کتێب':
+                                    return (
+                                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">نووسەر</label>
+                                                <Select
+                                                    isClearable
+                                                    options={authorOptions}
+                                                    value={selectedAuthor}
+                                                    onChange={setSelectedAuthor}
+                                                    placeholder="گەڕان بە ناوی نووسەر"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">زنجیرە</label>
+                                                <Select
+                                                    isClearable
+                                                    options={seriesOptions}
+                                                    value={selectedSeries}
+                                                    onChange={setSelectedSeries}
+                                                    placeholder="گەڕان بە ناوی زنجیرە"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">چەشن</label>
+                                                <Select
+                                                    isClearable
+                                                    options={genreOptions}
+                                                    value={selectedGenre}
+                                                    onChange={setSelectedGenre}
+                                                    placeholder="گەڕان بە چەشن"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">زمان</label>
+                                                <Select
+                                                    isClearable
+                                                    options={languageOptions}
+                                                    value={selectedLanguage}
+                                                    onChange={setSelectedLanguage}
+                                                    placeholder="گەڕان بە زمان"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                        </div>
+                                    );
+                                case 'نووسەر':
+                                    return (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">زمان</label>
+                                                <Select
+                                                    isClearable
+                                                    options={languageOptions}
+                                                    value={selectedLanguageAuthor}
+                                                    onChange={setSelectedLanguageAuthor}
+                                                    placeholder="گەڕان بە زمان"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                        </div>
+                                    );
+                                case 'زنجیرە کتێب':
+                                    return (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">دۆخ</label>
+                                                <Select
+                                                    isClearable
+                                                    options={seriesStateOptions}
+                                                    value={selectedState}
+                                                    onChange={setSelectedState}
+                                                    placeholder="گەڕان بە دۆخی زنجیرە"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                        </div>
+                                    );
+                                case 'وتە':
+                                    return (
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">نوسەر</label>
+                                                <Select
+                                                    isClearable
+                                                    options={authorOptions}
+                                                    value={selectedAuthoQuote}
+                                                    onChange={setSelectedAuthorQuote}
+                                                    placeholder="گەڕان بە ناوی نووسەر"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">کتێب</label>
+                                                <Select
+                                                    isClearable
+                                                    options={booksOptions}
+                                                    value={selectedBook}
+                                                    onChange={setSelectedBook}
+                                                    placeholder="گەڕان بە ناوی نووسەر"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">زنجیرە</label>
+                                                <Select
+                                                    isClearable
+                                                    options={seriesOptions}
+                                                    value={selectedSeriesQuote}
+                                                    onChange={setSelectedSeriesQuote}
+                                                    placeholder="گەڕان بە ناوی زنجیرە"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                        </div>
+                                    );
+                                case 'ئەندام':
+                                    return (
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">پلە</label>
+                                                <Select
+                                                    isClearable
+                                                    options={roleOptions}
+                                                    value={selectedRole}
+                                                    onChange={setSelectedRole}
+                                                    placeholder="گەڕان بە پلە"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                        </div>
+                                    );
+                                case 'هەڵسەنگاندن':
+                                    return (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">کتێب</label>
+                                                <Select
+                                                    isClearable
+                                                    options={booksOptions}
+                                                    value={selectedBookComments}
+                                                    onChange={setSelectedBookComments}
+                                                    placeholder="گەڕان بە ناوی کتێب"
+                                                    className="basic-single"
+                                                    classNamePrefix="select"
+                                                />
+                                            </div>
+                                        </div>
+                                    )
+                                default:
+                                    return null;
+                            }
+                        })()}
+
+                        <div className="flex flex-col md:flex-row md:justify-between mb-6 space-y-4 md:space-y-0">
+                            <div className="w-full md:w-1/3">
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder={`گەڕان بە ${activeTab === 'زنجیرە کتێب' ? 'ناوی زنجیرە یان ئایدی' : activeTab === 'ئەندام' ? 'ناو یان نازناو یان ئیمەیڵ' :
+                                            activeTab === 'هەوال' ? 'سەردێر یان ئایدی' : activeTab === 'وتە' ? 'وتەکە یان ئایدی' :
+                                                activeTab === 'نووسەر' ? 'ناو یان ئایدی' : activeTab === 'هەڵسەنگاندن' ? 'نازناو یان ئایدی' : 'ناو یان ئایدی'}`}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                    />
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    </div>
                                 </div>
+                            </div>
+
+                            <div className={`${activeTab === 'هەڵسەنگاندن' ? 'hidden' : ''}`}>
+                                <button
+                                    onClick={handleAdd}
+                                    className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    زیادکردنی {activeTab}
+                                </button>
                             </div>
                         </div>
 
-                        <div className={`${activeTab === 'هەڵسەنگاندن' ? 'hidden' : ''}`}>
-                            <button
-                                onClick={handleAdd}
-                                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                </svg>
-                                زیادکردنی {activeTab}
-                            </button>
+                        <div className="bg-white shadow overflow-hidden rounded-lg">
+                            <div className="overflow-x-auto">
+                                {renderTable()}
+                            </div>
                         </div>
-                    </div>
+                    </main>
 
-                    <div className="bg-white shadow overflow-hidden rounded-lg">
-                        <div className="overflow-x-auto">
-                            {renderTable()}
-                        </div>
-                    </div>
-                </main>
-
-                <CommentDetailsModal
-                    isOpen={isModalOpenComments}
-                    onClose={() => setIsModalOpenComments(false)}
-                    comment={selectedComment}
-                />
-                {showModal && <ModalForm />}
-                <ToastContainer transition={Slide} />
+                    <CommentDetailsModal
+                        isOpen={isModalOpenComments}
+                        onClose={() => setIsModalOpenComments(false)}
+                        comment={selectedComment}
+                    />
+                    {showModal && <ModalForm />}
+                    <ToastContainer transition={Slide} />
+                </div>
+                <Footer />
             </div>
-            <Footer />
-        </div>
+        </AdminRoute>
     );
 };
 

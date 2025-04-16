@@ -360,7 +360,7 @@ const BookstoreNavigation = () => {
 
                                     {showResults && (
                                         <div className="absolute left-0 mt-2 w-[470px] bg-[#1a1a1a] rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
-                                            <div className="flex border-b border-[#1db954]">
+                                            <div className="flex">
                                                 <button
                                                     className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-[#1db954] border-b-2 border-[#1db954]' : 'text-gray-100 hover:text-gray-300'}`}
                                                     onClick={() => setActiveTab('books')}
