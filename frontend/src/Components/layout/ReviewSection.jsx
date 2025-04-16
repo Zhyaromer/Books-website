@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect,useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash, AlertTriangle, MoreVertical } from "lucide-react";
 import { axiosInstance } from "../../context/AxiosInstance";
@@ -222,10 +222,10 @@ const CommentsSection = ({ bookId }) => {
 
   return (
     <div dir="rtl" className="w-full max-w-7xl mx-auto p-0 md:p-4 font-sans">
-      <div className="flex justify-between items-center mb-6 mt-4 md:mt-0">
-        <h2 className="text-base md:text-2xl font-bold">هەڵسەنگاندنەکان</h2>
+      <div className="flex justify-between items-center px-4 md:px-0 mb-6 mt-4 md:mt-0">
+        <h2 className="text-gray-100 text-base md:text-2xl font-bold">هەڵسەنگاندنەکان</h2>
         <Button
-          className="bg-indigo-500 hover:bg-indigo-600 text-white text-xs md:text-sm px-1 md:px-2"
+          className="bg-[#1db954] hover:bg-[#1ed760] text-white text-xs md:text-sm px-1 md:px-2"
           onClick={() => {
             setEditMode(false);
             setRating(0);
@@ -240,7 +240,7 @@ const CommentsSection = ({ bookId }) => {
       <div className="relative mb-12">
         {comments.length === 0 && (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-600 dark:text-gray-300">هیچ هەڵسەنگاندنێک بەردەست نیە</p>
+            <p className="text-gray-100">هیچ هەڵسەنگاندنێک بەردەست نیە</p>
           </div>
         )}
         {comments.length > 0 && (
@@ -255,11 +255,11 @@ const CommentsSection = ({ bookId }) => {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleDragEnd}
           >
-            <div className="flex gap-2 h-full">
+            <div className="flex gap-2 h-full px-2">
               {comments?.map((review) => (
                 <div
                   key={review.id}
-                  className="p-2 shadow-md border w-[280px] h-full flex-shrink-0"
+                  className="p-2 shadow-md border-none bg-[#1a1a1a] w-[280px] h-full flex-shrink-0"
                 >
                   <div className="flex justify-between">
                     <div className="flex items-center gap-2">
@@ -268,7 +268,7 @@ const CommentsSection = ({ bookId }) => {
                         <AvatarFallback>{review.username}</AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 onClick={() => navigate(`/userprofile?username=${review.username}`)} className="font-medium text-sm cursor-pointer">{review.username}</h3>
+                        <h3 onClick={() => navigate(`/userprofile?username=${review.username}`)} className="font-medium text-gray-100 text-sm cursor-pointer">{review.username}</h3>
                         <div dir="ltr" className="mt-1">
                           <StarRating rating={review.rating} setRating={() => { }} />
                         </div>
@@ -277,16 +277,16 @@ const CommentsSection = ({ bookId }) => {
 
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`} variant="ghost" size="sm">
-                          <MoreVertical className="h-4 w-4" />
+                        <Button className={`cursor-pointer hover:bg-transparent ${reviewPermissions[review.id] ? "" : "hidden"}`} variant="ghost" size="sm">
+                          <MoreVertical className="text-white h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleEditReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`}>
+                      <DropdownMenuContent className="bg-[#1a1a1a] border-none" align="end">
+                        <DropdownMenuItem onClick={() => handleEditReview(review.id)} className={`cursor-pointer text-gray-100 ${reviewPermissions[review.id] ? "" : "hidden"}`}>
                           <Edit className="ml-2 h-4 w-4" />
                           دەستکاری
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDeleteReview(review.id)} className={`cursor-pointer ${reviewPermissions[review.id] ? "" : "hidden"}`} >
+                        <DropdownMenuItem onClick={() => handleDeleteReview(review.id)} className={`cursor-pointer text-gray-100 ${reviewPermissions[review.id] ? "" : "hidden"}`} >
                           <Trash className="ml-2 h-4 w-4 text-red-500" />
                           سڕینەوە
                         </DropdownMenuItem>
@@ -298,15 +298,15 @@ const CommentsSection = ({ bookId }) => {
                     {review.isSpoiler === 1 && !revealedSpoilers[review.id] ? (
                       <div className="rounded">
                         <div className="text-center">
-                          <AlertTriangle className="inline-block h-5 w-5 mb-1 text-amber-500" />
-                          <p className="text-amber-800 mb-2">
+                          <AlertTriangle className="inline-block h-5 w-5 mb-1 text-yellow-500" />
+                          <p className="text-white mb-2">
                             سپۆیلەر
                           </p>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleRevealSpoiler(review.id)}
-                            className="bg-indigo-500 hover:bg-indigo-600 text-white hover:text-white"
+                            className="border-none bg-[#1db954] hover:bg-[#1ed760] text-white hover:text-white"
                           >
                             پیشاندانی هەڵسەنگاندن
                           </Button>
@@ -314,12 +314,12 @@ const CommentsSection = ({ bookId }) => {
                       </div>
                     ) : (
                       <div className={`${review.isSpoiler ? "rounded" : ""}`}>
-                        <p className="text-gray-700 text-[14px] px-4">
+                        <p className="text-white text-[14px] px-4">
                           {review.comment}
                         </p>
                         {review.isSpoiler === 1 && revealedSpoilers[review.id] && (
                           <div className="mt-2 text-right">
-                            <Button variant="ghost" size="sm" onClick={() => handleHideSpoiler(review.id)}>
+                            <Button className="border-none bg-[#1db954] hover:bg-[#1ed760] text-white hover:text-white" variant="ghost" size="sm" onClick={() => handleHideSpoiler(review.id)}>
                               شاردنەوە
                             </Button>
                           </div>
@@ -332,32 +332,16 @@ const CommentsSection = ({ bookId }) => {
             </div>
           </div>
         )}
-
-        <style>{`
-        .hide-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;  /* Chrome, Safari, Opera */
-        }
-        .no-select {
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-      `}</style>
       </div>
 
       <Dialog open={isAddReviewOpen} onOpenChange={setIsAddReviewOpen}>
-        <DialogContent>
+        <DialogContent className='bg-[#1a1a1a] border-none'>
           <div className="flex justify-end pt-10 text-right">
             <DialogHeader>
-              <DialogTitle className="text-right">
+              <DialogTitle className="text-right text-gray-100">
                 {editMode ? "گۆڕێنی هەڵسەنگاندنەکەت" : "زیادکردنی هەڵسەنگاندن"}
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-right text-gray-100 pt-4">
                 تکایە هەڵسەنگاندنەکەت بنووسە و نمرەکە دیاری بکە
               </DialogDescription>
             </DialogHeader>
@@ -365,23 +349,19 @@ const CommentsSection = ({ bookId }) => {
 
           <div className="space-y-4 text-right">
             <div>
-              <label className="block mb-2 text-sm font-medium">هەڵسەنگاندن</label>
+              <label className="block text-gray-100 mb-2 text-sm font-medium">هەڵسەنگاندن</label>
               <div className="mb-2">
-                <StarRating
-                  rating={rating}
-                  setRating={setRating}
-                  editable={true}
-                />
+                <StarRating rating={rating} setRating={setRating} editable={true} />
               </div>
             </div>
 
             <div dir='rtl' className="text-right">
-              <label className="block mb-2 text-sm font-medium">بۆچوونەکەت</label>
+              <label className="block text-gray-100 mb-2 text-sm font-medium">بۆچوونەکەت</label>
               <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
-                className="placeholder:text-right"
+                className="text-gray-100 placeholder:text-right placeholder:text-gray-300"
                 placeholder="هەڵسەنگاندنەکەت بنووسە"
               />
             </div>
@@ -389,30 +369,37 @@ const CommentsSection = ({ bookId }) => {
             <div className="flex items-center space-x-2 justify-end">
               <Checkbox
                 id="spoiler"
+                className="border-white data-[state=checked]:bg-[#1db954] data-[state=checked]:border-[#1db954]"
                 checked={hasSpoiler}
-                onCheckedChange={(checked) =>
-                  setHasSpoiler(checked)
-                }
+                onCheckedChange={(checked) => setHasSpoiler(checked)}
               />
               <label
                 htmlFor="spoiler"
-                className="mr-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-gray-100 py-4 mr-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 ئەم هەڵسەنگاندنە سپۆیلەری تێدایە
               </label>
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddReviewOpen(false)}>
+          <DialogFooter className="sm:justify-end flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsAddReviewOpen(false)}
+              className="w-full sm:w-auto"
+            >
               پاشگەزبوونەوە
             </Button>
-            <Button className="bg-indigo-500 hover:bg-indigo-600 text-white" onClick={handleAddComment}>
+            <Button
+              className="bg-[#1db954] hover:bg-[#1ed760] text-white w-full sm:w-auto"
+              onClick={handleAddComment}
+            >
               {editMode ? "نوێکردنەوە" : "ناردن"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
       <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
     </div>
   );

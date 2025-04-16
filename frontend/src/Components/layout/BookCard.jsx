@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 
 const BookCollection = ({ data, text, path }) => {
     return (
-        <div className="pt-6 md:pt-12 bg-gradient-to-b from-indigo-50 to-white w-full">
+        <div className="pt-6 md:pt-12 bg-[#1a1a1a] w-full">
             <div className={`flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-4 md:px-8 ${path == "/Bookdetails" ? 'hidden' : ''}`}>
                 <div>
                     <h1 className="font-sans text-xl md:text-3xl lg:text-4xl font-bold text-indigo-900">{text}{path == "/Books" ? (`${data?.length ? ` (${data?.length})` : ''}`) : ''}</h1>
@@ -39,22 +39,22 @@ const BookCollection = ({ data, text, path }) => {
                                 <div className="absolute w-full h-[200px] lg:h-[320px] md:h-[300px] inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
 
                                 <div className="absolute z-20 bottom-0 right-0 left-0 flex justify-center transform translate-y-1/2">
-                                    <p className="text-xs sm:text-sm text-white px-2 py-1 bg-purple-500 rounded-full max-w-max shadow-lg">
+                                    <p className="text-xs sm:text-sm text-white px-2 py-1 bg-[#1db954] rounded-full max-w-max shadow-lg">
                                         {book.genre}
                                     </p>
                                 </div>
                             </div>
 
                             <div className="text-center mt-2">
-                                <h6 className="cursor-pointer text-sm md:text-lg font-bold text-gray-600 md:mb-2 
-                                    group-hover:text-indigo-700 transition-colors duration-300 line-clamp-2 "
+                                <h6 className="cursor-pointer text-sm md:text-lg font-bold text-gray-300 md:mb-2 
+                                    group-hover:text-gray-200 transition-colors duration-200 line-clamp-2 "
                                     onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                                 >
-                                    {book?.title?.length > 10 ? `${book.title.slice(0, 10)}...` : book.title}
+                                    {book?.title?.length > 15 ? `${book.title.slice(0, 15)}...` : book.title}
                                 </h6>
 
                                 <div className="flex items-center justify-center">
-                                    <span onClick={() => (window.location.href = `/AuthorDetails/${book.author_id}`)} className="text-xs cursor-pointer text-indigo-800 font-medium hover:text-indigo-600 transition-colors">
+                                    <span onClick={() => (window.location.href = `/AuthorDetails/${book.author_id}`)} className="text-xs cursor-pointer text-gray-300 font-medium hover:text-gray-200 transition-colors duration-200">
                                         -{book.name}-
                                     </span>
                                 </div>

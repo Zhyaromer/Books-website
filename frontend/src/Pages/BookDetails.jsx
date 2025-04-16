@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaBookmark, FaRegBookmark, FaShare } from 'react-icons/fa';
+import { FaShare } from 'react-icons/fa';
+import { FaHeart } from "react-icons/fa";
+import { FiHeart } from "react-icons/fi";
 import BookCollection from '../Components/layout/BookCard';
 import CommentsSection from '../Components/layout/ReviewSection';
 import BookstoreNavigation from '../Components/layout/Navigation';
@@ -151,8 +153,8 @@ const BookDetail = () => {
   return (
     <div>
       <BookstoreNavigation />
-      <div dir='rtl' className="bg-gray-50 min-h-screen pt-16">
-        <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white py-12">
+      <div dir='rtl' className="bg-[#121212] min-h-screen pt-16">
+        <div className="bg-[#1a1a1a] text-white py-12">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row items-center">
               <div className="w-2/3 lg:w-1/3 mb-8 md:mb-0">
@@ -167,7 +169,7 @@ const BookDetail = () => {
 
               <div className="md:w-2/3 md:pl-12">
                 <div className="flex items-center mb-2">
-                  <span onClick={() => navigate(`/books?genre=${fetchBook.genre}`)} className="text-xs bg-blue-700 bg-opacity-50 px-2 py-1 rounded-full mr-2 cursor-pointer">
+                  <span onClick={() => navigate(`/books?genre=${fetchBook.genre}`)} className="text-base bg-[#1db954] px-2 py-1 rounded-full mr-2 cursor-pointer">
                     {fetchBook.genre}
                   </span>
                 </div>
@@ -175,35 +177,35 @@ const BookDetail = () => {
                 <p onClick={() => navigate(`/AuthorDetails/${fetchBook.author_id}`)} className="text-xl mb-4 cursor-pointer">نووسەر: <span className="font-semibold">{fetchBook.name}</span></p>
 
                 <div className="flex flex-wrap gap-3 mb-6">
-                  <button onClick={() => addBooktoRead()} className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
-                    <div className="flex items-center gap-2">
-                      <div>
-                        {hasRead ?
-                          <svg className='h-4 w-4' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#63E6BE" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" /></svg>
-                          :
-                          <svg className='h-4 w-4' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" /></svg>
-                        }
-                      </div>
+                  <button onClick={() => addBooktoRead()} className="bg-[#121212] border border-gray-700 hover:bg-[#242121] text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
+                    <div className="flex flex-row items-center gap-2">
                       <div>
                         <span>خوێندراوەتەوە </span>
                       </div>
-                    </div>
-                  </button>
-                  <button onClick={() => addBooktoSave()} className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-900 text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
-                    <div className="flex flex-row items-center">
                       <div>
-                        بینینی دواتر
-                      </div>
-                      <div>
-                        {hasSaved ?
-                          <FaBookmark className="mr-2" />
+                        {hasRead ?
+                          <svg className='h-5 w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#00FF00" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" /></svg>
                           :
-                          <FaRegBookmark className="mr-2" />
+                          <svg className='h-5 w-5' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z" /></svg>
                         }
                       </div>
                     </div>
                   </button>
-                  <button onClick={() => handleaddSuggestion()} className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-900 text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
+                  <button onClick={() => addBooktoSave()} className="bg-[#121212] border border-gray-700 hover:bg-[#242121] text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
+                    <div className="flex flex-row items-center">
+                      <div>
+                        لیستی دڵخواز
+                      </div>
+                      <div>
+                        {hasSaved ?
+                          <FaHeart className="mr-2 text-red-500 h-5 w-5" />
+                          :
+                          <FiHeart className="mr-2 h-5 w-5" />
+                        }
+                      </div>
+                    </div>
+                  </button>
+                  <button onClick={() => handleaddSuggestion()} className="bg-[#121212] border border-gray-700 hover:bg-[#242121] text-white px-4 py-3 rounded-lg font-bold transition-colors duration-200 flex items-center">
                     <div className="flex flex-row items-center">
                       <div>
                         پێشنیار کردن
@@ -217,7 +219,7 @@ const BookDetail = () => {
                       </div>
                     </div>
                   </button>
-                  <button onClick={() => copyLink()} className="bg-transparent border-2 border-white hover:bg-white hover:text-indigo-900 text-white p-3 rounded-lg transition-colors duration-200">
+                  <button onClick={() => copyLink()} className="bg-[#121212] border border-gray-700 hover:bg-[#242121] text-white p-3 rounded-lg transition-colors duration-200">
                     <FaShare />
                   </button>
                 </div>
@@ -246,77 +248,103 @@ const BookDetail = () => {
         </div>
 
         <div className="container max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 py-12">
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="flex border-b">
-              <button
-                onClick={() => setActiveTab('description')}
-                className={`px-4 py-4 text-sm font-bold ${activeTab === 'description' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                کورتە
-              </button>
-              <button
-                onClick={() => setActiveTab('details')}
-                className={`px-4 py-4 text-sm font-bold ${activeTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                وردەکاری
-              </button>
-              <button
-                onClick={() => setActiveTab('author')}
-                className={`px-4 py-4 text-sm font-bold ${activeTab === 'author' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                نووسەر
-              </button>
-              <button
-                onClick={() => setActiveTab('reviews')}
-                className={`px-4 py-4 text-sm font-bold ${activeTab === 'reviews' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                هەڵسەنگاندن
-              </button>
+          <div className="bg-[#121212] rounded-xl shadow-lg overflow-hidden">
+            <div className="flex justify-start border-b border-gray-700">
+              <div className="flex w-full sm:w-auto">
+                <button
+                  onClick={() => setActiveTab('description')}
+                  className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-200 ${activeTab === 'description'
+                    ? 'text-[#1db954]'
+                    : 'text-gray-400 hover:text-gray-200'
+                    }`}
+                >
+                  کورتە
+                  {activeTab === 'description' && (
+                    <span className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('details')}
+                  className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-200 ${activeTab === 'details'
+                    ? 'text-[#1db954]'
+                    : 'text-gray-400 hover:text-gray-200'
+                    }`}
+                >
+                  وردەکاری
+                  {activeTab === 'details' && (
+                    <span className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('author')}
+                  className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-200 ${activeTab === 'author'
+                    ? 'text-[#1db954]'
+                    : 'text-gray-400 hover:text-gray-200'
+                    }`}
+                >
+                  نووسەر
+                  {activeTab === 'author' && (
+                    <span className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('reviews')}
+                  className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-200 ${activeTab === 'reviews'
+                    ? 'text-[#1db954]'
+                    : 'text-gray-400 hover:text-gray-200'
+                    }`}
+                >
+                  هەڵسەنگاندن
+                  {activeTab === 'reviews' && (
+                    <span className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div>
               {activeTab === 'description' && (
                 <div className="prose max-w-none p-6">
-                  <p className="text-lg leading-relaxed">{fetchBook.description}</p>
+                  <p className="text-lg text-gray-100 leading-relaxed">{fetchBook.description}</p>
                 </div>
               )}
 
               {activeTab === 'details' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
                   <div>
-                    <h3 className="text-xl font-semibold mb-4">وردەکاری کتێب</h3>
+                    <h3 className="text-xl text-gray-300 font-semibold mb-4">وردەکاری کتێب</h3>
                     <table className="w-full">
                       <tbody>
                         <tr className="border-b">
-                          <td className="py-3 text-gray-600">ناوی کتێب</td>
-                          <td className="py-3 font-medium">{fetchBook.title}</td>
+                          <td className="py-3 text-gray-100">ناوی کتێب</td>
+                          <td className="py-3 text-gray-300 font-medium">{fetchBook.title}</td>
                         </tr>
                         <tr className="border-b">
-                          <td className="py-3 text-gray-600">وتە</td>
-                          <td className="py-3 font-medium">{fetchBook.quote || "بەردەست نیە"}</td>
+                          <td className="py-3 text-gray-100">وتە</td>
+                          <td className="py-3 text-gray-300 font-medium">{fetchBook.quote || "بەردەست نیە"}</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                   <div className={series.length > 0 ? '' : 'hidden'}>
-                    <h3 className="text-xl font-semibold mb-4">وردەکاری زنجیرە کتێب</h3>
+                    <h3 className="text-xl text-gray-300 font-semibold mb-4">وردەکاری زنجیرە کتێب</h3>
                     <table className="w-full">
                       <tbody>
                         <tr className="border-b">
-                          <td className="py-3 text-gray-600">ناوی زنجیرە</td>
-                          <td className="py-3 font-medium">{series[0]?.series_title}</td>
+                          <td className="py-3 text-gray-100">ناوی زنجیرە</td>
+                          <td className="py-3 text-gray-300 font-medium">{series[0]?.series_title}</td>
                         </tr>
                         <tr className="border-b">
-                          <td className="py-3 text-gray-600">ڕیزبەندی ئەم کتێبە لە زنجیرەکە</td>
-                          <td className="py-3 font-medium">{fetchBook.part_num} یەم</td>
+                          <td className="py-3 text-gray-100">ڕیزبەندی ئەم کتێبە لە زنجیرەکە</td>
+                          <td className="py-3 text-gray-300 font-medium">{fetchBook.part_num} یەم</td>
                         </tr>
                         <tr className="border-b">
-                          <td className="py-3 text-gray-600">بەشەکانی زنجیرەکە</td>
-                          <td className="py-3 font-medium">{booksSeries?.length + 1} بەش</td>
+                          <td className="py-3 text-gray-100">بەشەکانی زنجیرەکە</td>
+                          <td className="py-3 text-gray-300 font-medium">{booksSeries?.length + 1} بەش</td>
                         </tr>
                         <tr className="border-b">
-                          <td className="py-3 text-gray-600">باری زنجیرە</td>
-                          <td className="py-3 font-medium">{series[0]?.state}</td>
+                          <td className="py-3 text-gray-100">باری زنجیرە</td>
+                          <td className="py-3 text-gray-300 font-medium">{series[0]?.state}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -334,10 +362,10 @@ const BookDetail = () => {
                     />
                   </div>
                   <div className="md:w-3/4">
-                    <h3 className="text-2xl font-bold mb-4">{fetchBook.name}</h3>
-                    <p className="text-lg leading-relaxed mb-6">{fetchBook.bio}</p>
+                    <h3 className="text-2xl text-gray-100 font-bold mb-4">{fetchBook.name}</h3>
+                    <p className="text-lg text-gray-300 line-clamp-3 leading-relaxed mb-6">{fetchBook.bio}</p>
                     <div className="flex gap-3">
-                      <button onClick={() => navigate(`/AuthorDetails/${fetchBook.author_id}`)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                      <button onClick={() => navigate(`/AuthorDetails/${fetchBook.author_id}`)} className="bg-[#1db954] hover:bg-[#1ed760] text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
                         بینینی نوسەر
                       </button>
                     </div>
@@ -352,16 +380,16 @@ const BookDetail = () => {
           </div>
         </div>
 
-        <div className={`bg-gray-100 py-12 ${booksSeries.length === 0 ? 'hidden' : ''}`}>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-xl md:text-3xl font-bold">بەشەکانی تری {series[0]?.series_title} </h2>
+        <div className={`max-w-7xl mx-auto w-full px-6 bg-[#121212] py-12 ${booksSeries.length === 0 ? 'hidden' : ''}`}>
+          <div className="container pt-8 bg-[#1a1a1a] mx-auto">
+            <h2 className="text-xl text-gray-100 md:text-3xl px-4 font-bold">بەشەکانی تری {series[0]?.series_title} </h2>
             <BookCollection data={booksSeries} text="هەموو فیلمەکان" path="/Bookdetails" />
           </div>
         </div>
 
-        <div className={`bg-gray-100 py-12 ${similarBooks.length === 0 ? 'hidden' : ''}`}>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-xl md:text-3xl font-bold">هاوشێوەی ئەم کتێبە</h2>
+        <div className={`max-w-7xl mx-auto w-full px-6 bg-[#121212] py-12 ${similarBooks.length === 0 ? 'hidden' : ''}`}>
+          <div className="container pt-8 bg-[#1a1a1a] mx-auto">
+            <h2 className="text-xl text-gray-100 md:text-3xl px-4 font-bold">هاوشێوەی ئەم کتێبە</h2>
             <BookCollection data={similarBooks} text="هەموو فیلمەکان" path="/Bookdetails" />
           </div>
         </div>

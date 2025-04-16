@@ -35,8 +35,8 @@ const Quotes = () => {
             <BookstoreNavigation />
 
             <div className="bg-[#1a1a1a] min-h-screen pt-20">
-                <div className="max-w-7xl mx-auto px-4 pt-8 pb-16">
-                    <div className="max-w-7xl mx-auto flex flex-row justify-between items-center mb-8 border-b border-[#1db954] pb-6">
+                <div className="max-w-7xl mx-auto px-8 w-full pt-8 pb-16">
+                    <div className="max-w-7xl mx-auto w-full flex flex-row justify-between items-center mb-8 border-b border-[#1db954] pb-6">
                         <h1 className="text-xl md:text-3xl font-bold text-gray-100">وتەی کتێبەکان</h1>
 
                         <button

@@ -41,7 +41,7 @@ const BookCardMain = ({ data, text, path }) => {
                                     src={book.cover_image}
                                     alt={`Cover of ${book.title}`}
                                     loading="lazy" 
-                                    className="w-full h-full object-fill rounded-lg transition-transform duration-500 group-hover:scale-105"
+                                    className="w-full h-[300px] object-fill rounded-lg transition-transform duration-500 group-hover:scale-105"
                                 />
 
                                 <div className="absolute w-full h-full inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
@@ -58,7 +58,7 @@ const BookCardMain = ({ data, text, path }) => {
                                     group-hover:text-gray-200 transition-colors duration-200 line-clamp-2 "
                                     onClick={() => (window.location.href = `/booksDetail/${book.id}`)}
                                 >
-                                    {book?.title?.length > 20 ? `${book.title.slice(0, 20)}...` : book.title}
+                                    {book?.title?.length > 15 ? `${book.title.slice(0, 15)}...` : book.title}
                                 </h6>
 
                                 <div className="flex items-center justify-center">

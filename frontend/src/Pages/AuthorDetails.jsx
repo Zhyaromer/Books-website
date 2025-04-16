@@ -74,9 +74,9 @@ const AuthorDetails = () => {
   return (
     <div>
       <BookstoreNavigation />
-      <div dir='rtl' className="bg-gray-50 min-h-screen pt-16">
-        <div className="max-w-6xl mx-auto py-8 px-4">
-          <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-lg shadow-md overflow-hidden mb-8">
+      <div dir='rtl' className="bg-[#121212] min-h-screen pt-16">
+        <div className="max-w-7xl mx-auto w-full py-8 px-6">
+          <div className="bg-[#1a1a1a] text-gray-100 rounded-lg shadow-md overflow-hidden mb-8">
             <div className="md:flex">
               <div className="md:w-1/3">
                 <img

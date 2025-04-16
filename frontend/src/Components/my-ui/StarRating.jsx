@@ -9,7 +9,7 @@ const StarRating = ({ rating, setRating, editable = false }) => {
                     key={star}
                     type="button"
                     onClick={() => editable && setRating(star)}
-                    className={`${star <= rating ? "text-yellow-500" : "text-gray-300"
+                    className={`${star <= rating ? "text-yellow-500" : "text-gray-200"
                         } ${editable ? "cursor-pointer" : "cursor-default"}`}
                 >
                     <Star className="w-4 h-4 fill-current" />
