@@ -1,6 +1,6 @@
 const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
-const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
+const {sendEmail} = require('../../config/Nodemailer/nodemailerconfig');
 
 const updateUserInfo = async (req, res) => {
     const { name } = req.body;

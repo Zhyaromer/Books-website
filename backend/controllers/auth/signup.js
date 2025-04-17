@@ -2,7 +2,6 @@ const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 const bcrypt = require('bcrypt');
 const validateEmail = require('../../utils/checkEmailFormat');
-const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
 
 const signup = async (req, res) => {
     const { username, name, email, password, conformPassword } = req.body;
@@ -37,7 +36,6 @@ const signup = async (req, res) => {
     if (!validateEmail(email)) {
         return res.status(400).json({ message: "Invalid email format" });
     }
-
     try {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(sanPassword, salt);
@@ -61,8 +59,6 @@ const signup = async (req, res) => {
                 if (err) {
                     return res.status(500).json({ message: "Internal server error" });
                 }
-
-                sendEmail.signup(sanEmail, { name });
 
                 return res.status(201).json({ message: "User created successfully" });
             });

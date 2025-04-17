@@ -2,7 +2,7 @@ const xss = require("xss");
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const db = require('../../config/SQL/sqlconfig');
-const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
+const {sendEmail} = require('../../config/Nodemailer/nodemailerconfig');
 
 const forgotPassword = async (req, res) => {
     const { email } = req.body;

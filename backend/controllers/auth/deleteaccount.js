@@ -1,5 +1,5 @@
 const db = require('../../config/SQL/sqlconfig');
-const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
+const {sendEmail} = require('../../config/Nodemailer/nodemailerconfig');
 
 const deleteaccount = async (req, res) => {
     const userId = req?.user?.id;

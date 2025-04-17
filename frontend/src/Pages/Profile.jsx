@@ -297,61 +297,69 @@ const Profile = () => {
     return (
         <div>
             <BookstoreNavigation />
-            <div className="min-h-screen bg-gray-50 p-4 pt-20" dir="rtl">
+            <div className="min-h-screen bg-[#121212] p-4 pt-20" dir="rtl">
                 <div className="max-w-7xl mx-auto">
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <div className="bg-[#1a1a1a] rounded-lg shadow-md p-6 mb-6">
                         <div className="flex flex-row justify-between items-start md:items-center">
                             <div className="flex flex-col md:flex-row md:items-center">
-                                <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 border-2 border-blue-500">
+                                <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-200 border-2 border-[#1db954]">
                                     <img
                                         src={userData.coverImgURL}
                                         alt={userData.username}
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
-                                <div className="mr-4">
-                                    <h1 className="text-xl font-bold text-gray-800">{userData.username}</h1>
-                                    <p className="text-gray-600">{userData.name}</p>
+                                <div className="mr-0 md:mr-4">
+                                    <h1 className="text-xl md:text-2xl font-bold text-gray-100">{userData.username}</h1>
+                                    <p className="text-gray-300 text-lg md:text-xl">{userData.name}</p>
                                 </div>
                             </div>
 
                             <button
                                 onClick={() => navigate('/settings')}
-                                className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
+                                className="p-2 rounded-full transition-colors"
                                 aria-label="گۆڕینی زانیارییەکان"
                             >
-                                <Cog size={24} className="text-gray-700" />
+                                <Cog size={33} className="text-gray-100" />
                             </button>
                         </div>
 
                         <div className="mt-6 text-right">
-                            <h2 className="text-lg font-semibold text-gray-800 mb-2">دەربارەی من</h2>
-                            <p className="text-gray-600 leading-relaxed">{userData.bio}</p>
+                            <h2 className="text-lg font-semibold text-gray-200 mb-2">دەربارەی من</h2>
+                            <p className="text-gray-300 leading-relaxed">{userData.bio}</p>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                        <div className="flex border-b">
+                    <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden">
+                        <div className="flex items-center justify-center md:justify-start border-b-[1px] border-gray-600">
                             <button
-                                className={`text-xs md:text-base flex-1 py-3 font-medium ${activeTab === 'suggestion' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
+                                className={`relative px-2 md:px-6 py-4 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'suggestion'
+                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('suggestion'); resetPage() }}
                             >
                                 پێشنیارکراو
                             </button>
                             <button
-                                className={`text-xs md:text-base flex-1 py-3 font-medium ${activeTab === 'saved' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
+                                className={`relative px-2 md:px-6 py-4 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'saved'
+                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('saved'); resetPage() }}
                             >
-                                بینینی دواتر
+                                لیستی دڵخواز
                             </button>
                             <button
-                                className={`text-xs md:text-base flex-1 py-3 font-medium ${activeTab === 'read' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
+                                className={`relative px-2 md:px-6 py-4 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'read'
+                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('read'); resetPage() }}
                             >
                                 خوێندراوەکان
                             </button>
                             <button
-                                className={`text-xs md:text-base flex-1 py-3 font-medium ${activeTab === 'comments' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
+                                className={`relative px-2 md:px-6 py-4 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'comments'
+                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('comments'); resetPage() }}
                             >
                                 هەڵسەنگاندنەکان
@@ -361,7 +369,7 @@ const Profile = () => {
                         <div className="p-6">
                             {activeTab === 'suggestion' && (
                                 <div dir='rtl' className="space-y-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">پێشنیارکراو ({suggestionstotal})</h3>
+                                    <h3 className="text-lg font-semibold text-gray-100 mb-4">پێشنیارکراو ({suggestionstotal})</h3>
                                     <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
                                         <BookCollection data={suggestionBooks} text="" path="/Bookdetails" />
                                     </div>
@@ -377,7 +385,7 @@ const Profile = () => {
                             )}
                             {activeTab === 'saved' && (
                                 <div dir='rtl' className="space-y-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">بینینی دواتر ({booksTotal})</h3>
+                                    <h3 className="text-lg font-semibold text-gray-100 mb-4"> لیستی دڵخواز ({booksTotal})</h3>
                                     <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
                                         <BookCollection data={savedBooks} text="" path="/Bookdetails" />
                                     </div>
@@ -395,7 +403,7 @@ const Profile = () => {
                             {activeTab === 'read' && (
                                 <div className="space-y-6">
                                     <div dir='rtl' className="space-y-6">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">خوێندراوەکان ({readbooksTotal})</h3>
+                                        <h3 className="text-lg font-semibold text-gray-100 mb-4">خوێندراوەکان ({readbooksTotal})</h3>
                                         <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
                                             <BookCollection data={readBooks} text="" path="/Bookdetails" />
                                         </div>
@@ -411,16 +419,16 @@ const Profile = () => {
                             )}
 
                             {activeTab === 'comments' && (
-                                <div dir="rtl" className="w-fulll mx-auto p-4">
-                                    <h2 className="text-xl font-bold mb-4 text-right text-gray-800">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div dir="rtl" className="w-fulll mx-auto">
+                                     <h3 className="text-lg font-semibold text-gray-100 mb-8">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#1a1a1a]">
                                         {comments.length === 0 ? (
                                             <p className="text-gray-500 text-center py-4">هیچ هەڵسەنگاندنێک نییە</p>
                                         ) : (
                                             comments.map((review) => (
                                                 <div
                                                     key={review.id}
-                                                    className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden"
+                                                    className="bg-[#121212] rounded-lg shadow-md border-none overflow-hidden"
                                                 >
                                                     <div className="flex p-4 h-48">
                                                         <div className="flex-shrink-0 ml-4">
@@ -440,24 +448,23 @@ const Profile = () => {
                                                                 <div className="relative z-50">
                                                                     <button
                                                                         onClick={(e) => toggleMenu(review.id, e)}
-                                                                        className="p-1 rounded-full hover:bg-gray-100"
+                                                                        className="p-1 rounded-full hover:bg-transparent"
                                                                     >
-                                                                        <MoreVertical className="w-5 h-5 text-gray-500" />
+                                                                        <MoreVertical className="w-5 h-5 text-gray-100" />
                                                                     </button>
-
                                                                     {openMenuId === review.id && (
-                                                                        <div className="absolute left-0 mt-1 w-32 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                                                                        <div className="absolute left-0 mt-1 w-32 bg-[#1a1a1a] rounded-md shadow-lg z-10 border-none">
                                                                             <div className="py-1">
                                                                                 <button
                                                                                     onClick={() => handleEdit(review.id)}
-                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 justify-end"
+                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-gray-100 hover:bg-[#1db954] justify-end"
                                                                                 >
                                                                                     <span>دەستکاری</span>
                                                                                     <Edit2 className="w-4 h-4 mr-2" />
                                                                                 </button>
                                                                                 <button
                                                                                     onClick={() => handleDelete(review.id)}
-                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100 justify-end"
+                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-[#1db954] hover:text-white justify-end"
                                                                                 >
                                                                                     <span>سڕینەوە</span>
                                                                                     <Trash2 className="w-4 h-4 mr-2" />
@@ -468,18 +475,18 @@ const Profile = () => {
                                                                 </div>
 
                                                                 <div>
-                                                                    <h3 onClick={() => navigate(`/booksDetail/${review.book_id}`)} className="cursor-pointer text-lg font-medium text-gray-900 mb-1">{review.title}</h3>
+                                                                    <h3 onClick={() => navigate(`/booksDetail/${review.book_id}`)} className="cursor-pointer text-lg font-medium text-gray-100 mb-1">{review.title}</h3>
                                                                     <div className="flex items-center mb-2">
                                                                         <div className="flex">
                                                                             {renderStars(review.rating)}
                                                                         </div>
-                                                                        <span className="mr-2 text-xs text-gray-500">({review.rating}/5)</span>
+                                                                        <span className="mr-2 text-xs text-gray-300">({review.rating}/5)</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
 
                                                             <div className="h-32 overflow-y-auto pr-1 text-right custom-scrollbar">
-                                                                <p className="text-sm text-gray-600 whitespace-pre-wrap">{review.comment}</p>
+                                                                <p className="text-sm text-gray-300 whitespace-pre-wrap">{review.comment}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -520,49 +527,50 @@ const Profile = () => {
 
                 {isModalOpen && editingReview && (
                     <div dir='rtl' className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden" dir="rtl">
-                            <div className="flex justify-between items-center p-4 border-b">
-                                <h3 className="text-lg font-semibold text-gray-800">دەستکاری هەڵسەنگاندن</h3>
+                        <div className="bg-[#1a1a1a] rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden" dir="rtl">
+                            <div className="flex justify-between items-center p-4 border-b-[1px] border-gray-500">
+                                <h3 className="text-lg font-semibold text-gray-100">دەستکاری هەڵسەنگاندن</h3>
                                 <button
                                     onClick={handleModalClose}
                                     className="p-1 rounded-full hover:bg-gray-100 transition-colors"
                                 >
-                                    <X className="w-5 h-5 text-gray-500" />
+                                    <X className="w-5 h-5 text-gray-200" />
                                 </button>
                             </div>
 
                             <form onSubmit={handleSubmit} className="p-4">
                                 <div dir='rtl' className="mb-4">
                                     <div className="mb-2 text-center">
-                                        <h4 className="text-md font-medium text-gray-700">{editingReview.title}</h4>
+                                        <h4 className="text-md font-medium text-gray-300">{editingReview.title}</h4>
                                     </div>
 
                                     {renderStarSelector()}
 
                                     <div className="mt-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">هەڵسەنگاندن</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">هەڵسەنگاندن</label>
                                         <textarea
                                             name="comment"
                                             value={editFormData.comment}
                                             onChange={handleInputChange}
                                             rows="5"
-                                            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            placeholder='دەستکاری هەڵسەنگاندن'
+                                            className="resize-none bg-[#1a1a1a] border-[1px] border-gray-600 placeholder:text-gray-400 w-full px-3 py-2 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1db954]"
                                             dir="rtl"
                                         ></textarea>
                                     </div>
                                 </div>
 
-                                <div className="flex justify-start">
+                                <div className="flex justify-end flex-row-reverse gap-2">
                                     <button
                                         type="button"
                                         onClick={handleModalClose}
-                                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 ml-2"
+                                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                                     >
                                         پاشگەزبوونەوە
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 flex items-center"
+                                        className="px-4 py-2 text-sm font-medium text-white bg-[#1db954] rounded-md hover:bg-[#1ed760] flex items-center"
                                     >
                                         <Save className="w-4 h-4 ml-1" />
                                         <span>پاشەکەوتکردن</span>

@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const db = require('../../config/SQL/sqlconfig');
-const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
+const {sendEmail} = require('../../config/Nodemailer/nodemailerconfig');
 
 const changePassword = async (req, res) => {
     const { oldPassword, newPassword, confirmPassword } = req.body;

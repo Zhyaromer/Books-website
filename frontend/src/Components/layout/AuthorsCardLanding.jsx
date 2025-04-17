@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 const MultipleAuthorsCard = ({ data }) => {
     return (
         <div className="w-full max-w-6xl mx-auto bg-[#1a1a1a] p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-xl">
-            <h1 className="text-xl md:text-2xl flex justify-end font-bold mb-4 sm:mb-6 md:mb-8 text-white border-b pb-2 sm:pb-4 border-[#1db954]">
+            <h1 className="text-xl md:text-2xl flex justify-end font-bold mb-4 sm:mb-6 md:mb-8 text-white border-b pb-2 sm:pb-4 border-gray-600">
                 بەناوبانگترین نوسەرەکان 
             </h1>
             

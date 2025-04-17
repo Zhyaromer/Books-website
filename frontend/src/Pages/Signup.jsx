@@ -109,10 +109,10 @@ const SignUp = () => {
         <div>
             <BookstoreNavigation />
             <div dir="rtl" className="max-w-4xl mx-auto px-4 py-12 pt-20 md:pt-32">
-                <div className="bg-white rounded-lg shadow-md p-8">
+                <div className="bg-[#1a1a1a] rounded-lg shadow-md p-8">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-800 mb-2">تۆمارکردنی ئەندامێتی</h1>
-                        <p className="text-gray-600">
+                        <h1 className="text-3xl font-bold text-gray-100 mb-2">تۆمارکردنی ئەندامێتی</h1>
+                        <p className="text-gray-300">
                             ئەندامێتی نوێ دروست بکە بۆ دەستگەیشتن بە زانیاری کتێب
                         </p>
                     </div>
@@ -120,28 +120,28 @@ const SignUp = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">ناو</label>
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">ناو</label>
                                 <input
                                     type="text"
                                     id="name"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className={`w-full px-4 py-2 border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                                    className={`w-full px-4 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.name ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                     placeholder="ناوەکەت بنووسە"
                                 />
                                 {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
                             </div>
 
                             <div>
-                                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">نازناو</label>
+                                <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-1">نازناو</label>
                                 <input
                                     type="text"
                                     id="username"
                                     name="username"
                                     value={formData.username}
                                     onChange={handleChange}
-                                    className={`w-full px-4 py-2 border ${errors.username ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                                    className={`w-full px-4 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.username ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                     placeholder="نازناوەکەت بنووسە"
                                 />
                                 {errors.username && <p className="mt-1 text-sm text-red-500">{errors.username}</p>}
@@ -150,7 +150,7 @@ const SignUp = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">وشەی نهێنی</label>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">وشەی نهێنی</label>
                                 <div className="relative">
                                     <input
                                         type={showPassword ? "text" : "password"}
@@ -158,7 +158,7 @@ const SignUp = () => {
                                         name="password"
                                         value={formData.password}
                                         onChange={handleChange}
-                                        className={`w-full px-4 py-2 pl-10 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                                        className={`w-full px-4 py-2 pl-10 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.password ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                         placeholder="وشەی نهێنی"
                                     />
                                     <button
@@ -181,18 +181,18 @@ const SignUp = () => {
                                     </button>
                                 </div>
                                 {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
-                                <p className="mt-1 text-xs text-gray-500">وشەی نهێنی پێویستە لانیکەم ٨ پیت بێت</p>
+                                <p className="mt-1 text-xs text-gray-300">وشەی نهێنی پێویستە لانیکەم ٨ پیت بێت</p>
                             </div>
 
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">ئیمەیل</label>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">ئیمەیل</label>
                                 <input
                                     type="email"
                                     id="email"
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className={`w-full px-4 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                                    className={`w-full px-4 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.email ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                     placeholder="ئیمەیل"
                                 />
                                 {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
@@ -201,7 +201,7 @@ const SignUp = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">دڵنیاکردنەوەی وشەی نهێنی</label>
+                                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1">دڵنیاکردنەوەی وشەی نهێنی</label>
                                 <div className="relative">
                                     <input
                                         type={showConfirmPassword ? "text" : "password"}
@@ -209,7 +209,7 @@ const SignUp = () => {
                                         name="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
-                                        className={`w-full px-4 py-2 pl-10 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                                        className={`w-full px-4 py-2 pl-10 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.confirmPassword ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                         placeholder="دڵنیاکردنەوەی وشەی نهێنی"
                                     />
                                     <button
@@ -237,17 +237,17 @@ const SignUp = () => {
                         <div>
                             <button
                                 type="submit"
-                                className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition duration-300"
+                                className="w-full bg-[#1db954] text-gray-100 py-3 px-4 rounded-md hover:bg-[#1ed760] transition duration-300"
                             >
                                 دروستکردنی هەژمار
                             </button>
                         </div>
 
                         <div className="text-center">
-                            <p className="text-gray-600 text-sm">
+                            <p className="text-gray-300 text-sm">
                                 پێشتر هەژمارت هەیە؟{" "}
 
-                                <a href="/login" className="text-blue-600 hover:underline">
+                                <a href="/login" className="text-[#1db954] hover:text-[#1ed760] transition-colors duration-300">
                                     چوونە ژوورەوە
                                 </a>
                             </p>

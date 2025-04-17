@@ -57,17 +57,17 @@ const KurdishLoginForm = () => {
     return (
         <div>
             <BookstoreNavigation />
-            <div dir="rtl" className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-                <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-                    <h2 className="mb-6 text-right text-2xl font-bold text-gray-800">چوونەژوورەوە</h2>
+            <div dir="rtl" className="flex min-h-screen items-center justify-center bg-[#121212] p-4">
+                <div className="w-full max-w-md rounded-lg bg-[#1a1a1a] p-8 shadow-lg">
+                    <h2 className="mb-6 text-right text-2xl font-bold text-gray-100">چوونەژوورەوە</h2>
                     <form onSubmit={handleSubmit} className="space-y-6" autoComplete="new-password">
                         <div className="space-y-2">
-                            <label htmlFor="user_login_email" className="block text-right text-sm font-medium text-gray-700">
+                            <label htmlFor="user_login_email" className="block text-right text-sm font-medium text-gray-200">
                                 ئیمەیڵ
                             </label>
-                            <div className="relative">
+                            <div className="relative bg-[#1a1a1a]">
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <Mail className="h-5 w-5 text-gray-400" />
+                                    <Mail className="h-5 w-5 text-gray-300" />
                                 </div>
                                 <input
                                     type="text"
@@ -76,7 +76,7 @@ const KurdishLoginForm = () => {
                                     value={credentials.user_login_email}
                                     onChange={handleChange}
                                     autoComplete="off"
-                                    className="w-full rounded-md border border-gray-300 p-3 pr-10 text-right shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    className="w-full bg-[#1a1a1a] placeholder:text-gray-300 rounded-md border border-gray-600 p-3 pr-10 text-right shadow-sm focus:outline-none focus:ring-1 focus:ring-[#1db954]"
                                     placeholder="ئیمەیڵیەکەت بنووسە"
                                     required
                                 />
@@ -84,12 +84,12 @@ const KurdishLoginForm = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label htmlFor="user_login_password" className="block text-right text-sm font-medium text-gray-700">
+                            <label htmlFor="user_login_password" className="block text-right text-sm font-medium text-gray-200">
                                 وشەی نهێنی
                             </label>
                             <div className="relative">
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <Lock className="h-5 w-5 text-gray-400" />
+                                    <Lock className="h-5 w-5 text-gray-300" />
                                 </div>
                                 <input
                                     type={showPassword ? "text" : "password"}
@@ -98,7 +98,7 @@ const KurdishLoginForm = () => {
                                     value={credentials.user_login_password}
                                     onChange={handleChange}
                                     autoComplete="new-password"
-                                    className="w-full rounded-md border border-gray-300 p-3 pr-10 text-right shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                    className="w-full bg-[#1a1a1a] placeholder:text-gray-300 rounded-md border border-gray-600 p-3 pr-10 text-right shadow-sm focus:outline-none focus:ring-1 focus:ring-[#1db954]"
                                     placeholder="وشەی نهێنیەکەت بنووسە"
                                     required
                                 />
@@ -108,15 +108,15 @@ const KurdishLoginForm = () => {
                                     className="absolute inset-y-0 left-0 flex items-center pl-3 focus:outline-none"
                                 >
                                     {showPassword ?
-                                        <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-500" /> :
-                                        <Eye className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                                        <EyeOff className="h-5 w-5 text-gray-200 hover:text-gray-400" /> :
+                                        <Eye className="h-5 w-5 text-gray-200 hover:text-gray-400" />
                                     }
                                 </button>
                             </div>
                         </div>
 
                         <div className="flex justify-start">
-                            <a href="/forgotpassword" className="text-sm font-medium text-blue-600 hover:text-blue-500">
+                            <a href="/forgotpassword" className="text-sm font-medium text-[#1db954] hover:text-[#1ed760] transition-colors duration-300">
                                 وشەی نهێنیت لەبیرچووە؟
                             </a>
                         </div>
@@ -124,7 +124,7 @@ const KurdishLoginForm = () => {
                         <div>
                             <button
                                 type="submit"
-                                className="w-full rounded-md bg-blue-600 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                className="w-full rounded-md bg-[#1db954] py-3 text-sm font-medium text-white hover:bg-[#1ed760] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                             >
                                 چوونەژوورەوە
                             </button>
@@ -132,9 +132,9 @@ const KurdishLoginForm = () => {
                     </form>
 
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-300">
                             هەژمارت نییە؟{' '}
-                            <a href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+                            <a href="/signup" className="font-medium text-[#1db954] hover:text-[#1ed760] transition-colors duration-300">
                                 هەژمارێک دروست بکە
                             </a>
                         </p>

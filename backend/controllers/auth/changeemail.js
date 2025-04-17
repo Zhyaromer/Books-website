@@ -1,7 +1,7 @@
 const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 const validateEmail = require('../../utils/checkEmailFormat');
-const sendEmail = require('../../config/Nodemailer/nodemailerconfig');
+const {sendEmail} = require('../../config/Nodemailer/nodemailerconfig');
 
 const changeemail = async (req, res) => {
     const { email } = req.body;

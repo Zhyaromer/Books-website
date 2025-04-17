@@ -7,10 +7,10 @@ const getTrendingBooks = (req, res) => {
         authors.name, authors.bio, authors.imgURL
         FROM books
         INNER JOIN authors ON books.author_id = authors.id
-        where books.created_at >= NOW() - INTERVAL 1 month
         ORDER BY COALESCE(books.views, 0) DESC
         LIMIT 6
         `
+        // where books.created_at >= NOW() - INTERVAL 1 month
 
         db.query(sql, (err, result) => {
             if (err) {
