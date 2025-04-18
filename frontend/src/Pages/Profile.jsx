@@ -315,13 +315,15 @@ const Profile = () => {
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => navigate('/settings')}
-                                className="p-2 rounded-full transition-colors"
-                                aria-label="گۆڕینی زانیارییەکان"
-                            >
-                                <Cog size={33} className="text-gray-100" />
-                            </button>
+                            <div className='flex items-end'>
+                                <button
+                                    onClick={() => navigate('/settings')}
+                                    className="p-2 rounded-full transition-colors"
+                                    aria-label="گۆڕینی زانیارییەکان"
+                                >
+                                    <Cog size={33} className="text-gray-100" />
+                                </button>
+                            </div>
                         </div>
 
                         <div className="mt-6 text-right">
@@ -333,7 +335,7 @@ const Profile = () => {
                     <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden">
                         <div className="flex items-center justify-center md:justify-start border-b-[1px] border-gray-600">
                             <button
-                                className={`relative px-2 md:px-6 py-4 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'suggestion'
+                                className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'suggestion'
                                     ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('suggestion'); resetPage() }}
@@ -341,7 +343,7 @@ const Profile = () => {
                                 پێشنیارکراو
                             </button>
                             <button
-                                className={`relative px-2 md:px-6 py-4 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'saved'
+                                className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'saved'
                                     ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('saved'); resetPage() }}
@@ -349,7 +351,7 @@ const Profile = () => {
                                 لیستی دڵخواز
                             </button>
                             <button
-                                className={`relative px-2 md:px-6 py-4 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'read'
+                                className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'read'
                                     ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('read'); resetPage() }}
@@ -357,7 +359,7 @@ const Profile = () => {
                                 خوێندراوەکان
                             </button>
                             <button
-                                className={`relative px-2 md:px-6 py-4 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'comments'
+                                className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'comments'
                                     ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('comments'); resetPage() }}
@@ -370,7 +372,7 @@ const Profile = () => {
                             {activeTab === 'suggestion' && (
                                 <div dir='rtl' className="space-y-6">
                                     <h3 className="text-lg font-semibold text-gray-100 mb-4">پێشنیارکراو ({suggestionstotal})</h3>
-                                    <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                                    <div className="flex pb-4 last:border-0 last:pb-0">
                                         <BookCollection data={suggestionBooks} text="" path="/Bookdetails" />
                                     </div>
 
@@ -386,7 +388,7 @@ const Profile = () => {
                             {activeTab === 'saved' && (
                                 <div dir='rtl' className="space-y-6">
                                     <h3 className="text-lg font-semibold text-gray-100 mb-4"> لیستی دڵخواز ({booksTotal})</h3>
-                                    <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                                    <div className="flex pb-4 last:border-0 last:pb-0">
                                         <BookCollection data={savedBooks} text="" path="/Bookdetails" />
                                     </div>
 
@@ -404,7 +406,7 @@ const Profile = () => {
                                 <div className="space-y-6">
                                     <div dir='rtl' className="space-y-6">
                                         <h3 className="text-lg font-semibold text-gray-100 mb-4">خوێندراوەکان ({readbooksTotal})</h3>
-                                        <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                                        <div className="flex pb-4 last:border-0 last:pb-0">
                                             <BookCollection data={readBooks} text="" path="/Bookdetails" />
                                         </div>
                                     </div>
@@ -420,7 +422,7 @@ const Profile = () => {
 
                             {activeTab === 'comments' && (
                                 <div dir="rtl" className="w-fulll mx-auto">
-                                     <h3 className="text-lg font-semibold text-gray-100 mb-8">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h3>
+                                    <h3 className="text-lg font-semibold text-gray-100 mb-8">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#1a1a1a]">
                                         {comments.length === 0 ? (
                                             <p className="text-gray-500 text-center py-4">هیچ هەڵسەنگاندنێک نییە</p>

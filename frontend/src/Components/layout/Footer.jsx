@@ -1,14 +1,52 @@
+import availableColors from "../../Helpers/colors";
+import { useState, useEffect } from "react";
+import { useTheme } from "../../context/ThemeContext";
+
 const Footer = () => {
+    const { selectedColor, updateColor, main } = useTheme();
+
+    const handleColorClick = (colorName) => {
+        updateColor(colorName);
+    };
+
     return (
         <footer dir="rtl" className="bg-[#1a1a1a] text-white">
             <div className="container mx-auto px-6 py-10">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                    <div className="md:col-span-1">
-                        <h2 className="text-2xl font-bold mb-4">پەرتووکخانە</h2>
-                        <p className="text-gray-300 mb-4">
-                            گەورەترین پەرتووکخانە لە کوردستان بۆ خوێندنەوەی پەرتووکی
-                            نوێ و کلاسیک بە زمانی کوردی و زمانەکانی تر.
-                        </p>
+                    <div className="col-span-1">
+                        <div>
+                            <h2 className="text-2xl font-bold mb-4">پەرتووکخانە</h2>
+                            <p className="text-gray-300 mb-4">
+                                گەورەترین پەرتووکخانە لە کوردستان بۆ خوێندنەوەی پەرتووکی
+                                نوێ و کلاسیک بە زمانی کوردی و زمانەکانی تر.
+                            </p>
+                        </div>
+                        <div>
+                            <h2 style={{ color: main }} className={`text-2xl font-bold mb-4`}>ڕەنگەکان</h2>
+                            <div className="flex flex-wrap">
+                                {availableColors.map((colorObj) => (
+                                    <div
+                                        onClick={() => handleColorClick(colorObj.color)}
+                                        key={colorObj.color}
+                                        className={`
+                                w-6 h-6 
+                                rounded-full 
+                                mr-3 mb-3
+                                cursor-pointer
+                                transition-all duration-200
+                                hover:scale-110
+                                hover:shadow-lg
+                                relative
+                            `}
+                                        style={{ backgroundColor: colorObj.main }}
+                                    >
+                                        {selectedColor === colorObj.color && (
+                                            <div className="absolute inset-0 rounded-full border-2 border-white" />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="flex flex-col items-center md:col-span-1">

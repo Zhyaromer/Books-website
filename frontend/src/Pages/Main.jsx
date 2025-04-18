@@ -11,6 +11,7 @@ import { axiosInstance } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { useNavigate } from "react-router-dom";
+import getColorTones from "../Helpers/colorUtils";
 
 const Main = () => {
     const navigate = useNavigate();

@@ -1,7 +1,7 @@
 const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 
-const getmemberSavedBooks = async (req, res) => {
+const getmembersuggestion = async (req, res) => {
     const { page = 1, limit = 12 } = req.query;
     const offset = (page - 1) * parseInt(limit);
     const username  = xss(req?.query?.username);
@@ -21,7 +21,7 @@ const getmemberSavedBooks = async (req, res) => {
         const user_id = result[0].id;
 
         const [countResult] = await db.promise().query(
-            "SELECT COUNT(*) as total FROM user_saves WHERE user_id = ?",
+            "SELECT COUNT(*) as total FROM suggestions WHERE user_id = ?",
             [user_id]
         );
         const total = countResult[0].total;
@@ -36,7 +36,7 @@ const getmemberSavedBooks = async (req, res) => {
         }
 
         const [savedBooks] = await db.promise().query(
-            "SELECT book_id FROM user_saves WHERE user_id = ? LIMIT ? OFFSET ?",
+            "SELECT book_id FROM suggestions WHERE user_id = ? LIMIT ? OFFSET ?",
             [user_id, parseInt(limit), parseInt(offset)]
         );
 
@@ -61,6 +61,10 @@ const getmemberSavedBooks = async (req, res) => {
             booksIds
         );
 
+        console.log(`total: ${total}`);
+        console.log(`totalPages: ${Math.ceil(total / limit)}`);
+        console.log(`currentPage: ${parseInt(page)}`);
+
         return res.status(200).json({
             foundBooks: foundBooks,
             total: total,
@@ -72,4 +76,4 @@ const getmemberSavedBooks = async (req, res) => {
     }
 }
 
-module.exports = getmemberSavedBooks;
+module.exports = getmembersuggestion;

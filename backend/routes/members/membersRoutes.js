@@ -4,10 +4,12 @@ const getallmemberreviews = require('../../controllers/members/getallmemberrevie
 const getmemberinfo = require('../../controllers/members/getmemberinfo');
 const getmemberReadBooks = require('../../controllers/members/getmemberReadBooks');
 const getmemberSavedBooks = require('../../controllers/members/getmemberSavedBooks');
+const getmembersuggestion = require('../../controllers/members/getmembersuggestion');
 
 router.get('/getallmemberreviews', getallmemberreviews);
 router.get('/getmemberinfo', getmemberinfo);
 router.get('/getmemberReadBooks', getmemberReadBooks);
 router.get('/getmemberSavedBooks', getmemberSavedBooks);
+router.get('/getmembersuggestion', getmembersuggestion);
 
 module.exports = router;

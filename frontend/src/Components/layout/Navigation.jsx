@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search, Book, User, ChevronDown, Settings, LogOut,UserCog2 } from 'lucide-react';
+import { Menu, X, Search, Book, User, ChevronDown, Settings, LogOut, UserCog2 } from 'lucide-react';
 import { useCheckAuth, logout, axiosInstance } from "../../context/AxiosInstance";
 import LoadingUi from '../my-ui/Loading';
 import { useNavigate } from 'react-router-dom';

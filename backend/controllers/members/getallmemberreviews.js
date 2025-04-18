@@ -11,7 +11,7 @@ const getallmemberreviews = async (req, res) => {
     }
 
     try {
-        const sql = `select * from users where username = ?`;
+        const sql = `select id from users where username = ?`;
 
         const [result] = await db.promise().query(sql, [username]);
 

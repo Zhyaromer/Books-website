@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
+import { useTheme } from "../../context/ThemeContext"; // Import the hook
 
 const BookCardMain = ({ data, text, path }) => {
+    const { main, secondary, tertiary } = useTheme();
     return (
         <div className="pt-6 md:pt-12 bg-[#121212] w-full flex justify-center items-center flex-col">
             {path == "/Books" ? (
@@ -47,7 +49,9 @@ const BookCardMain = ({ data, text, path }) => {
                                 <div className="absolute w-full h-full inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
 
                                 <div className="absolute z-20 bottom-0 right-0 left-0 flex justify-center transform translate-y-1/2">
-                                    <p className="text-xs sm:text-sm text-white px-2 py-1 bg-[#1db954] rounded-full max-w-max shadow-lg">
+                                    <p className="text-xs sm:text-sm text-white px-2 py-1 rounded-full max-w-max shadow-lg"
+                                    style={{ backgroundColor: secondary }}
+                                    >
                                         {book.genre}
                                     </p>
                                 </div>

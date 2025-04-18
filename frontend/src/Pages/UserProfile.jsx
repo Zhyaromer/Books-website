@@ -17,13 +17,18 @@ const UserProfile = () => {
     const [userData, setUserData] = useState([]);
     const [savedBooks, setSavedBooks] = useState([]);
     const [readBooks, setReadBooks] = useState([]);
+    const [suggestionBooks, setSuggestionBooks] = useState([]);
     const [comments, setcomments] = useState([]);
     const [hasfound, setHasFound] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [booksTotal, setBooksTotal] = useState(0);
     const [readbooksTotal, setreadbooksTotal] = useState(0);
+    const [suggestionstotal, setsuggestionstotal] = useState(0);
     const [commentsTotal, setcommentsTotal] = useState(0);
-    const [totalPages, setTotalPages] = useState(1);
+    const [savedBooksTotalPages, setSavedBooksTotalPages] = useState(1);
+    const [readBooksTotalPages, setReadBooksTotalPages] = useState(1);
+    const [suggestionsTotalPages, setSuggestionsTotalPages] = useState(1);
+    const [commentsTotalPages, setCommentsTotalPages] = useState(1);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const username = queryParams.get("username");
@@ -53,15 +58,15 @@ const UserProfile = () => {
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setSavedBooks(res.data.foundBooks);
                     setBooksTotal(res.data.total || 0);
-                    setTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                    setSavedBooksTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
                 } else {
                     setSavedBooks([]);
-                    setTotalPages(0);
+                    setSavedBooksTotalPages(0);
                 }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Something went wrong");
                 setSavedBooks([]);
-                setTotalPages(0);
+                setSavedBooksTotalPages(0);
             }
         }
 
@@ -71,15 +76,35 @@ const UserProfile = () => {
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setReadBooks(res.data.foundBooks);
                     setreadbooksTotal(res.data.total || 0);
-                    setTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                    setReadBooksTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
                 } else {
                     setReadBooks([]);
-                    setTotalPages(0);
+                    setReadBooksTotalPages(0);
                 }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Something went wrong");
                 setReadBooks([]);
-                setTotalPages(0);
+                setReadBooksTotalPages(0);
+            }
+        }
+
+        const fetchSuggestions = async () => {
+            try {
+                const res = await axiosInstance.get(`/members/getmembersuggestion?username=${username}&page=${currentPage}&limit=${booksPerPage}`);
+                if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
+                    console.log(Math.ceil(res.data.total || 0) / booksPerPage);
+                    console.log(res.data.total);
+                    setSuggestionBooks(res.data.foundBooks);
+                    setsuggestionstotal(res.data.total || 0);
+                    setSuggestionsTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                } else {
+                    setSuggestionBooks([]);
+                    setSuggestionsTotalPages(0);
+                }
+            } catch (error) {
+                toast.error(error.response?.data?.message || "Something went wrong");
+                setSuggestionBooks([]);
+                setSuggestionsTotalPages(0);
             }
         }
 
@@ -89,14 +114,15 @@ const UserProfile = () => {
                 if (res.data.comments && Array.isArray(res.data.comments)) {
                     setcomments(res.data.comments);
                     setcommentsTotal(res.data.total || 0);
-                    setTotalPages(Math.ceil((res.data.total || 0) / commentsPerPage));
+                    setCommentsTotalPages(Math.ceil((res.data.total || 0) / commentsPerPage));
                 } else {
                     setcomments([]);
-                    setTotalPages(0);
+                    setCommentsTotalPages(0);
                 }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Something went wrong");
                 setcomments([]);
+                setCommentsTotalPages(0);
                 setTotalPages(0);
             }
         }
@@ -105,6 +131,7 @@ const UserProfile = () => {
         fetchSavedBooks();
         fetchReadBooks();
         fetchComments();
+        fetchSuggestions();
     }, [currentPage, username]);
 
     const renderStars = (rating) => {
@@ -161,12 +188,12 @@ const UserProfile = () => {
     return (
         <div>
             <BookstoreNavigation />
-            <div className="min-h-screen bg-gray-50 p-4 pt-20" dir="rtl">
+            <div className="min-h-screen bg-[#121212] p-4 pt-20" dir="rtl">
                 <div className="max-w-7xl mx-auto">
-                    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                        <div className="flex flex-row justify-between items-center">
-                            <div className="flex flex-row items-center">
-                                <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 border-2 border-blue-500">
+                    <div className="bg-[#1a1a1a] rounded-lg shadow-md p-6 mb-6">
+                        <div className="flex flex-row justify-between items-start">
+                            <div className="flex items-center">
+                                <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-200 border-2 border-[#1db954]">
                                     <img
                                         src={userData.coverImgURL}
                                         alt={userData.username}
@@ -174,87 +201,121 @@ const UserProfile = () => {
                                     />
                                 </div>
                                 <div className="mr-4">
-                                    <h1 className="text-xl font-bold text-gray-800">{userData.username}</h1>
-                                    <p className="text-gray-600">{userData.name}</p>
+                                    <h1 className="text-xl md:text-2xl font-bold text-gray-100">{userData.username}</h1>
+                                    <p className="text-gray-300 text-lg md:text-xl">{userData.name}</p>
                                 </div>
                             </div>
                         </div>
 
                         <div className="mt-6 text-right">
-                            <h2 className="text-lg font-semibold text-gray-800 mb-2">دەربارەی من</h2>
-                            <p className="text-gray-600 leading-relaxed">{userData.bio}</p>
+                            <h2 className="text-lg font-semibold text-gray-200 mb-2">دەربارەی من</h2>
+                            <p className="text-gray-300 leading-relaxed">{userData.bio}</p>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                        <div className="flex border-b">
+                    <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden">
+                        <div className="flex items-center justify-center md:justify-start border-b-[1px] border-gray-600">
                             <button
-                                className={`flex-1 py-3 font-medium ${activeTab === 'saved' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
-                                onClick={() => { setActiveTab('saved'); resetPage() }}
+                                className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300  ${activeTab === 'saved'
+                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    : 'text-gray-400 hover:text-gray-200'}`}
+                                onClick={() => { setActiveTab('saved'); resetPage(); }}
                             >
-                                بینینی دواتر
+                                لیستی دڵخواز
                             </button>
                             <button
-                                className={`flex-1 py-3 font-medium ${activeTab === 'read' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
-                                onClick={() => { setActiveTab('read'); resetPage() }}
+                                className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'read'
+                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    : 'text-gray-400 hover:text-gray-200'}`}
+                                onClick={() => { setActiveTab('read'); resetPage(); }}
                             >
                                 خوێندراوەکان
                             </button>
                             <button
-                                className={`flex-1 py-3 font-medium ${activeTab === 'comments' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-500'}`}
-                                onClick={() => { setActiveTab('comments'); resetPage() }}
+                                className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'suggestionBooks'
+                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    : 'text-gray-400 hover:text-gray-200'}`}
+                                onClick={() => { setActiveTab('suggestionBooks'); resetPage(); }}
+                            >
+                                پێشنیارکراو
+                            </button>
+                            <button
+                                className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'comments'
+                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    : 'text-gray-400 hover:text-gray-200'}`}
+                                onClick={() => { setActiveTab('comments'); resetPage(); }}
                             >
                                 هەڵسەنگاندنەکان
                             </button>
                         </div>
 
-                        <div className="p-6">
+                        <div className="p-6 pb-12">
                             {activeTab === 'saved' && (
-                                <div dir='rtl' className="space-y-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">بینینی دواتر ({booksTotal})</h3>
-                                    <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                                <div dir='rtl' className="space-y-2">
+                                    <h3 className="text-lg font-semibold text-gray-100">بینینی دواتر ({booksTotal})</h3>
+                                    <div className="flex border-b border-gray-600 pb-4 last:border-0 last:pb-0">
                                         <BookCollection data={savedBooks} text="" path="/Bookdetails" />
                                     </div>
 
-                                    {booksTotal > 12 && (
-                                        <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
-                                            onPageChange={handlePageChange}
-                                        />
-                                    )}
+                                    <div>
+                                        {booksTotal > 12 && (
+                                            <Pagination
+                                                currentPage={currentPage}
+                                                totalPages={savedBooksTotalPages}
+                                                onPageChange={handlePageChange}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             )}
 
                             {activeTab === 'read' && (
-                                <div className="space-y-6">
-                                    <div dir='rtl' className="space-y-6">
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">خوێندراوەکان ({readbooksTotal})</h3>
-                                        <div className="flex border-b border-gray-200 pb-4 last:border-0 last:pb-0">
-                                            <BookCollection data={readBooks} text="" path="/Bookdetails" />
-                                        </div>
+                                <div dir='rtl' className="space-y-2">
+                                    <h3 className="text-lg font-semibold text-gray-100">خوێندراوەکان ({readbooksTotal})</h3>
+                                    <div className="flex border-b border-gray-600 pb-4 last:border-0 last:pb-0">
+                                        <BookCollection data={readBooks} text="" path="/Bookdetails" />
                                     </div>
-                                    {readbooksTotal > 12 && (
-                                        <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
-                                            onPageChange={handlePageChange}
-                                        />
-                                    )}
+                                    <div>
+                                        {readbooksTotal > 12 && (
+                                            <Pagination
+                                                currentPage={currentPage}
+                                                totalPages={readBooksTotalPages}
+                                                onPageChange={handlePageChange}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'suggestionBooks' && (
+                                <div dir='rtl' className="space-y-2">
+                                    <h3 className="text-lg font-semibold text-gray-100">پێشنیارکراوەکان ({suggestionstotal})</h3>
+                                    <div className="flex border-b border-gray-600 pb-4 last:border-0 last:pb-0">
+                                        <BookCollection data={suggestionBooks} text="" path="/Bookdetails" />
+                                    </div>
+                                    <div>
+                                        {suggestionstotal > 12 && (
+                                            <Pagination
+                                                currentPage={currentPage}
+                                                totalPages={suggestionsTotalPages}
+                                                onPageChange={handlePageChange}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             )}
 
                             {activeTab === 'comments' && (
-                                <div dir="rtl" className="w-fulll mx-auto p-4">
-                                    <h2 className="text-xl font-bold mb-4 text-right text-gray-800">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h2>
-                                    <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div dir="rtl" className="space-y-2">
+                                    <h3 className="text-lg font-semibold text-gray-100 mb-14">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-gray-600 pb-10 last:border-0 last:pb-0">
                                         {comments.length === 0 ? (
-                                            <p className="text-gray-500 text-center py-4">هیچ هەڵسەنگاندنێک نییە</p>
+                                            <p className="text-gray-100 text-center py-4">هیچ هەڵسەنگاندنێک نییە</p>
                                         ) : (
                                             comments.map((review) => (
                                                 <div
                                                     key={review.id}
-                                                    className="bg-white rounded-lg shadow-md border border-gray-100 overflow-hidden"
+                                                    className="bg-[#121212] rounded-lg shadow-md border-none overflow-hidden"
                                                 >
                                                     <div className="flex p-4 h-48">
                                                         <div className="flex-shrink-0 ml-4">
@@ -272,18 +333,18 @@ const UserProfile = () => {
                                                         <div className="flex-grow overflow-hidden">
                                                             <div className="flex flex-row-reverse justify-end items-start">
                                                                 <div>
-                                                                    <h3 onClick={() => navigate(`/booksDetail/${review.book_id}`)} className="cursor-pointer text-lg font-medium text-gray-900 mb-1">{review.title}</h3>
+                                                                    <h3 onClick={() => navigate(`/booksDetail/${review.book_id}`)} className="cursor-pointer text-lg font-medium text-gray-100 mb-1">{review.title}</h3>
                                                                     <div className="flex items-center mb-2">
                                                                         <div className="flex">
                                                                             {renderStars(review.rating)}
                                                                         </div>
-                                                                        <span className="mr-2 text-xs text-gray-500">({review.rating}/5)</span>
+                                                                        <span className="mr-2 text-xs text-gray-400">({review.rating}/5)</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
 
                                                             <div className="h-32 overflow-y-auto pr-1 text-right custom-scrollbar">
-                                                                <p className="text-sm text-gray-600 whitespace-pre-wrap">{review.comment}</p>
+                                                                <p className="text-sm text-gray-300 whitespace-pre-wrap">{review.comment}</p>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -292,13 +353,15 @@ const UserProfile = () => {
                                         )}
                                     </div>
 
-                                    {commentsTotal > 6 && (
-                                        <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
-                                            onPageChange={handlePageChange}
-                                        />
-                                    )}
+                                    <div>
+                                        {commentsTotal > 6 && (
+                                            <Pagination
+                                                currentPage={currentPage}
+                                                totalPages={commentsTotalPages}
+                                                onPageChange={handlePageChange}
+                                            />
+                                        )}
+                                    </div>
 
                                     <style>{`
                             .custom-scrollbar::-webkit-scrollbar {

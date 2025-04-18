@@ -2,24 +2,26 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Book, Globe, Tag } from 'lucide-react';
 import PropTypes from "prop-types";
+import getColorTones from "../../Helpers/colorUtils";
 
 const BookSlider = ({ data }) => {
   const navigate = useNavigate();
+  const { main, secondary, tertiary } = getColorTones();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedBook, setSelectedBook] = useState(data?.[0] || {});
 
   const visibleBooks = 3;
   const maxIndex = data.length - visibleBooks;
-  
+
   useEffect(() => {
     if (data?.length) {
       setSelectedBook(data[0]);
     }
   }, [data]);
-  
+
   if (!data || data.length === 0) {
     return <p></p>;
-  }  
+  }
 
   const nextSlide = () => {
     if (currentIndex < maxIndex) {
@@ -52,8 +54,13 @@ const BookSlider = ({ data }) => {
                   }`}
                 onClick={() => handleBookClick(book)}
               >
-                <div className={`relative rounded-lg overflow-hidden shadow-md ${selectedBook.id === book.id ? 'ring-4 ring-[#1db954]' : ''
-                  }`}>
+                <div className={`relative rounded-lg overflow-hidden shadow-md`}
+                  style={
+                    selectedBook.id === book.id
+                      ? { boxShadow: `0 0 0 4px ${main}`, borderRadius: '0.5rem' }  // border-radius added here
+                      : {}
+                  }
+                >
                   <img
                     src={book.cover_image}
                     alt={`Cover of ${book.title}`}
@@ -121,7 +128,11 @@ const BookSlider = ({ data }) => {
             <p className="text-white">{selectedBook.description}</p>
 
             <div className="mt-6">
-              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="bg-[#1db954] text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3">
+              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3"
+                style={{
+                  backgroundColor: main
+                }}
+                >
                 بینینی زیاتر
               </button>
             </div>
