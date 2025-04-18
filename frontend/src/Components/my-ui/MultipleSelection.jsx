@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { X, ChevronDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTheme } from "../../context/ThemeContext";
 
 const MultipleSelection = ({ options, label, placeholder, onChange, value }) => {
+    const { secondary } = useTheme();
+    const [isFocused, setIsFocused] = useState(false);
     const [selectedItems, setSelectedItems] = useState(value || []);
     const [inputValue, setInputValue] = useState("");
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -82,14 +85,28 @@ const MultipleSelection = ({ options, label, placeholder, onChange, value }) => 
             <div className="relative z-50">
                 <div
                     tabIndex={0}
-                    className="flex flex-wrap items-center gap-1 p-2 border-[1px] border-gray-700 outline-none focus-within:border-[#1db954] focus-within:border-[2px] rounded-md"
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '8px',
+                        border: isFocused ? `2px solid ${secondary}` : `1px solid #4a5565`,
+                        outline: 'none',
+                        borderRadius: '6px',
+                    }}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
                     onClick={() => inputRef.current.focus()}
                 >
                     {selectedItems.map(item => (
                         <Badge
                             onClick={() => handleRemoveItem(item.value)}
                             key={item.value}
-                            className=" bg-[#1db954] cursor-pointer text-white hover:bg-[#1ed760] transform transition-colors duration-300 flex items-center gap-1 py-1 px-2"
+                            className="cursor-pointer text-white transform transition-colors duration-300 flex items-center gap-1 py-1 px-2"
+                            style={{
+                                backgroundColor: secondary,
+                            }}
                         >
                             {item.label}
                             <X
@@ -127,8 +144,10 @@ const MultipleSelection = ({ options, label, placeholder, onChange, value }) => 
                                 {filteredOptions.map(option => (
                                     <div
                                         key={option.value}
-                                        className="flex items-center px-3 py-2 text-sm hover:bg-[#1db954] cursor-pointer"
+                                        className="flex items-center px-3 py-2 text-sm cursor-pointer"
                                         onClick={() => handleSelectItem(option)}
+                                        onMouseEnter={(e) => (e.target.style.backgroundColor = secondary)}
+                                        onMouseLeave={(e) => (e.target.style.backgroundColor = '')}
                                     >
                                         <span className='text-gray-100'>{option.label}</span>
                                         {selectedItems.find(i => i.value === option.value) && (

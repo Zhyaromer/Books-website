@@ -1,7 +1,9 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import PropTypes from 'prop-types';
+import { useTheme } from "../../context/ThemeContext";
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+    const { main, secondary, tertiary } = useTheme();
     const renderPageButtons = () => {
         const pages = [];
         for (let i = 1; i <= totalPages; i++) {
@@ -9,11 +11,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 <button
                     key={i}
                     onClick={() => onPageChange(i)}
-                    className={`px-4 py-2 mx-1 rounded-full ${
-                        currentPage === i 
-                            ? 'bg-[#1db954] text-white' 
+                    className={`px-4 py-2 mx-1 rounded-full ${currentPage === i
+                            ? 'text-white'
                             : 'bg-[#1a1a1a] text-gray-100 hover:bg-[rgb(34,33,33)]'
-                    }`}
+                        }`}
+                    style={{
+                        backgroundColor: currentPage === i ? main : '',
+                    }}
                 >
                     {i}
                 </button>
@@ -29,7 +33,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 disabled={currentPage === 1}
                 className="p-2 rounded-full bg-[#272525] text-gray-100 hover:bg-[rgb(48,45,45)] disabled:opacity-50"
             >
-               <ChevronRight />
+                <ChevronRight />
             </button>
             {renderPageButtons()}
             <button
@@ -37,7 +41,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 disabled={currentPage === totalPages}
                 className="p-2 rounded-full bg-[#272525] text-gray-100 hover:bg-[rgb(48,45,45)] disabled:opacity-50"
             >
-                 <ChevronLeft />
+                <ChevronLeft />
             </button>
         </div>
     );

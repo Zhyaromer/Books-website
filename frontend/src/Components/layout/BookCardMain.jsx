@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useTheme } from "../../context/ThemeContext"; // Import the hook
+import { useTheme } from "../../context/ThemeContext";
 
 const BookCardMain = ({ data, text, path }) => {
     const { main, secondary, tertiary } = useTheme();

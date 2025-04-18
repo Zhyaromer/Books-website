@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ChevronDown, Check } from 'lucide-react';
+import { useTheme } from "../../context/ThemeContext";
 
 const CustomSelect = ({ options, label, placeholder, value, onChange }) => {
+    const { main, secondary, tertiary } = useTheme();
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(
         value ? options.find(option => option.value === value) : null
@@ -61,18 +63,25 @@ const CustomSelect = ({ options, label, placeholder, value, onChange }) => {
                 <div
                     ref={selectRef}
                     tabIndex={0}
-                    className={`flex h-[41px] w-full items-center justify-between rounded-md border px-3 py-2 shadow-sm outline-none cursor-pointer ${isOpen
-                            ? ' ring-offset-black'
-                            : 'border-gray-700'
-                        } focus:border-green-400 focus:ring-1 focus:ring-green-400`}
+                    className="flex h-[41px] w-full items-center justify-between rounded-md border px-3 py-2 shadow-sm outline-none cursor-pointer border-gray-700"
+                    style={{
+                        transition: 'border-color 0.2s ease', 
+                    }}
                     onClick={toggleDropdown}
                     onKeyDown={handleKeyDown}
-                    onFocus={() => { }}
+                    onFocus={() => {
+                        selectRef.current.style.borderColor = isOpen ? '#364153' : main;
+                        selectRef.current.style.boxShadow = `0 0 0 1px ${isOpen ? '#364153' : main}`;
+                    }}
+                    onBlur={() => {
+                        selectRef.current.style.borderColor = '#374151';
+                        selectRef.current.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+                    }}
                 >
                     <span className={selectedOption ? 'text-gray-100' : 'text-gray-400'}>
                         {selectedOption ? selectedOption.label : placeholder}
                     </span>
-                    <ChevronDown className={`h-4 w-4 opacity-50 transition-transform ${isOpen ? 'transform rotate-180' : ''}`} />
+                    <ChevronDown className={`h-4 w-4 opacity-50 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </div>
 
                 {isOpen && (
@@ -84,15 +93,33 @@ const CustomSelect = ({ options, label, placeholder, value, onChange }) => {
                             {options.map((option) => (
                                 <li
                                     key={option.value}
-                                    className={`flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-green-500 hover:text-white ${selectedOption && selectedOption.value === option.value
-                                            ? 'bg-green-500 text-white'
-                                            : 'text-gray-100'
-                                        }`}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        padding: '0.5rem 0.75rem',
+                                        cursor: 'pointer',
+                                        color: selectedOption?.value === option.value ? 'white' : '#f3f4f6',
+                                        backgroundColor: selectedOption?.value === option.value ? main : 'transparent',
+                                        transition: 'background-color 0.2s, color 0.2s',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (selectedOption?.value !== option.value) {
+                                            e.currentTarget.style.backgroundColor = secondary;
+                                            e.currentTarget.style.color = 'white';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (selectedOption?.value !== option.value) {
+                                            e.currentTarget.style.backgroundColor = 'transparent';
+                                            e.currentTarget.style.color = '#f3f4f6';
+                                        }
+                                    }}
                                     onClick={() => handleSelect(option)}
                                 >
                                     <span>{option.label}</span>
-                                    {selectedOption && selectedOption.value === option.value && (
-                                        <Check className="h-4 w-4" />
+                                    {selectedOption?.value === option.value && (
+                                        <Check style={{ height: '1rem', width: '1rem' }} />
                                     )}
                                 </li>
                             ))}

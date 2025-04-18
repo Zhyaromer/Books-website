@@ -1,9 +1,10 @@
 import availableColors from "../../Helpers/colors";
-import { useState, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
+import { useState } from "react";
 
 const Footer = () => {
-    const { selectedColor, updateColor, main } = useTheme();
+    const { selectedColor, updateColor, main, secondary } = useTheme();
+    const [hoveredIndex, setHoveredIndex] = useState(null);
 
     const handleColorClick = (colorName) => {
         updateColor(colorName);
@@ -22,22 +23,22 @@ const Footer = () => {
                             </p>
                         </div>
                         <div>
-                            <h2 style={{ color: main }} className={`text-2xl font-bold mb-4`}>ڕەنگەکان</h2>
+                            <h2 className={`text-2xl font-bold mb-4 text-gray-100`}>ڕەنگەکان</h2>
                             <div className="flex flex-wrap">
                                 {availableColors.map((colorObj) => (
                                     <div
                                         onClick={() => handleColorClick(colorObj.color)}
                                         key={colorObj.color}
                                         className={`
-                                w-6 h-6 
-                                rounded-full 
-                                mr-3 mb-3
-                                cursor-pointer
-                                transition-all duration-200
-                                hover:scale-110
-                                hover:shadow-lg
-                                relative
-                            `}
+                                                w-6 h-6 
+                                                rounded-full 
+                                                mr-3 mb-3
+                                                cursor-pointer
+                                                transition-all duration-200
+                                                hover:scale-110
+                                                hover:shadow-lg
+                                                relative
+                                            `}
                                         style={{ backgroundColor: colorObj.main }}
                                     >
                                         {selectedColor === colorObj.color && (
@@ -52,11 +53,26 @@ const Footer = () => {
                     <div className="flex flex-col items-center md:col-span-1">
                         <h3 className="text-xl font-semibold mb-4">بەشەکان</h3>
                         <ul className="space-y-2">
-                            <li><a href="/books" className="text-gray-300 hover:text-white transition">کتێبەکان</a></li>
-                            <li><a href="/authors" className="text-gray-300 hover:text-white transition">نووسەرەکان</a></li>
-                            <li><a href="/quotes" className="text-gray-300 hover:text-white transition">وتە</a></li>
-                            <li><a href="/news" className="text-gray-300 hover:text-white transition">هەوڵ</a></li>
-                            <li><a href="/suggestions" className="text-gray-300 hover:text-white transition">پێشنیاری ئێمە</a></li>
+                            {["/books", "/authors", "/quotes", "/news", "/suggestions"].map((href, index) => (
+                                <li key={href}>
+                                    <a
+                                        href={href}
+                                        onMouseEnter={() => setHoveredIndex(index)}
+                                        onMouseLeave={() => setHoveredIndex(null)}
+                                        style={{
+                                            color: hoveredIndex === index ? secondary : '#d1d5db',
+                                        }}
+                                        className="transition"
+                                    >
+                                        {href === "/books" && "کتێبەکان"}
+                                        {href === "/authors" && "نووسەرەکان"}
+                                        {href === "/quotes" && "وتە"}
+                                        {href === "/news" && "هەوڵ"}
+                                        {href === "/suggestions" && "پێشنیاری ئێمە"}
+                                    </a>
+                                </li>
+                            ))}
+
                         </ul>
                     </div>
 

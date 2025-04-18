@@ -11,8 +11,10 @@ import 'react-toastify/dist/ReactToastify.css'
 const FilterSection = lazy(() => import("../Components/my-ui/FilterSection"));
 const Pagination = lazy(() => import("../Components/my-ui/Pagination"));
 const Footer = lazy(() => import("../Components/layout/Footer"));
+import { useTheme } from "../context/ThemeContext";
 
 const Books = () => {
+    const { main, secondary, tertiary } = useTheme();
     const [Sort, setSort] = useState();
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [books, setBooks] = useState([]);

@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Book, Globe, Tag } from 'lucide-react';
 import PropTypes from "prop-types";
-import getColorTones from "../../Helpers/colorUtils";
+import { useTheme } from "../../context/ThemeContext";
 
 const BookSlider = ({ data }) => {
   const navigate = useNavigate();
-  const { main, secondary, tertiary } = getColorTones();
+  const { main, secondary, tertiary } = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedBook, setSelectedBook] = useState(data?.[0] || {});
 
@@ -128,10 +128,12 @@ const BookSlider = ({ data }) => {
             <p className="text-white">{selectedBook.description}</p>
 
             <div className="mt-6">
-              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors mr-3"
+              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors duration-200 mr-3"
                 style={{
                   backgroundColor: main
-                }}
+                }} 
+                onMouseLeave={(e) => (e.target.style.backgroundColor = main)}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = secondary)}
                 >
                 بینینی زیاتر
               </button>
@@ -145,8 +147,12 @@ const BookSlider = ({ data }) => {
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full ${currentIndex === index ? 'bg-[#1db954]' : 'bg-white hover:bg-gray-200'
-              }`}
+            className={`w-3 h-3 rounded-full transition-colors duration-200`}
+              style={{
+                backgroundColor: currentIndex === index ? secondary : "white"
+              }} 
+              onMouseLeave={(e) => (e.target.style.backgroundColor = currentIndex === index ? secondary : "white")}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = "#e5e7eb")}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
