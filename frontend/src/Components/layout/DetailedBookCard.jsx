@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from "../../context/ThemeContext";
 
 const DetailedBookCard = ({ books, author, endpoint }) => {
     const navigate = useNavigate();
+    const { secondary, tertiary } = useTheme();
     return (
         <div dir='rtl' className={books.length === 0 ? "hidden" : "block"}>
             <div className={`flex flex-row items-center gap-1 ${window.location.pathname.includes('/seriesbooks') ? 'hidden' : ''}`}>
@@ -27,7 +29,13 @@ const DetailedBookCard = ({ books, author, endpoint }) => {
                             <p className="text-gray-200 md:text-base text-sm mb-2">بەرواری بڵاوکردنەوە {new Date(book?.published_date).getFullYear()} • {book?.page_count} لاپەڕە</p>
                             <p className="text-gray-200 md:text-base text-sm hidden md:block">{book?.description?.length > 170 ? `${book.description.substring(0, 170)}...` : book?.description}</p>
                             <p className="text-gray-300 text-sm block md:hidden">{book?.description?.length > 80 ? `${book.description.substring(0, 80)}...` : book?.description}</p>
-                            <button onClick={() => navigate(`/booksDetail/${book.id}`)} className='text-sm mt-4 bg-[#1db954] hover:bg-[#1ed760] text-white py-2 px-2 rounded'>بینینی کتێب</button>
+                            <button 
+                            style={{
+                                backgroundColor: secondary
+                            }}
+                            onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
+                            onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
+                            onClick={() => navigate(`/booksDetail/${book.id}`)} className='text-sm mt-4 text-white py-2 px-2 rounded transition-colors duration-300'>بینینی کتێب</button>
                         </div>
                     </div>
                 ))}

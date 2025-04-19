@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
+import { useTheme } from "../../context/ThemeContext";
 
 const BookCollection = ({ data, text, path }) => {
+    const { secondary } = useTheme();
     return (
         <div className="pt-6 md:pt-12 bg-[#1a1a1a] w-full">
             <div className={`flex pb-4 md:pb-8 flex-row-reverse items-center justify-between px-4 md:px-8 ${path == "/Bookdetails" ? 'hidden' : ''}`}>
@@ -39,7 +41,9 @@ const BookCollection = ({ data, text, path }) => {
                                 <div className="absolute w-full h-[200px] lg:h-[320px] md:h-[300px] inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transform group-hover:scale-105 transition-all duration-500"></div>
 
                                 <div className="absolute z-20 bottom-0 right-0 left-0 flex justify-center transform translate-y-1/2">
-                                    <p className="text-xs sm:text-sm text-white px-2 py-1 bg-[#1db954] rounded-full max-w-max shadow-lg">
+                                    <p
+                                        style={{ backgroundColor: secondary }}
+                                        className="text-xs sm:text-sm text-white px-2 py-1 rounded-full max-w-max shadow-lg">
                                         {book.genre}
                                     </p>
                                 </div>

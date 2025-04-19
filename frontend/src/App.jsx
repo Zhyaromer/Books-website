@@ -15,7 +15,7 @@ import ContactUs from "./Pages/ContactUs";
 import BookSeriesPage from "./Pages/BookSeriesPage";
 import BookSeriesBooks from "./Pages/BookSeriesBooks";
 import Signup from "./Pages/Signup";
-import KurdishLoginForm from "./Pages/Login";
+import LoginForm from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import SettingsPage from "./Pages/Settings";
 import UserProfile from "./Pages/UserProfile";
@@ -43,7 +43,7 @@ function App() {
           <Route path="/bookseries" element={<BookSeriesPage />} />
           <Route path="/seriesbooks/:id" element={<BookSeriesBooks />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<KurdishLoginForm />} />
+          <Route path="/login" element={<LoginForm />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<SettingsPage />} />

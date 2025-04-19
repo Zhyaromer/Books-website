@@ -7,7 +7,7 @@ import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 
-const KurdishLoginForm = () => {
+const LoginForm = () => {
     const navigate = useNavigate();
     const { isAuthenticated } = useCheckAuth();
     useEffect(() => {
@@ -147,4 +147,4 @@ const KurdishLoginForm = () => {
     );
 };
 
-export default KurdishLoginForm;
+export default LoginForm;

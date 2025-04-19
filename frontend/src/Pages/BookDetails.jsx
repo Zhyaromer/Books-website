@@ -14,8 +14,10 @@ import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { useNavigate } from "react-router-dom";
 import NotFound from './NotFound';
+import { useTheme } from "../context/ThemeContext";
 
 const BookDetail = () => {
+  const { main, secondary, tertiary } = useTheme();
   const navigate = useNavigate();
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
@@ -169,7 +171,11 @@ const BookDetail = () => {
 
               <div className="md:w-2/3 md:pl-12">
                 <div className="flex items-center mb-2">
-                  <span onClick={() => navigate(`/books?genre=${fetchBook.genre}`)} className="text-base bg-[#1db954] px-2 py-1 rounded-full mr-2 cursor-pointer">
+                  <span
+                    style={{ backgroundColor: tertiary }}
+                    onMouseEnter={(e => (e.target.style.backgroundColor = secondary))}
+                    onMouseLeave={(e => (e.target.style.backgroundColor = tertiary))}
+                    onClick={() => navigate(`/books?genre=${fetchBook.genre}`)} className="text-base px-2 py-1 rounded-full mr-2 cursor-pointer transition-colors duration-200">
                     {fetchBook.genre}
                   </span>
                 </div>
@@ -253,18 +259,22 @@ const BookDetail = () => {
               <div className="flex w-full sm:w-auto">
                 <button
                   onClick={() => setActiveTab('description')}
-                  className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-200 ${activeTab === 'description'
-                    ? 'text-[#1db954]'
+                  style={activeTab === 'description' ? { color: secondary } : { }}
+                  className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-300 ${activeTab === 'description'
+                    ? ''
                     : 'text-gray-400 hover:text-gray-200'
                     }`}
                 >
                   کورتە
                   {activeTab === 'description' && (
-                    <span className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
+                    <span
+                    style={activeTab === 'description' ? { backgroundColor: secondary } : { }}
+                    className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
                   )}
                 </button>
                 <button
                   onClick={() => setActiveTab('details')}
+                  style={activeTab === 'details' ? { color: secondary } : { }}
                   className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-200 ${activeTab === 'details'
                     ? 'text-[#1db954]'
                     : 'text-gray-400 hover:text-gray-200'
@@ -272,11 +282,14 @@ const BookDetail = () => {
                 >
                   وردەکاری
                   {activeTab === 'details' && (
-                    <span className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
+                    <span 
+                    style={activeTab === 'details' ? { backgroundColor: secondary } : { }}
+                    className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
                   )}
                 </button>
                 <button
                   onClick={() => setActiveTab('author')}
+                  style={activeTab === 'author' ? { color: secondary } : { }}
                   className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-200 ${activeTab === 'author'
                     ? 'text-[#1db954]'
                     : 'text-gray-400 hover:text-gray-200'
@@ -284,11 +297,14 @@ const BookDetail = () => {
                 >
                   نووسەر
                   {activeTab === 'author' && (
-                    <span className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
+                    <span 
+                    style={activeTab === 'author' ? { backgroundColor: secondary } : { }}
+                    className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
                   )}
                 </button>
                 <button
                   onClick={() => setActiveTab('reviews')}
+                  style={activeTab === 'reviews' ? { color: secondary } : { }}
                   className={`relative px-6 py-4 text-sm md:text-lg font-bold transition-colors duration-200 ${activeTab === 'reviews'
                     ? 'text-[#1db954]'
                     : 'text-gray-400 hover:text-gray-200'
@@ -296,7 +312,9 @@ const BookDetail = () => {
                 >
                   هەڵسەنگاندن
                   {activeTab === 'reviews' && (
-                    <span className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
+                    <span 
+                    style={activeTab === 'reviews' ? { backgroundColor: secondary } : { }}
+                    className="absolute bottom-0 left-0 w-full h-1 bg-[#1db954] rounded-t-md"></span>
                   )}
                 </button>
               </div>
@@ -365,7 +383,11 @@ const BookDetail = () => {
                     <h3 className="text-2xl text-gray-100 font-bold mb-4">{fetchBook.name}</h3>
                     <p className="text-lg text-gray-300 line-clamp-3 leading-relaxed mb-6">{fetchBook.bio}</p>
                     <div className="flex gap-3">
-                      <button onClick={() => navigate(`/AuthorDetails/${fetchBook.author_id}`)} className="bg-[#1db954] hover:bg-[#1ed760] text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                      <button 
+                      style={{ backgroundColor: secondary }}
+                      onMouseEnter={(e => (e.target.style.backgroundColor = tertiary))}
+                      onMouseLeave={(e => (e.target.style.backgroundColor = secondary))}
+                      onClick={() => navigate(`/AuthorDetails/${fetchBook.author_id}`)} className="bg-[#1db954] hover:bg-[#1ed760] text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
                         بینینی نوسەر
                       </button>
                     </div>

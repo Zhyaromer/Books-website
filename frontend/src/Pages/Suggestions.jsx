@@ -6,11 +6,13 @@ import { useState, useEffect, useRef } from "react";
 import { axiosInstance } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTheme } from "../context/ThemeContext";
 
 const Suggestions = () => {
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const controllerRef = useRef(null);
+    const { main, secondary, tertiary } = useTheme();
 
     const fetchBooksData = async () => {
         try {
@@ -70,12 +72,15 @@ const Suggestions = () => {
                             بێزار بویت لە گەڕان بە دوای کتێبێک بۆ خوێندنەوە؟ ئەتوانی پێشنیاری ئێمە وەربگرێت و دەست بە خوێندنەوە بکەیت
                         </p>
                     </div>
-
-                    <div className="max-w-7xl mx-auto flex flex-row justify-between items-center mb-8 border-b border-[#1db954] pb-6">
+                    <div
+                        className="max-w-7xl mx-auto flex flex-row justify-between items-center mb-8 border-b border-gray-600 pb-6">
                         <h1 className="text-base md:text-2xl font-bold text-gray-100">پێشنیاری ئێمە</h1>
                         <button
+                            style={{ backgroundColor: secondary }}
+                            onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
+                            onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
                             onClick={handleFetchBooks}
-                            className="flex flex-row items-center gap-2 bg-[#1db954] hover:bg-[#1ed760] text-white font-bold py-2 md:py-3 px-2 md:px-4 rounded transition-colors duration-300"
+                            className="flex flex-row items-center gap-2 text-white font-bold py-2 md:py-3 px-2 md:px-4 rounded transition-colors duration-300"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />

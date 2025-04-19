@@ -66,7 +66,7 @@ const NewsDetails = () => {
                     {news.title}
                   </h1>
 
-                  <div className="flex items-center gap-6 text-gray-300 mb-8 border-b border-[#1db954] pb-4">
+                  <div className="flex items-center gap-6 text-gray-300 mb-8 border-b border-gray-600 pb-4">
                     <div className="flex items-center gap-2">
                       <Calendar size={20} />
                       <span>{new Date(news.created_at).toLocaleDateString()}</span>
@@ -85,7 +85,7 @@ const NewsDetails = () => {
 
               <div className="lg:w-1/4">
                 <div className="bg-[#1a1a1a] rounded-xl p-6 rtl sticky top-24">
-                  <h2 className="text-xl font-bold mb-6 text-gray-200 border-b border-[#1db954] pb-2">
+                  <h2 className="text-xl font-bold mb-6 text-gray-200 border-b border-gray-600 pb-2">
                     دوایین هەواڵەکان
                   </h2>
                   <div className="space-y-6">

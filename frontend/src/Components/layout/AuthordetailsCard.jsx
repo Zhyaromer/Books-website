@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../UI/card";
 import { Avatar, AvatarImage, AvatarFallback } from "../UI/avatar";
+import { useTheme } from "../../context/ThemeContext";
 
 const AuthorCard = ({ name, imageUrl, bio, id, className }) => {
   const getInitials = (authorName = "") =>
@@ -8,6 +9,7 @@ const AuthorCard = ({ name, imageUrl, bio, id, className }) => {
       .split(/\s+/)
       .map((word) => word[0]?.toUpperCase() || "")
       .join("");
+  const { main, secondary, tertiary } = useTheme();
 
   return (
     <div>
@@ -16,7 +18,11 @@ const AuthorCard = ({ name, imageUrl, bio, id, className }) => {
           <div className="transform transition-transform duration-500 ease-out hover:scale-105">
             <Avatar className="h-28 w-28 mb-3 shadow-md">
               <AvatarImage src={imageUrl || "/default-avatar.png"} loading="lazy" alt={name} />
-              <AvatarFallback className="text-xl font-medium bg-[#1db954] text-white">
+              <AvatarFallback
+              style={{
+                backgroundColor: secondary
+              }}
+              className="text-xl font-medium text-white">
                 {getInitials(name)}
               </AvatarFallback>
             </Avatar>
@@ -30,7 +36,13 @@ const AuthorCard = ({ name, imageUrl, bio, id, className }) => {
         </CardHeader>
         <CardContent className="text-center pb-5 relative z-10">
           <div className="flex justify-center space-x-3 mt-2">
-            <button onClick={() => window.location.href = `/AuthorDetails/${id}`} className="px-4 py-1.5 rounded-full text-gray-100 bg-[#1db954] text-sm font-medium hover:bg-[#1ed760]">
+            <button 
+            style={{
+              backgroundColor: secondary
+            }}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
+            onClick={() => window.location.href = `/AuthorDetails/${id}`} className="px-4 py-1.5 rounded-full text-gray-100 text-sm font-medium transition-colors duration-300">
               بینینی نووسەر
             </button>
           </div>

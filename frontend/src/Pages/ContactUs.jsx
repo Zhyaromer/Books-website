@@ -6,8 +6,10 @@ import { useState } from 'react';
 import { axiosInstance } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTheme } from "../context/ThemeContext";
 
 const ContactUs = () => {
+  const { main, secondary, tertiary } = useTheme();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -92,12 +94,12 @@ const ContactUs = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <BookstoreNavigation />
-      <div className="flex-grow pt-12 bg-[#2E8B57]">
+      <div style={{ backgroundColor: tertiary }} className="flex-grow pt-12">
         <div className="relative py-20 px-4 md:px-6">
           <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:40px_40px]" />
           <div className="container mx-auto text-center relative z-10">
             <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">پەیوەندیمان پێوە بکە</h1>
-            <p className="text-lg md:text-xl text-green-100 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white max-w-2xl mx-auto">
               ئێمە ئامادەین بۆ وەڵامدانەوەی پرسیارەکانتان و پێشنیارەکانتان
             </p>
           </div>
@@ -129,7 +131,7 @@ const ContactUs = () => {
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 bg-[#1a1a1a] text-gray-100 border border-gray-700 rounded-lg focus:border-[#1db954] outline-none transition"
+                          className="form-input w-full px-4 py-3 bg-[#1a1a1a] text-gray-100 border border-gray-700 rounded-lg focus:border-2 outline-none"
                           required
                         />
                       </div>
@@ -145,7 +147,7 @@ const ContactUs = () => {
                           name="email"
                           value={formData.email}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 bg-[#1a1a1a] text-gray-100 border border-gray-700 rounded-lg focus:border-[#1db954] outline-none transition"
+                          className="form-input w-full px-4 py-3 bg-[#1a1a1a] text-gray-100 border focus:border-2 border-gray-700 rounded-lg outline-none"
                           required
                         />
                       </div>
@@ -160,7 +162,7 @@ const ContactUs = () => {
                         name="subject"
                         value={formData.subject}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 bg-[#1a1a1a] text-gray-100 border border-gray-700 rounded-lg appearance-none focus:border-[#1db954] outline-none transition hover:border-[#1db954] cursor-pointer"
+                        className="form-input w-full px-4 py-3 bg-[#1a1a1a] text-gray-100 border border-gray-700 focus:border-2 rounded-lg appearance-none outline-none cursor-pointer"
                         required
                       >
                         {subjectOptions.map((option, index) => (
@@ -199,18 +201,31 @@ const ContactUs = () => {
                         value={formData.message}
                         onChange={handleChange}
                         rows="6"
-                        className="resize-none w-full px-4 py-3 bg-[#1a1a1a] text-gray-100 border border-gray-700 rounded-lg focus:border-[#1db954] outline-none transition"
+                        className="form-input resize-none w-full px-4 py-3 bg-[#1a1a1a] text-gray-100 border border-gray-700 focus:border-2 rounded-lg outline-none"
                         required
                       ></textarea>
                     </div>
 
                     <button
                       type="submit"
+                      style={{ backgroundColor: secondary }}
+                      onMouseEnter={(e => (e.target.style.backgroundColor = tertiary))}
+                      onMouseLeave={(e => (e.target.style.backgroundColor = secondary))}
                       className="w-full bg-[#1db954] hover:bg-[#1ed760] text-white font-medium py-3 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                     >
                       <Mail className="w-5 h-5" />
-                      <span>ناردنی نامە</span>
+                      <span 
+                      >ناردنی نامە</span>
                     </button>
+                    <style jsx>{`
+                        .form-input {
+                          transition: border 0.2s;
+                          outline: none;
+                        }
+                        .form-input:focus {
+                          border: 2px solid ${secondary} !important;
+                        }
+                          `}</style>
                   </form>
                 )}
               </div>

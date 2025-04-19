@@ -24,8 +24,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PropTypes from 'prop-types';
+import { useTheme } from "../../context/ThemeContext";
 
 const CommentsSection = ({ bookId }) => {
+  const { main, secondary, tertiary } = useTheme();
+  const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const [isAddReviewOpen, setIsAddReviewOpen] = useState(false);
@@ -225,7 +228,12 @@ const CommentsSection = ({ bookId }) => {
       <div className="flex justify-between items-center px-4 md:px-0 mb-6 mt-4 md:mt-0">
         <h2 className="text-gray-100 text-base md:text-2xl font-bold">هەڵسەنگاندنەکان</h2>
         <Button
-          className="bg-[#1db954] hover:bg-[#1ed760] text-white text-xs md:text-sm px-1 md:px-2"
+          style={{
+            backgroundColor: secondary,
+          }}
+          onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
+          onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
+          className="text-white text-xs md:text-sm px-1 md:px-2"
           onClick={() => {
             setEditMode(false);
             setRating(0);
@@ -305,8 +313,13 @@ const CommentsSection = ({ bookId }) => {
                           <Button
                             variant="outline"
                             size="sm"
+                            style={{
+                              backgroundColor: secondary,
+                            }}
+                            onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
+                            onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
                             onClick={() => handleRevealSpoiler(review.id)}
-                            className="border-none bg-[#1db954] hover:bg-[#1ed760] text-white hover:text-white"
+                            className="border-none text-white hover:text-white"
                           >
                             پیشاندانی هەڵسەنگاندن
                           </Button>
@@ -319,7 +332,13 @@ const CommentsSection = ({ bookId }) => {
                         </p>
                         {review.isSpoiler === 1 && revealedSpoilers[review.id] && (
                           <div className="mt-2 text-right">
-                            <Button className="border-none bg-[#1db954] hover:bg-[#1ed760] text-white hover:text-white" variant="ghost" size="sm" onClick={() => handleHideSpoiler(review.id)}>
+                            <Button 
+                            style={{
+                              backgroundColor: secondary,
+                            }}
+                            onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
+                            onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
+                            className="border-none text-white hover:text-white" variant="ghost" size="sm" onClick={() => handleHideSpoiler(review.id)}>
                               شاردنەوە
                             </Button>
                           </div>
@@ -362,6 +381,12 @@ const CommentsSection = ({ bookId }) => {
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 className="text-gray-100 placeholder:text-right placeholder:text-gray-300"
+                style={{
+                  borderWidth: '2px',
+                  borderColor: isFocused ? main : '',
+                }}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 placeholder="هەڵسەنگاندنەکەت بنووسە"
               />
             </div>
@@ -370,6 +395,13 @@ const CommentsSection = ({ bookId }) => {
               <Checkbox
                 id="spoiler"
                 className="border-white data-[state=checked]:bg-[#1db954] data-[state=checked]:border-[#1db954]"
+                style={{
+                  borderColor: 'white',
+                  ...(hasSpoiler && {
+                    backgroundColor: secondary,
+                    borderColor: secondary,
+                  }),
+                }}
                 checked={hasSpoiler}
                 onCheckedChange={(checked) => setHasSpoiler(checked)}
               />
@@ -391,7 +423,12 @@ const CommentsSection = ({ bookId }) => {
               پاشگەزبوونەوە
             </Button>
             <Button
-              className="bg-[#1db954] hover:bg-[#1ed760] text-white w-full sm:w-auto"
+              style={{
+                backgroundColor: secondary,
+              }}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
+              onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
+              className="text-white w-full sm:w-auto"
               onClick={handleAddComment}
             >
               {editMode ? "نوێکردنەوە" : "ناردن"}
