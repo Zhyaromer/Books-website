@@ -11,10 +11,8 @@ import 'react-toastify/dist/ReactToastify.css'
 const FilterSection = lazy(() => import("../Components/my-ui/FilterSection"));
 const Pagination = lazy(() => import("../Components/my-ui/Pagination"));
 const Footer = lazy(() => import("../Components/layout/Footer"));
-import { useTheme } from "../context/ThemeContext";
 
 const Books = () => {
-    const { main, secondary, tertiary } = useTheme();
     const [Sort, setSort] = useState();
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [books, setBooks] = useState([]);
@@ -82,13 +80,11 @@ const Books = () => {
     };
 
     const handleLanguageChange = (value) => {
-        setLoading(true);
         setLanguage(value);
         setCurrentPage(1);
     };
 
     const handleSortChange = (value) => {
-        setLoading(true);
         setSort(value);
         setCurrentPage(1);
     };
@@ -120,7 +116,6 @@ const Books = () => {
                     setTotalPages(Math.ceil((response.data.total || 0) / booksPerPage));
                 }
             } catch (error) {
-                toast.error(error.response?.data?.message || 'Something went wrong');
                 if (error.name !== 'AbortError') {
                     setBooks([]);
                     setTotalBooks(0);

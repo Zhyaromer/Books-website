@@ -82,17 +82,6 @@ const PasswordResetPage = () => {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4" dir="rtl">
             <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-                <div className="flex flex-col items-center mb-6">
-                    <div className="bg-blue-100 p-3 rounded-full mb-4">
-                        <Lock className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-gray-800">
-                        گۆڕینی وشەی نهێنی
-                    </h1>
-                    <p className="text-gray-600 text-center mt-2">
-                        تکایە وشەی نهێنی نوێت بنووسە
-                    </p>
-                </div>
 
                 {resetSuccess ? (
                     <div className="bg-green-50 p-4 rounded-lg text-center">
@@ -105,7 +94,7 @@ const PasswordResetPage = () => {
                             وشەی نهێنی بە سەرکەوتوویی گۆڕدرا!
                         </h2>
                         <p className="text-green-600 mt-2">
-                            ئێستا دەتوانیت بە وشەی نهێنی نوێت بچیتە ژوورەوە.
+                            ئێستا دەتوانیت بە وشەی نهێنی نوێت بچیتە ژوورەوە
                         </p>
                         <a
                             href="/login"
@@ -117,6 +106,17 @@ const PasswordResetPage = () => {
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
+                            <div className="flex flex-col items-center mb-6">
+                                <div className="bg-blue-100 p-3 rounded-full mb-4">
+                                    <Lock className="h-8 w-8 text-blue-600" />
+                                </div>
+                                <h1 className="text-2xl font-bold text-gray-800">
+                                    گۆڕینی وشەی نهێنی
+                                </h1>
+                                <p className="text-gray-600 text-center mt-2">
+                                    تکایە وشەی نهێنی نوێت بنووسە
+                                </p>
+                            </div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                                 وشەی نهێنی نوێ
                             </label>
@@ -201,7 +201,7 @@ const PasswordResetPage = () => {
                     </form>
                 )}
             </div>
-            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
+            <ToastContainer draggable={true} transition={Slide} autoClose={4000} />
         </div>
     );
 };

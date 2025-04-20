@@ -20,7 +20,13 @@ const ForgotPassword = () => {
       } else if (res.status === 404) {
         toast.error('not found');
       }
-    } catch {
+    } catch (err) {
+      if (err.response && err.response.status === 400 && err.response.data.message === 'Token is not expired') {
+        return toast.error('بەستەری گۆرینی وشەی نهێنی نێردراوە تکایە کەمێکی تر هەوڵ بدەوە');
+      }
+      if (err.response && err.response.status === 404) {
+        return toast.error('هیچ هەژمارێک نەدۆزرایەوە');
+      }
       toast.error('something went wrong');
     }
   };
@@ -89,7 +95,7 @@ const ForgotPassword = () => {
           </a>
         </div>
       </div>
-      <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
+      <ToastContainer draggable={true} transition={Slide} autoClose={4000} />
     </div>
   );
 };

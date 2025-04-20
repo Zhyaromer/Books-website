@@ -8,12 +8,14 @@ import LatestNewsCard from '../Components/layout/LatestNewsCard';
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { axiosInstance } from "../context/AxiosInstance";
+import NotFound from './NotFound';
 
 const NewsDetails = () => {
   const { id } = useParams();
   const [news, setNews] = useState(null);
   const [latestNews, setLatestNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasFound, setHasFound] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +34,9 @@ const NewsDetails = () => {
         }
       } catch (error) {
         toast.error(error.response.data.message || "Something went wrong");
+        if (error.response.status === 404) {
+          setHasFound(false);
+        }
       } finally {
         setLoading(false);
       }
@@ -39,6 +44,8 @@ const NewsDetails = () => {
 
     fetchData();
   }, [id]);
+
+  if (!hasFound) return <NotFound />;
 
   return (
     <div >

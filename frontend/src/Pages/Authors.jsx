@@ -57,13 +57,11 @@ const Authors = () => {
   };
 
   const handleLanguageChange = (value) => {
-    setLoading(true);
     setLanguage(value);
     setCurrentPage(1);
   };
 
   const handleSortChange = (value) => {
-    setLoading(true);
     setSort(value);
     setCurrentPage(1);
   };
@@ -155,6 +153,12 @@ const Authors = () => {
                     </div>
                   ))}
                 </div>
+
+                {authors.length == 0 && (
+                  <div className="col-span-full">
+                    <p className="text-center text-sm md:text-base font-bold text-white md:pb-56">هیچ نووسەرێک نەدۆزرایەوە</p>
+                  </div>
+                )}
 
                 <Suspense fallback={<LoadingUi />}>
                   <Pagination

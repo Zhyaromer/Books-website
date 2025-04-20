@@ -15,7 +15,7 @@ const changebio = async (req, res) => {
     }
 
     if (sanBio.length >= 100) {
-        return res.status(400).json({ message: "no more than 100 characters" });
+        return res.status(400).json({ message: "ژیاننامە پێوستە لە 100 پیت کەمتر بێت" });
     }
 
     try {

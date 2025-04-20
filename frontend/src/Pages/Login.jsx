@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
 const LoginForm = () => {
-    const { main, secondary, tertiary } = useTheme();
+    const { secondary, tertiary } = useTheme();
     const navigate = useNavigate();
     const { isAuthenticated } = useCheckAuth();
     useEffect(() => {
@@ -61,7 +61,7 @@ const LoginForm = () => {
             <BookstoreNavigation />
             <div dir="rtl" className="flex min-h-screen items-center justify-center bg-[#121212] p-4">
                 <div className="w-full max-w-md rounded-lg bg-[#1a1a1a] p-8 shadow-lg">
-                    <h2 className="mb-6 text-center text-2xl font-bold text-gray-100">چوونەژوورەوە</h2>
+                    <h2 className="mb-6 text-center text-3xl font-bold text-gray-100">چوونەژوورەوە</h2>
                     <form onSubmit={handleSubmit} className="space-y-6" autoComplete="new-password">
                         <div className="space-y-2">
                             <label htmlFor="user_login_email" className="block text-right text-sm font-medium text-gray-200">

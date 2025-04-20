@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useTheme } from "../../context/ThemeContext";
 
 const BookCardMain = ({ data, text, path }) => {
-    const { main, secondary, tertiary } = useTheme();
+    const {secondary } = useTheme();
     return (
         <div className="pt-6 md:pt-12 bg-[#121212] w-full flex justify-center items-center flex-col">
             {path == "/Books" ? (
@@ -75,7 +75,7 @@ const BookCardMain = ({ data, text, path }) => {
                     ))
                 ) : (
                     <div className="col-span-full">
-                        <p className="text-center text-sm md:text-base font-bold text-white md:pb-56">هیچ کتێبێک نەدۆزرایەوە نییە</p>
+                        <p className="text-center text-sm md:text-base font-bold text-white md:pb-56">هیچ کتێبێک نەدۆزرایەوە</p>
                     </div>
                 )}
             </div>

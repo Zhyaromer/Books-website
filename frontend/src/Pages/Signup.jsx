@@ -4,6 +4,8 @@ import { useState } from "react";
 import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const SignUp = () => {
     const { main, secondary, tertiary } = useTheme();
@@ -77,7 +79,7 @@ const SignUp = () => {
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
         if (!passwordRegex.test(formData.password)) {
-            newErrors.password = "Password must contain at least one uppercase letter, one number, and one special character and at least 8 characters";
+            newErrors.password = "وشەی نهێنی دەبێت لانیکەم یەک پیتی گەورە، یەک ژمارە، یەک کارەکتەری تایبەت و لانیکەم 8 کارەکتەری تێدا بێت";
         }
 
         setErrors(newErrors);
@@ -95,13 +97,18 @@ const SignUp = () => {
                     password: formData.password,
                     conformPassword: formData.confirmPassword
                 });
+                console.log(res.data);
 
                 if (res.status === 201) {
                     navigate("/login");
                 } else if (res.status === 400) {
                     setErrors({ error: res.data.message });
                 }
-            } catch {
+            } catch (error) {
+                if (error.response && error.response.data && error.response.data.message) {
+                    toast.error(error.response.data.message);
+                    setErrors({ error: error.response.data.message });
+                }
                 setErrors({ error: "An error occurred while signing up" });
             }
         }
@@ -273,6 +280,7 @@ const SignUp = () => {
                     </form>
                 </div>
             </div>
+            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
             <Footer />
         </div>
     );

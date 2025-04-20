@@ -279,7 +279,7 @@ const BookstoreNavigation = () => {
                             <div className="flex items-center">
                                 <a href="/" className="flex items-center">
                                     <Book style={{ color: secondary }} className="h-8 w-8" />
-                                    <span className="mr-2 text-xl font-bold text-gray-100">خانەی کتێب</span>
+                                    <span className="mr-2 text-xl font-bold text-gray-100">پەرتووکخانە</span>
                                 </a>
                             </div>
 

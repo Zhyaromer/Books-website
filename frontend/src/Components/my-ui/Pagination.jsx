@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useTheme } from "../../context/ThemeContext";
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-    const { main, secondary, tertiary } = useTheme();
+    const { main } = useTheme();
     const renderPageButtons = () => {
         const pages = [];
         for (let i = 1; i <= totalPages; i++) {
@@ -27,13 +27,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     };
 
     return (
-        <div dir="rtl" className="flex justify-center items-center my-8">
+        <div dir="ltr" className="flex justify-center items-center my-8">
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className="p-2 rounded-full bg-[#272525] text-gray-100 hover:bg-[rgb(48,45,45)] disabled:opacity-50"
             >
-                <ChevronRight />
+                <ChevronLeft />
             </button>
             {renderPageButtons()}
             <button
@@ -41,7 +41,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 disabled={currentPage === totalPages}
                 className="p-2 rounded-full bg-[#272525] text-gray-100 hover:bg-[rgb(48,45,45)] disabled:opacity-50"
             >
-                <ChevronLeft />
+                <ChevronRight />
             </button>
         </div>
     );

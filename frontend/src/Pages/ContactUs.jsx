@@ -1,6 +1,6 @@
 import BookstoreNavigation from "../Components/layout/Navigation";
 import Footer from "../Components/layout/Footer";
-import { Mail, Facebook, Instagram, Phone, MailIcon, CheckCircle } from 'lucide-react';
+import { Mail, Facebook, Instagram,Youtube, Phone, MailIcon, CheckCircle } from 'lucide-react';
 import { SiTiktok } from 'react-icons/si';
 import { useState } from 'react';
 import { axiosInstance } from "../context/AxiosInstance";
@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from "../context/ThemeContext";
 
 const ContactUs = () => {
-  const { main, secondary, tertiary } = useTheme();
+  const { secondary, tertiary } = useTheme();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -23,7 +23,7 @@ const ContactUs = () => {
       icon: <Facebook className="w-6 h-6" />,
       title: "Facebook",
       details: "@KurdishBooks",
-      link: "https://facebook.com/KurdishBooks",
+      link: "https://facebook.com/",
       bgColor: "bg-[#1877F2]",
       hoverColor: "hover:bg-[#1877F2]/90"
     },
@@ -31,15 +31,23 @@ const ContactUs = () => {
       icon: <Instagram className="w-6 h-6" />,
       title: "Instagram",
       details: "@KurdishBooks",
-      link: "https://instagram.com/KurdishBooks",
+      link: "https://instagram.com/",
       bgColor: "bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737]",
       hoverColor: "hover:from-[#833AB4]/90 hover:via-[#FD1D1D]/90 hover:to-[#F77737]/90"
     },
     {
+      icon: <Youtube className="w-6 h-6" />,
+      title: "YouTube",
+      details: "@KurdishBooks",
+      link: "https://youtube.com/",
+      bgColor: "bg-[#FF0000]",
+      hoverColor: "hover:bg-[#cc0000]"
+    },    
+    {
       icon: <SiTiktok className="w-6 h-6" />,
       title: "Tiktok",
       details: "@KurdishBooks",
-      link: "https://Tiktok.com/KurdishBooks",
+      link: "https://Tiktok.com/",
       bgColor: "bg-[#1DA1F2]",
       hoverColor: "hover:bg-[#1DA1F2]/90"
     },
@@ -54,7 +62,7 @@ const ContactUs = () => {
     {
       icon: <Phone className="w-5 h-5 text-[#1db954]" />,
       title: "ژمارەی تەلەفۆن",
-      details: "+964 750 123 4567"
+      details: "0770 322 7250"
     }
   ];
 
@@ -122,7 +130,7 @@ const ContactUs = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label htmlFor="name" className="block text-gray-300 mb-2 text-sm">
-                         ناو
+                          ناو
                         </label>
                         <input
                           type="text"
@@ -214,7 +222,7 @@ const ContactUs = () => {
                       className="w-full bg-[#1db954] hover:bg-[#1ed760] text-white font-medium py-3 px-4 rounded-lg transition duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                     >
                       <Mail className="w-5 h-5" />
-                      <span 
+                      <span
                       >ناردنی نامە</span>
                     </button>
                     <style jsx>{`
@@ -232,7 +240,7 @@ const ContactUs = () => {
 
               <div className="space-y-8">
                 <div className="bg-[#1a1a1a] rounded-xl p-6 shadow-sm">
-                  <h2 className="text-2xl font-bold text-gray-100 mb-6 pb-2 border-b border-gray-800">زانیاریەکانی پەیوەندی کردن</h2>
+                  <h2 className="text-2xl font-bold text-gray-100 mb-6 pb-2 border-b border-gray-800"> پەیوەندی کردن</h2>
                   <div className="space-y-6">
                     {contactInfo.map((item, index) => (
                       <div key={index} className="flex items-start gap-4">
@@ -241,7 +249,7 @@ const ContactUs = () => {
                         </div>
                         <div>
                           <h3 className="font-medium text-gray-200 mb-1">{item.title}</h3>
-                          <p className="text-gray-300 text-sm">{item.details}</p>
+                          <p dir="ltr" className="text-gray-300 text-end text-sm">{item.details}</p>
                         </div>
                       </div>
                     ))}

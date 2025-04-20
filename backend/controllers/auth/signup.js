@@ -2,6 +2,7 @@ const db = require('../../config/SQL/sqlconfig');
 const xss = require('xss');
 const bcrypt = require('bcrypt');
 const validateEmail = require('../../utils/checkEmailFormat');
+const {sendEmail} = require('../../config/Nodemailer/nodemailerconfig');
 
 const signup = async (req, res) => {
     const { username, name, email, password, conformPassword } = req.body;

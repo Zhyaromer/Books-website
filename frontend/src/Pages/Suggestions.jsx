@@ -12,7 +12,7 @@ const Suggestions = () => {
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(true);
     const controllerRef = useRef(null);
-    const { main, secondary, tertiary } = useTheme();
+    const { secondary, tertiary } = useTheme();
 
     const fetchBooksData = async () => {
         try {

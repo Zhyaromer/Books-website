@@ -39,7 +39,7 @@ const changeusername = async (req, res) => {
         const [checkUserName] = await db.promise().query("SELECT username FROM users WHERE username = ?", [sanUserName]);
 
         if (checkUserName.length > 0) {
-            return res.status(400).json({ message: "Username already exists, please choose another one" });
+            return res.status(400).json({ message: "ئەم نازناوە بە هەژمارێکی تر بوونی هەیە تکایە نازناوێکی تر بنووسە" });
         }
 
         const [updateResult] = await db.promise().query("UPDATE users SET username = ? WHERE id = ?", [sanUserName, userId]);

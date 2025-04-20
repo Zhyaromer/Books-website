@@ -643,7 +643,7 @@ const SettingsPage = () => {
                 </div>
             </div>
             <Footer />
-            <ToastContainer draggable={true} transition={Slide} autoClose={2000} />
+            <ToastContainer draggable={true} transition={Slide} autoClose={4000} />
         </div>
     );
 };
