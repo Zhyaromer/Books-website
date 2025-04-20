@@ -46,21 +46,21 @@ const BookstoreNavigation = () => {
 
     useEffect(() => {
         function handleClickOutside(event) {
-          if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-            setShowResults(false);
-          }
-          
-          if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
-            setUserDropdownOpen(false);
-          }
+            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+                setShowResults(false);
+            }
+
+            if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+                setUserDropdownOpen(false);
+            }
         }
-        
+
         document.addEventListener('mousedown', handleClickOutside);
-        
+
         return () => {
-          document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
-      }, []);
+    }, []);
 
     useEffect(() => {
         if (searchTerm.length >= 1) {
@@ -288,7 +288,7 @@ const BookstoreNavigation = () => {
                                     {navLinks.map((link, index) => (
                                         <div key={link.name} className="relative dropdown-container">
                                             <div
-                                                className="flex items-center cursor-pointer text-gray-100 rounded-xl transition-colors px-3 py-2 text-sm font-medium"
+                                                className="flex items-center cursor-pointer text-gray-100 rounded-xl transition-colors lg:px-2 py-2 text-sm font-medium"
                                                 style={{ backgroundColor: "transparent", color: '#f3f4f6' }}
                                                 onMouseEnter={(e) => {
                                                     e.currentTarget.style.backgroundColor = secondary;
@@ -320,7 +320,7 @@ const BookstoreNavigation = () => {
                                                                     e.currentTarget.style.backgroundColor = 'transparent';
                                                                     e.currentTarget.style.color = '#f3f4f6';
                                                                 }}
-                                                                className="block px-4 py-2 text-sm text-gray-100 hover:bg-[#1db954]"
+                                                                className="block px-4 py-2 text-sm text-gray-100"
                                                                 role="menuitem"
                                                             >
                                                                 {item.name}
@@ -332,58 +332,9 @@ const BookstoreNavigation = () => {
                                         </div>
                                     ))}
                                 </div>
-
-                                <div className="sm:flex lg:hidden">
-                                    <div className="relative dropdown-container mr-2">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setIsOpen(!isOpen);
-                                            }}
-                                            className="flex items-center text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md border border-gray-200"
-                                        >
-                                            <Menu className="h-5 w-5" />
-                                        </button>
-
-                                        {isOpen && (
-                                            <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                                                <div className="py-1" role="menu" aria-orientation="vertical">
-                                                    {navLinks.map((link, index) => (
-                                                        <div key={link.name}>
-                                                            <div
-                                                                className="flex justify-between items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 cursor-pointer"
-                                                                onClick={(e) => handleDropdownToggle(e, link, index)}
-                                                            >
-                                                                <a href={link.hasDropdown ? undefined : link.href} className="block w-full">
-                                                                    {link.name}
-                                                                </a>
-                                                                {link.hasDropdown && <ChevronDown className="h-4 w-4" />}
-                                                            </div>
-
-                                                            {link.hasDropdown && link.dropdownOpen && (
-                                                                <div className="pr-4 bg-gray-50">
-                                                                    {link.dropdownItems.map((item) => (
-                                                                        <a
-                                                                            key={item.name}
-                                                                            href={item.href}
-                                                                            className="block px-4 py-2 text-sm text-gray-600 hover:text-indigo-600"
-                                                                        >
-                                                                            {item.name}
-                                                                        </a>
-                                                                    ))}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
                             </div>
 
-                            {/* Search bar for laptop view */}
-                            <div className="hidden sm:flex items-center space-x-reverse space-x-6">
+                            <div className="hidden lg:flex items-center space-x-reverse space-x-6">
                                 <div className="relative search-container" ref={searchContainerRef}>
                                     <div className="flex">
                                         <input
@@ -596,18 +547,18 @@ const BookstoreNavigation = () => {
                                 </div>
                             </div>
 
-                            <div className="flex sm:hidden items-center space-x-reverse space-x-4">
+                            <div className="flex lg:hidden items-center space-x-reverse space-x-4">
                                 <button
                                     onClick={() => setIsSearchOpen(!isSearchOpen)}
                                     className="text-gray-700"
                                 >
-                                    <Search className="h-6 w-6" />
+                                    <Search className="h-6 w-6 text-gray-200" />
                                 </button>
                                 <button
                                     onClick={() => setIsOpen(!isOpen)}
                                     className="text-gray-700"
                                 >
-                                    {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                                    {isOpen ? <X className="h-6 w-6 text-gray-300" /> : <Menu className="h-6 w-6 text-gray-200" />}
                                 </button>
                             </div>
                         </div>
@@ -615,39 +566,60 @@ const BookstoreNavigation = () => {
 
                     {isSearchOpen && (
                         <div className="sm:hidden px-4 pb-4">
-                            <div className="relative search-container">
-                                <div className="flex">
-                                    <input
-                                        type="text"
-                                        placeholder="گەڕان..."
-                                        className="w-full pr-10 pl-1 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        onFocus={() => searchTerm}
-                                    />
-                                </div>
+                            <div className="relative z-50 search-container" ref={searchContainerRef}>
+                                <input
+                                    type="text"
+                                    placeholder="گەڕان بۆ کتێب..."
+                                    className="w-full text-gray-300 bg-black border-2 border-transparent placeholder:text-gray-400 pr-10 pl-4 py-2 rounded-full focus:outline-none"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onFocus={(e) => { searchTerm, e.currentTarget.style.borderColor = secondary }}
+                                    onBlur={(e) => { searchTerm, e.currentTarget.style.borderColor = 'transparent' }}
+                                />
+
                                 <div className="absolute right-3 top-2.5">
                                     <Search className="h-5 w-5 text-gray-400" />
                                 </div>
 
                                 {showResults && (
-                                    <div className="absolute mt-2 w-full bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
-                                        <div className="flex border-b border-gray-200">
+                                    <div className="absolute mt-2 w-full bg-[#1a1a1a] rounded-lg shadow-xl border border-gray-600 z-50 overflow-hidden">
+                                        <div className="flex border-b border-gray-600">
                                             <button
-                                                className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
-                                                onClick={() => setActiveTab('books')}
+                                                className={`flex-1 py-3 px-4 text-xs border-b-2 font-medium text-gray-100 hover:text-gray-300`}
+                                                style={{
+                                                    borderColor: activeTab === 'books' ? secondary : 'transparent',
+                                                    color: activeTab === 'books' ? secondary : '#f3f4f6'
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveTab('books');
+                                                }}
                                             >
                                                 کتێبەکان ({results.books.length})
                                             </button>
                                             <button
-                                                className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'authors' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
-                                                onClick={() => setActiveTab('authors')}
+                                                className={`flex-1 py-3 px-4 text-xs border-b-2 font-medium text-gray-100 hover:text-gray-300`}
+                                                style={{
+                                                    borderColor: activeTab === 'authors' ? secondary : 'transparent',
+                                                    color: activeTab === 'authors' ? secondary : '#f3f4f6'
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveTab('authors');
+                                                }}
                                             >
                                                 نووسەرەکان ({results.authors.length})
                                             </button>
                                             <button
-                                                className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'users' ? 'text-indigo-600 border-b-2 border-indigo-500' : 'text-gray-500 hover:text-gray-700'}`}
-                                                onClick={() => setActiveTab('users')}
+                                                className={`flex-1 py-3 px-4 text-xs border-b-2 font-medium text-gray-100 hover:text-gray-300`}
+                                                style={{
+                                                    borderColor: activeTab === 'users' ? secondary : 'transparent',
+                                                    color: activeTab === 'users' ? secondary : '#f3f4f6'
+                                                }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveTab('users');
+                                                }}
                                             >
                                                 بەکارهێنەران ({results.users.length})
                                             </button>
@@ -656,9 +628,9 @@ const BookstoreNavigation = () => {
                                         <div className="max-h-80 overflow-y-auto">
                                             {searchLoading && (
                                                 <div className="flex flex-col gap-2 items-center justify-center py-12">
-                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                                                    <div style={{ borderColor: secondary }} className="animate-spin rounded-full h-8 w-8 border-b-2"></div>
                                                     <div>
-                                                        <p>تکایە چاوەڕوانبە...</p>
+                                                        <p className="text-sm text-gray-200">تکایە چاوەڕوانبە...</p>
                                                     </div>
                                                 </div>
                                             )}
@@ -669,7 +641,7 @@ const BookstoreNavigation = () => {
                                                         results.books.map(book => (
                                                             <div
                                                                 key={book.id}
-                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-600"
                                                                 onClick={() => handleResultClick(book.id, 'book')}
                                                             >
                                                                 <div className="flex-shrink-0 w-16 h-20 bg-gradient-to-b from-indigo-200 to-indigo-400 rounded flex items-center justify-center shadow-md">
@@ -680,7 +652,7 @@ const BookstoreNavigation = () => {
                                                                     )}
                                                                 </div>
                                                                 <div className="mr-4 flex-1">
-                                                                    <div className="text-base font-bold text-gray-900 mb-1">{book.title}</div>
+                                                                    <div className="text-base font-bold text-gray-100 mb-1">{book.title}</div>
                                                                     <div className="flex items-center space-x-2 space-x-reverse mb-2">
                                                                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                                                                             {book.genre}
@@ -689,12 +661,12 @@ const BookstoreNavigation = () => {
                                                                             {book.language}
                                                                         </span>
                                                                     </div>
-                                                                    <div className="text-xs text-gray-600 line-clamp-2">{book.description}</div>
+                                                                    <div className="text-xs text-gray-300 line-clamp-2">{book.description}</div>
                                                                 </div>
                                                             </div>
                                                         ))
                                                     ) : (
-                                                        <div className="py-8 text-center text-gray-500">
+                                                        <div className="py-8 text-center text-gray-200">
                                                             هیچ کتێبێک نەدۆزرایەوە
                                                         </div>
                                                     )}
@@ -707,10 +679,10 @@ const BookstoreNavigation = () => {
                                                         results.authors.map(author => (
                                                             <div
                                                                 key={author.id}
-                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-600"
                                                                 onClick={() => handleResultClick(author.id, 'authors')}
                                                             >
-                                                                <div className="flex-shrink-0 w-14 h-14 bg-indigo-500 rounded-full flex items-center justify-center shadow-md">
+                                                                <div style={{ backgroundColor: secondary }} className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center shadow-md">
                                                                     {author.imgURL ? (
                                                                         <img src={author.imgURL} className="w-14 h-14 object-cover rounded-full" />
                                                                     ) : (
@@ -718,13 +690,13 @@ const BookstoreNavigation = () => {
                                                                     )}
                                                                 </div>
                                                                 <div className="mr-4 flex-1">
-                                                                    <div className="text-base font-bold text-gray-900">{author.name}</div>
-                                                                    <div className="text-xs text-gray-600 mt-1 line-clamp-2">{truncateBio(author.bio)}</div>
+                                                                    <div className="text-base font-bold text-gray-100">{author.name}</div>
+                                                                    <div className="text-xs text-gray-300 mt-1 line-clamp-2">{truncateBio(author.bio)}</div>
                                                                 </div>
                                                             </div>
                                                         ))
                                                     ) : (
-                                                        <div className="py-8 text-center text-gray-500">
+                                                        <div className="py-8 text-center text-gray-300">
                                                             هیچ نووسەرێک نەدۆزرایەوە
                                                         </div>
                                                     )}
@@ -737,10 +709,10 @@ const BookstoreNavigation = () => {
                                                         results.users.map(user => (
                                                             <div
                                                                 key={user.username}
-                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-100"
+                                                                className="flex items-center p-4 hover:bg-indigo-50 cursor-pointer border-b border-gray-600"
                                                                 onClick={() => handleResultClick(user.username, 'users')}
                                                             >
-                                                                <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-[#1db954]'}`}>
+                                                                <div style={{ backgroundColor: user.coverImgURL ? '' : secondary }} className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md`}>
                                                                     {user.coverImgURL ? (
                                                                         <img src={user.coverImgURL} className="w-12 h-12 object-cover rounded-full" />
                                                                     ) : (
@@ -748,13 +720,13 @@ const BookstoreNavigation = () => {
                                                                     )}
                                                                 </div>
                                                                 <div className="mr-4 flex-1">
-                                                                    <div className="text-base font-bold text-gray-900">{user.name}</div>
-                                                                    <div className="text-xs text-gray-500">@{user.username}</div>
+                                                                    <div className="text-base font-bold text-gray-100">{user.name}</div>
+                                                                    <div className="text-xs text-gray-300">@{user.username}</div>
                                                                 </div>
                                                             </div>
                                                         ))
                                                     ) : (
-                                                        <div className="py-8 text-center text-gray-500">
+                                                        <div className="py-8 text-center text-gray-300">
                                                             هیچ بەکارهێنەرێک نەدۆزرایەوە
                                                         </div>
                                                     )}
@@ -769,11 +741,11 @@ const BookstoreNavigation = () => {
 
                     {isOpen && (
                         <div className="sm:hidden">
-                            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
+                            <div className="px-2 pt-2 pb-3 space-y-1 bg-[#1a1a1a] border-t border-gray-600">
                                 {navLinks.map((link, index) => (
                                     <div key={link.name}>
                                         <div
-                                            className="flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50"
+                                            className="flex justify-between items-center px-3 py-2 rounded-md text-base font-medium text-gray-100 hover:bg-[#242323]"
                                             onClick={(e) => handleDropdownToggle(e, link, index)}
                                         >
                                             <a href={link.hasDropdown ? undefined : link.href}>
@@ -783,12 +755,12 @@ const BookstoreNavigation = () => {
                                         </div>
 
                                         {link.hasDropdown && link.dropdownOpen && (
-                                            <div className="pr-6 mt-1 space-y-1 border-r-2 border-indigo-200">
+                                            <div style={{ borderColor: secondary }} className="pr-6 mt-1 space-y-1 border-r-2">
                                                 {link.dropdownItems.map((item) => (
                                                     <a
                                                         key={item.name}
                                                         href={item.href}
-                                                        className="block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600"
+                                                        className="block px-3 py-1 text-sm text-gray-300"
                                                     >
                                                         {item.name}
                                                     </a>
@@ -797,31 +769,37 @@ const BookstoreNavigation = () => {
                                         )}
                                     </div>
                                 ))}
-                                <div className="border-t border-gray-200 mt-4 pt-4">
-                                    <div className="px-3 py-2 text-base font-medium text-gray-900">
+                                <div className="border-t border-gray-600 mt-4 pt-4">
+                                    <div className="px-3 py-2 text-base font-medium text-gray-100">
                                         {isLoggedIn ? 'هەژماری من' : 'چوونەژوورەوە'}
                                     </div>
                                     {isLoggedIn ? (
                                         <div className="space-y-1 pr-6">
-                                            <a href="/profile" className="flex items-center px-3 py-1 text-sm text-gray-600 hover:text-indigo-600">
+                                            <a href="/profile" className="flex items-center px-3 py-1 text-sm text-gray-200 hover:text-gray-300">
                                                 <User className="h-4 w-4 ml-2" />
                                                 پروفایل
                                             </a>
-                                            <a href="/settings" className="flex items-center px-3 py-1 text-sm text-gray-600 hover:text-indigo-600">
+                                            <a href="/settings" className="flex items-center px-3 py-1 text-sm text-gray-200 hover:text-gray-300">
                                                 <Settings className="h-4 w-4 ml-2" />
                                                 ڕێکخستنەکان
                                             </a>
-                                            <a href="/logout" className="flex items-center px-3 py-1 text-sm text-red-600 hover:text-indigo-600">
+                                            {isAdmin && (
+                                                <a href="/admin" className="flex items-center px-3 py-1 text-sm text-gray-200 hover:text-gray-300">
+                                                    <Settings className="h-4 w-4 ml-2" />
+                                                    ئەدمین
+                                                </a>
+                                            )}
+                                            <a href="/logout" className="flex items-center px-3 py-1 text-sm text-gray-200 hover:text-gray-300">
                                                 <LogOut className="h-4 w-4 ml-2" />
                                                 چوونەدەرەوە
                                             </a>
                                         </div>
                                     ) : (
                                         <div className="space-y-1 pr-6">
-                                            <a href="/login" className="block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600">
+                                            <a href="/login" className="block px-3 py-1 text-sm text-gray-200 hover:text-gray-300">
                                                 چوونەژوورەوە
                                             </a>
-                                            <a href="/signup" className="block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600">
+                                            <a href="/signup" className="block px-3 py-1 text-sm text-gray-200 hover:text-gray-300">
                                                 تۆمارکردن
                                             </a>
                                         </div>

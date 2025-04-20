@@ -22,8 +22,8 @@ const Footer = () => {
                                 نوێ و کلاسیک بە زمانی کوردی و زمانەکانی تر.
                             </p>
                         </div>
-                        <div>
-                            <h2 className={`text-2xl font-bold mb-4 text-gray-100`}>ڕەنگەکان</h2>
+                        <div className="flex flex-row items-center">
+                            <h2 className={`text-xl font-bold mb-4 text-gray-100`}>ڕەنگەکان</h2>
                             <div className="flex flex-wrap">
                                 {availableColors.map((colorObj) => (
                                     <div

@@ -122,15 +122,17 @@ const CommentsSection = ({ bookId }) => {
       toast.warning("Please enter a comment");
       return;
     }
-
+  
     if (message.length > 3000 || message.length < 1) {
       toast.warning("Comment must be between 1 and 3000 characters");
       return;
     }
+    
     try {
-
+      let response;
+      
       if (editMode && selectedReview) {
-        await axiosInstance.patch(
+        response = await axiosInstance.patch(
           `/user/updateReview?review_id=${selectedReview.id}`,
           {
             rating,
@@ -138,8 +140,17 @@ const CommentsSection = ({ bookId }) => {
             hasSpoiler
           }
         );
+        
+        setComments(prevComments => 
+          prevComments.map(comment => 
+            comment.id === selectedReview.id 
+              ? {...comment, rating, comment: message, isSpoiler: hasSpoiler ? 1 : 0} 
+              : comment
+          )
+        );
+        
       } else {
-        await axiosInstance.post(
+        response = await axiosInstance.post(
           `/user/addReview/${bookId}`,
           {
             rating,
@@ -147,15 +158,21 @@ const CommentsSection = ({ bookId }) => {
             hasSpoiler
           }
         );
+        
+        if (response.data && response.data.newReview) {
+          setComments(prevComments => [...prevComments, response.data.newReview]);
+        } else {
+          const updatedComments = await axiosInstance.get(`/user/getallreviews?book_id=${bookId}`);
+          setComments(updatedComments.data);
+        }
       }
-
+      
       setIsAddReviewOpen(false);
-
-      setTimeout(async () => {
-        const updatedComments = await axiosInstance.get(`/user/getallreviews?book_id=${bookId}`);
-        setComments(updatedComments.data);
-      }, 100);
-
+      setEditMode(false);
+      setRating(0);
+      setMessage("");
+      setHasSpoiler(false);
+      
       return true;
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
