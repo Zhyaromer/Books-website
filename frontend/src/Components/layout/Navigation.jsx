@@ -3,9 +3,13 @@ import { Menu, X, Search, Book, User, ChevronDown, Settings, LogOut, UserCog2 } 
 import { useCheckAuth, logout, axiosInstance } from "../../context/AxiosInstance";
 import LoadingUi from '../my-ui/Loading';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from "../../context/ThemeContext";
 
 const BookstoreNavigation = () => {
+    const { main, secondary, tertiary } = useTheme();
     const navigate = useNavigate();
+    const searchContainerRef = useRef(null);
+    const userDropdownRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [homeDropdownOpen, setHomeDropdownOpen] = useState(false);
@@ -39,6 +43,24 @@ const BookstoreNavigation = () => {
             }
         }
     }, 500);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+          if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+            setShowResults(false);
+          }
+          
+          if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+            setUserDropdownOpen(false);
+          }
+        }
+        
+        document.addEventListener('mousedown', handleClickOutside);
+        
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }, []);
 
     useEffect(() => {
         if (searchTerm.length >= 1) {
@@ -256,7 +278,7 @@ const BookstoreNavigation = () => {
                         <div className="flex justify-between h-16 items-center">
                             <div className="flex items-center">
                                 <a href="/" className="flex items-center">
-                                    <Book className="h-8 w-8 text-[#1db954]" />
+                                    <Book style={{ color: secondary }} className="h-8 w-8" />
                                     <span className="mr-2 text-xl font-bold text-gray-100">خانەی کتێب</span>
                                 </a>
                             </div>
@@ -266,10 +288,19 @@ const BookstoreNavigation = () => {
                                     {navLinks.map((link, index) => (
                                         <div key={link.name} className="relative dropdown-container">
                                             <div
-                                                className="flex items-center cursor-pointer text-gray-100 hover:bg-[#1db954] rounded-xl transition-colors px-3 py-2 text-sm font-medium"
+                                                className="flex items-center cursor-pointer text-gray-100 rounded-xl transition-colors px-3 py-2 text-sm font-medium"
+                                                style={{ backgroundColor: "transparent", color: '#f3f4f6' }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = secondary;
+                                                    e.currentTarget.style.color = '#f3f4f6';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                                    e.currentTarget.style.color = '#f3f4f6';
+                                                }}
                                                 onClick={(e) => handleDropdownToggle(e, link, index)}
                                             >
-                                                <span>{link.name}</span>
+                                                <span style={{ color: '#f3f4f6' }}>{link.name}</span>
                                                 {link.hasDropdown && <ChevronDown className="h-4 w-4 mr-1" />}
                                             </div>
 
@@ -280,6 +311,15 @@ const BookstoreNavigation = () => {
                                                             <a
                                                                 key={item.name}
                                                                 href={item.href}
+                                                                style={{ backgroundColor: 'transparent', color: '#f3f4f6' }}
+                                                                onMouseEnter={(e) => {
+                                                                    e.currentTarget.style.backgroundColor = secondary;
+                                                                    e.currentTarget.style.color = '#f3f4f6';
+                                                                }}
+                                                                onMouseLeave={(e) => {
+                                                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                                                    e.currentTarget.style.color = '#f3f4f6';
+                                                                }}
                                                                 className="block px-4 py-2 text-sm text-gray-100 hover:bg-[#1db954]"
                                                                 role="menuitem"
                                                             >
@@ -342,16 +382,18 @@ const BookstoreNavigation = () => {
                                 </div>
                             </div>
 
+                            {/* Search bar for laptop view */}
                             <div className="hidden sm:flex items-center space-x-reverse space-x-6">
-                                <div className="relative search-container">
+                                <div className="relative search-container" ref={searchContainerRef}>
                                     <div className="flex">
                                         <input
                                             type="text"
                                             placeholder="گەڕان بۆ کتێب..."
-                                            className="w-full text-gray-300 bg-black placeholder:text-gray-400 pr-10 pl-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#1db954]"
+                                            className="w-full text-gray-300 bg-black border-2 border-transparent placeholder:text-gray-400 pr-10 pl-4 py-2 rounded-full focus:outline-none"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            onFocus={() => searchTerm}
+                                            onFocus={(e) => { searchTerm, e.currentTarget.style.borderColor = secondary }}
+                                            onBlur={(e) => { searchTerm, e.currentTarget.style.borderColor = 'transparent' }}
                                         />
                                         <div className="absolute right-3 top-2.5">
                                             <Search className="h-5 w-5 text-gray-400" />
@@ -359,23 +401,33 @@ const BookstoreNavigation = () => {
                                     </div>
 
                                     {showResults && (
-                                        <div className="absolute left-0 mt-2 w-[470px] bg-[#1a1a1a] rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden">
+                                        <div className="absolute left-0 mt-2 w-[470px] bg-[#1a1a1a] rounded-lg shadow-xl border border-gray-600 z-50 overflow-hidden">
                                             <div className="flex">
                                                 <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'books' ? 'text-[#1db954] border-b-2 border-[#1db954]' : 'text-gray-100 hover:text-gray-300'}`}
+                                                    className={`flex-1 py-3 px-4 text-sm border-b-2 font-medium text-gray-100 hover:text-gray-300`}
+                                                    style={{
+                                                        borderColor: activeTab === 'books' ? secondary : 'transparent',
+                                                        color: activeTab === 'books' ? secondary : '#f3f4f6'
+                                                    }}
                                                     onClick={() => setActiveTab('books')}
                                                 >
                                                     کتێبەکان ({results.books.length})
                                                 </button>
                                                 <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'authors' ? 'text-[#1db954] border-b-2 border-[#1db954]' : 'text-gray-100 hover:text-gray-300'}`}
-                                                    onClick={() => setActiveTab('authors')}
+                                                    className={`flex-1 py-3 px-4 text-sm border-b-2 font-medium text-gray-100 hover:text-gray-300`}
+                                                    style={{
+                                                        borderColor: activeTab === 'authors' ? secondary : 'transparent',
+                                                        color: activeTab === 'authors' ? secondary : '#f3f4f6'
+                                                    }} onClick={() => setActiveTab('authors')}
                                                 >
                                                     نووسەرەکان ({results.authors.length})
                                                 </button>
                                                 <button
-                                                    className={`flex-1 py-3 px-4 text-sm font-medium ${activeTab === 'users' ? 'text-[#1db954] border-b-2 border-[#1db954]' : 'text-gray-100 hover:text-gray-300'}`}
-                                                    onClick={() => setActiveTab('users')}
+                                                    className={`flex-1 py-3 px-4 text-sm border-b-2 font-medium text-gray-100 hover:text-gray-300`}
+                                                    style={{
+                                                        borderColor: activeTab === 'users' ? secondary : 'transparent',
+                                                        color: activeTab === 'users' ? secondary : '#f3f4f6'
+                                                    }} onClick={() => setActiveTab('users')}
                                                 >
                                                     بەکارهێنەران ({results.users.length})
                                                 </button>
@@ -384,7 +436,9 @@ const BookstoreNavigation = () => {
                                             <div className="max-h-80 overflow-y-auto">
                                                 {searchLoading && (
                                                     <div className="flex flex-col gap-2 items-center justify-center py-12">
-                                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1db954]"></div>
+                                                        <div
+                                                            style={{ borderColor: secondary }}
+                                                            className="animate-spin rounded-full h-8 w-8 border-b-2"></div>
                                                         <div>
                                                             <p className='text-gray-100'>تکایە چاوەڕوانبە...</p>
                                                         </div>
@@ -438,7 +492,7 @@ const BookstoreNavigation = () => {
                                                                     className="flex items-center p-4 hover:bg-[#121212] cursor-pointer border-b border-gray-100"
                                                                     onClick={() => handleResultClick(author.id, 'authors')}
                                                                 >
-                                                                    <div className="flex-shrink-0 w-14 h-14 bg-[#1db954] rounded-full flex items-center justify-center shadow-md">
+                                                                    <div style={{ backgroundColor: secondary }} className="flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center shadow-md">
                                                                         {author.imgURL ? (
                                                                             <img src={author.imgURL} className="w-14 h-14 object-cover rounded-full" />
                                                                         ) : (
@@ -468,7 +522,7 @@ const BookstoreNavigation = () => {
                                                                     className="flex items-center p-4 hover:bg-[#121212] cursor-pointer border-b border-gray-100"
                                                                     onClick={() => handleResultClick(user.username, 'users')}
                                                                 >
-                                                                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-[#1db954]'}`}>
+                                                                    <div style={{ backgroundColor: user.coverImgURL ? '' : secondary }} className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-md ${user.coverImgURL ? '' : 'bg-[#1db954]'}`}>
                                                                         {user.coverImgURL ? (
                                                                             <img src={user.coverImgURL} alt={user.username} className="w-12 h-12 object-cover rounded-full" />
                                                                         ) : (
@@ -493,7 +547,7 @@ const BookstoreNavigation = () => {
                                     )}
                                 </div>
 
-                                <div className="relative dropdown-container">
+                                <div className="relative dropdown-container" ref={userDropdownRef}>
                                     {isLoggedIn ? (
                                         <button
                                             onClick={handleUserDropdownToggle}
@@ -520,7 +574,16 @@ const BookstoreNavigation = () => {
                                                     <p
                                                         key={item.name}
                                                         onClick={item.onClick}
-                                                        className="cursor-pointer flex items-center px-4 py-2 text-sm text-gray-100 hover:bg-[#1db954] hover:text-gray-200"
+                                                        style={{ backgroundColor: 'transparent', color: '#f3f4f6' }}
+                                                        onMouseEnter={(e) => {
+                                                            e.currentTarget.style.backgroundColor = secondary;
+                                                            e.currentTarget.style.color = '#f3f4f6';
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            e.currentTarget.style.backgroundColor = 'transparent';
+                                                            e.currentTarget.style.color = '#f3f4f6';
+                                                        }}
+                                                        className="cursor-pointer flex items-center px-4 py-2 text-sm text-gray-100"
                                                         role="menuitem"
                                                     >
                                                         {item.icon}
@@ -769,7 +832,7 @@ const BookstoreNavigation = () => {
                     )}
                 </nav>
             }
-        </div>
+        </div >
     );
 };
 

@@ -6,8 +6,10 @@ import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 const LoginForm = () => {
+    const { main, secondary, tertiary } = useTheme();
     const navigate = useNavigate();
     const { isAuthenticated } = useCheckAuth();
     useEffect(() => {
@@ -59,7 +61,7 @@ const LoginForm = () => {
             <BookstoreNavigation />
             <div dir="rtl" className="flex min-h-screen items-center justify-center bg-[#121212] p-4">
                 <div className="w-full max-w-md rounded-lg bg-[#1a1a1a] p-8 shadow-lg">
-                    <h2 className="mb-6 text-right text-2xl font-bold text-gray-100">چوونەژوورەوە</h2>
+                    <h2 className="mb-6 text-center text-2xl font-bold text-gray-100">چوونەژوورەوە</h2>
                     <form onSubmit={handleSubmit} className="space-y-6" autoComplete="new-password">
                         <div className="space-y-2">
                             <label htmlFor="user_login_email" className="block text-right text-sm font-medium text-gray-200">
@@ -76,7 +78,9 @@ const LoginForm = () => {
                                     value={credentials.user_login_email}
                                     onChange={handleChange}
                                     autoComplete="off"
-                                    className="w-full bg-[#1a1a1a] placeholder:text-gray-300 rounded-md border border-gray-600 p-3 pr-10 text-right shadow-sm focus:outline-none focus:ring-1 focus:ring-[#1db954]"
+                                    className="w-full bg-[#1a1a1a] text-gray-100 placeholder:text-gray-300 rounded-md border border-gray-600 p-3 pr-10 text-right shadow-sm focus:outline-none"
+                                    onFocus={(e) => e.target.style.borderColor = secondary}
+                                    onBlur={(e) => e.target.style.borderColor = '#4a5565'}
                                     placeholder="ئیمەیڵیەکەت بنووسە"
                                     required
                                 />
@@ -98,7 +102,9 @@ const LoginForm = () => {
                                     value={credentials.user_login_password}
                                     onChange={handleChange}
                                     autoComplete="new-password"
-                                    className="w-full bg-[#1a1a1a] placeholder:text-gray-300 rounded-md border border-gray-600 p-3 pr-10 text-right shadow-sm focus:outline-none focus:ring-1 focus:ring-[#1db954]"
+                                    className="w-full bg-[#1a1a1a] text-gray-100 placeholder:text-gray-300 rounded-md border border-gray-600 p-3 pr-10 text-right shadow-sm focus:outline-none"
+                                    onFocus={(e) => e.target.style.borderColor = secondary}
+                                    onBlur={(e) => e.target.style.borderColor = '#4a5565'}
                                     placeholder="وشەی نهێنیەکەت بنووسە"
                                     required
                                 />
@@ -116,7 +122,11 @@ const LoginForm = () => {
                         </div>
 
                         <div className="flex justify-start">
-                            <a href="/forgotpassword" className="text-sm font-medium text-[#1db954] hover:text-[#1ed760] transition-colors duration-300">
+                            <a
+                                style={{ color: secondary }}
+                                onMouseEnter={(e) => e.target.style.color = tertiary}
+                                onMouseLeave={(e) => e.target.style.color = secondary}
+                                href="/forgotpassword" className="text-sm font-medium transition-colors duration-300">
                                 وشەی نهێنیت لەبیرچووە؟
                             </a>
                         </div>
@@ -124,7 +134,10 @@ const LoginForm = () => {
                         <div>
                             <button
                                 type="submit"
-                                className="w-full rounded-md bg-[#1db954] py-3 text-sm font-medium text-white hover:bg-[#1ed760] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                style={{ backgroundColor: secondary }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = tertiary}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = secondary}
+                                className="w-full rounded-md py-3 text-sm font-medium text-white ransition-colors duration-300 focus:outline-none"
                             >
                                 چوونەژوورەوە
                             </button>
@@ -134,7 +147,11 @@ const LoginForm = () => {
                     <div className="mt-6 text-center">
                         <p className="text-sm text-gray-300">
                             هەژمارت نییە؟{' '}
-                            <a href="/signup" className="font-medium text-[#1db954] hover:text-[#1ed760] transition-colors duration-300">
+                            <a
+                                style={{ color: secondary }}
+                                onMouseEnter={(e) => e.target.style.color = tertiary}
+                                onMouseLeave={(e) => e.target.style.color = secondary}
+                                href="/signup" className="font-medium transition-colors duration-300">
                                 هەژمارێک دروست بکە
                             </a>
                         </p>

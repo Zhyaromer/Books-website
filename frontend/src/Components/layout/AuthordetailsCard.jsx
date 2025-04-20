@@ -9,7 +9,7 @@ const AuthorCard = ({ name, imageUrl, bio, id, className }) => {
       .split(/\s+/)
       .map((word) => word[0]?.toUpperCase() || "")
       .join("");
-  const { main, secondary, tertiary } = useTheme();
+  const { secondary, tertiary } = useTheme();
 
   return (
     <div>

@@ -10,8 +10,10 @@ import { useLocation } from "react-router-dom";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NotFound from './NotFound';
+import { useTheme } from "../context/ThemeContext";
 
 const UserProfile = () => {
+    const { main, secondary, tertiary } = useTheme();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('saved');
     const [userData, setUserData] = useState([]);
@@ -193,7 +195,7 @@ const UserProfile = () => {
                     <div className="bg-[#1a1a1a] rounded-lg shadow-md p-6 mb-6">
                         <div className="flex flex-row justify-between items-start">
                             <div className="flex items-center">
-                                <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-200 border-2 border-[#1db954]">
+                                <div style={{borderColor : secondary}} className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-200 border-2">
                                     <img
                                         src={userData.coverImgURL}
                                         alt={userData.username}
@@ -216,32 +218,39 @@ const UserProfile = () => {
                     <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden">
                         <div className="flex items-center justify-center md:justify-start border-b-[1px] border-gray-600">
                             <button
+                                style={activeTab === 'saved' ? { color: secondary, borderColor: secondary } : {}}
                                 className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300  ${activeTab === 'saved'
-                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    ? 'border-b-[2px]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('saved'); resetPage(); }}
                             >
                                 لیستی دڵخواز
                             </button>
                             <button
+                                style={activeTab === 'read' ? { color: secondary, borderColor: secondary } : {}}
+
                                 className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'read'
-                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    ? 'border-b-[2px]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('read'); resetPage(); }}
                             >
                                 خوێندراوەکان
                             </button>
                             <button
+                                style={activeTab === 'suggestionBooks' ? { color: secondary, borderColor: secondary } : {}}
+
                                 className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'suggestionBooks'
-                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    ? 'border-b-[2px]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('suggestionBooks'); resetPage(); }}
                             >
                                 پێشنیارکراو
                             </button>
                             <button
+                                style={activeTab === 'comments' ? { color: secondary, borderColor: secondary } : {}}
+
                                 className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'comments'
-                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    ? 'border-b-[2px]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('comments'); resetPage(); }}
                             >

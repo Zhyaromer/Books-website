@@ -3,8 +3,10 @@ import Footer from "../Components/layout/Footer";
 import { useState } from "react";
 import { axiosInstance, useCheckAuth } from "../context/AxiosInstance";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 const SignUp = () => {
+    const { main, secondary, tertiary } = useTheme();
     const navigate = useNavigate();
     const { isAuthenticated } = useCheckAuth();
     if (isAuthenticated === true) {
@@ -52,9 +54,9 @@ const SignUp = () => {
         }
 
         if (!formData.username.trim()) {
-            newErrors.username = "تکایە ناوی بەکارهێنەر بنووسە";
+            newErrors.username = "تکایە نازناوەکەت بنووسە";
         } else if (formData.username.length < 3) {
-            newErrors.username = "ناوی بەکارهێنەر دەبێت لە ٣ پیت زیاتر بێت";
+            newErrors.username = "نازناوەکەت دەبێت لە ٣ پیت زیاتر بێت";
         }
 
         if (!formData.email.trim()) {
@@ -111,9 +113,9 @@ const SignUp = () => {
             <div dir="rtl" className="max-w-4xl mx-auto px-4 py-12 pt-20 md:pt-32">
                 <div className="bg-[#1a1a1a] rounded-lg shadow-md p-8">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-100 mb-2">تۆمارکردنی ئەندامێتی</h1>
+                        <h1 className="text-3xl font-bold text-gray-100 mb-2">دروستکردنی هەژمار</h1>
                         <p className="text-gray-300">
-                            ئەندامێتی نوێ دروست بکە بۆ دەستگەیشتن بە زانیاری کتێب
+                            زانیاریەکان پڕ بکەرەوە بۆ بەردەوام بوون
                         </p>
                     </div>
 
@@ -127,7 +129,9 @@ const SignUp = () => {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className={`w-full px-4 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.name ? 'border-red-500' : 'border-gray-600'} rounded-md`}
+                                    onFocus={(e) => e.target.style.borderColor = secondary}
+                                    onBlur={(e) => e.target.style.borderColor = '#4a5565'}
+                                    className={`w-full px-4 text-gray-100 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:border-2 ${errors.name ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                     placeholder="ناوەکەت بنووسە"
                                 />
                                 {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
@@ -140,8 +144,10 @@ const SignUp = () => {
                                     id="username"
                                     name="username"
                                     value={formData.username}
+                                    onFocus={(e) => e.target.style.borderColor = secondary}
+                                    onBlur={(e) => e.target.style.borderColor = '#4a5565'}
                                     onChange={handleChange}
-                                    className={`w-full px-4 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.username ? 'border-red-500' : 'border-gray-600'} rounded-md`}
+                                    className={`w-full text-gray-100 px-4 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:border-2 ${errors.username ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                     placeholder="نازناوەکەت بنووسە"
                                 />
                                 {errors.username && <p className="mt-1 text-sm text-red-500">{errors.username}</p>}
@@ -158,7 +164,9 @@ const SignUp = () => {
                                         name="password"
                                         value={formData.password}
                                         onChange={handleChange}
-                                        className={`w-full px-4 py-2 pl-10 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.password ? 'border-red-500' : 'border-gray-600'} rounded-md`}
+                                        onFocus={(e) => e.target.style.borderColor = secondary}
+                                        onBlur={(e) => e.target.style.borderColor = '#4a5565'}
+                                        className={`w-full px-4 text-gray-100 py-2 pl-10 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:border-2 ${errors.password ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                         placeholder="وشەی نهێنی"
                                     />
                                     <button
@@ -192,7 +200,9 @@ const SignUp = () => {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className={`w-full px-4 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.email ? 'border-red-500' : 'border-gray-600'} rounded-md`}
+                                    onFocus={(e) => e.target.style.borderColor = secondary}
+                                    onBlur={(e) => e.target.style.borderColor = '#4a5565'}
+                                    className={`w-full px-4 text-gray-100 py-2 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:border-2 ${errors.email ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                     placeholder="ئیمەیل"
                                 />
                                 {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
@@ -209,7 +219,9 @@ const SignUp = () => {
                                         name="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
-                                        className={`w-full px-4 py-2 pl-10 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[#1db954] ${errors.confirmPassword ? 'border-red-500' : 'border-gray-600'} rounded-md`}
+                                        onFocus={(e) => e.target.style.borderColor = secondary}
+                                        onBlur={(e) => e.target.style.borderColor = '#4a5565'}
+                                        className={`w-full px-4 text-gray-100 py-2 pl-10 border bg-[#1a1a1a] placeholder:text-gray-400 focus:outline-none focus:border-2 ${errors.confirmPassword ? 'border-red-500' : 'border-gray-600'} rounded-md`}
                                         placeholder="دڵنیاکردنەوەی وشەی نهێنی"
                                     />
                                     <button
@@ -237,7 +249,10 @@ const SignUp = () => {
                         <div>
                             <button
                                 type="submit"
-                                className="w-full bg-[#1db954] text-gray-100 py-3 px-4 rounded-md hover:bg-[#1ed760] transition duration-300"
+                                style={{ backgroundColor: secondary }}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = tertiary}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = secondary}
+                                className="w-full text-gray-100 py-3 px-4 rounded-md transition duration-300"
                             >
                                 دروستکردنی هەژمار
                             </button>
@@ -246,8 +261,11 @@ const SignUp = () => {
                         <div className="text-center">
                             <p className="text-gray-300 text-sm">
                                 پێشتر هەژمارت هەیە؟{" "}
-
-                                <a href="/login" className="text-[#1db954] hover:text-[#1ed760] transition-colors duration-300">
+                                <a
+                                    style={{ color: secondary }}
+                                    onMouseEnter={(e) => e.target.style.color = main}
+                                    onMouseLeave={(e) => e.target.style.color = secondary}
+                                    href="/login" className="transition-colors duration-300">
                                     چوونە ژوورەوە
                                 </a>
                             </p>

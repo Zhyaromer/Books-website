@@ -7,8 +7,10 @@ import LoadingUi from '../Components/my-ui/Loading';
 import { useNavigate } from "react-router-dom";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTheme } from "../context/ThemeContext";
 
 const SettingsPage = () => {
+    const { main, secondary, tertiary } = useTheme();
     const navigate = useNavigate();
     const { isAuthenticated, authLoading } = useCheckAuth();
     useEffect(() => {
@@ -288,15 +290,20 @@ const SettingsPage = () => {
                                             <li key={tab.id}>
                                                 <button
                                                     onClick={() => setActiveTab(tab.id)}
-                                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab.id
-                                                        ? 'bg-[#1db954] text-gray-100'
-                                                        : 'hover:bg-[#2E8B57] text-gray-100'
-                                                        }`}
-                                                >
-                                                    <span className={activeTab === tab.id ? 'text-gray-200' : 'text-gray-300'}>
-                                                        {tab.icon}
-                                                    </span>
-                                                    <span className="font-medium">{tab.label}</span>
+                                                    style={{
+                                                        backgroundColor: activeTab === tab.id ? secondary : 'transparent',
+                                                    }}
+                                                    onMouseEnter={(e) => {
+                                                        e.target.style.backgroundColor = tertiary;
+                                                        e.target.style.color = '#f3f4f6';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.target.style.backgroundColor = activeTab === tab.id ? secondary : 'transparent';
+                                                        e.target.style.color = '#f3f4f6';
+                                                    }}
+                                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-300 text-gray-100`}>
+                                                    {tab.icon}
+                                                    {tab.label}
                                                 </button>
                                             </li>
                                         ))}
@@ -309,7 +316,7 @@ const SettingsPage = () => {
                                     {activeTab === 'name' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3 mb-4">
-                                                <User size={24} className="text-[#1db954]" />
+                                                <User size={24} className="text-gray-400" />
                                                 <h2 className="text-xl font-medium text-gray-100">ناو</h2>
                                             </div>
                                             <div className="flex items-center py-3 rounded-lg mb-4">
@@ -325,7 +332,9 @@ const SettingsPage = () => {
                                                     name="name"
                                                     value={formData.name}
                                                     onChange={handleChange}
-                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-600 focus:ring-2 focus:ring-[#1db954] outline-none transition"
+                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border focus:border-2 border-gray-600 outline-none"
+                                                    onFocus={(e => e.target.style.borderColor = main)}
+                                                    onBlur={(e => e.target.style.borderColor = '')}
                                                     placeholder="ناوە تازەکەت بنووسە"
                                                 />
                                             </div>
@@ -334,9 +343,14 @@ const SettingsPage = () => {
                                                     onClick={changeName}
                                                     type="submit"
                                                     disabled={isSubmitDisabled('name')}
-                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors ${isSubmitDisabled('name')
-                                                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                                                        : 'bg-[#1db954] hover:bg-[#1ed760] text-gray-100'
+                                                    style={{
+                                                        backgroundColor: isSubmitDisabled('name') ? 'gray' : secondary,
+                                                    }}
+                                                    onMouseEnter={(e) => { e.target.style.backgroundColor = tertiary }}
+                                                    onMouseLeave={(e) => { e.target.style.backgroundColor = isSubmitDisabled('name') ? 'gray' : secondary }}
+                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 ${isSubmitDisabled('name')
+                                                        ? 'text-gray-600 cursor-not-allowed'
+                                                        : 'text-gray-100'
                                                         }`}
                                                 >
                                                     پاشەکەوتکردن
@@ -349,7 +363,7 @@ const SettingsPage = () => {
                                     {activeTab === 'username' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3 mb-4">
-                                                <Edit size={24} className="text-[#1db954]" />
+                                                <Edit size={24} className="text-gray-400" />
                                                 <h2 className="text-xl font-medium text-gray-100">نازناو</h2>
                                             </div>
                                             <p className="text-gray-200 mb-2">نازناوی خۆت بنووسە تاکو بەکارهێنەران بتوانن باشتر بتناسن و بتدۆزنەوە</p>
@@ -367,7 +381,9 @@ const SettingsPage = () => {
                                                     name="username"
                                                     value={formData.username}
                                                     onChange={handleChange}
-                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-600 focus:ring-2 focus:ring-[#1db954] outline-none transition"
+                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border focus:border-2 border-gray-600 outline-none"
+                                                    onFocus={(e => e.target.style.borderColor = main)}
+                                                    onBlur={(e => e.target.style.borderColor = '')}
                                                     placeholder="نازناوە تازەکەت بنووسە"
                                                 />
                                             </div>
@@ -376,9 +392,14 @@ const SettingsPage = () => {
                                                     onClick={changeUsername}
                                                     type="submit"
                                                     disabled={isSubmitDisabled('username')}
-                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors ${isSubmitDisabled('username')
-                                                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                                                        : 'bg-[#1db954] hover:bg-[#1ed760] text-gray-100'
+                                                    style={{
+                                                        backgroundColor: isSubmitDisabled('username') ? 'gray' : secondary,
+                                                    }}
+                                                    onMouseEnter={(e) => { e.target.style.backgroundColor = tertiary }}
+                                                    onMouseLeave={(e) => { e.target.style.backgroundColor = isSubmitDisabled('username') ? 'gray' : secondary }}
+                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 ${isSubmitDisabled('username')
+                                                        ? 'text-gray-600 cursor-not-allowed'
+                                                        : 'text-gray-100'
                                                         }`}
                                                 >
                                                     <Save size={18} />
@@ -391,7 +412,7 @@ const SettingsPage = () => {
                                     {activeTab === 'email' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3 mb-4">
-                                                <Mail size={24} className="text-[#1db954]" />
+                                                <Mail size={24} className="text-gray-400" />
                                                 <h2 className="text-xl font-medium text-gray-100">ئیمەیل</h2>
                                             </div>
 
@@ -408,7 +429,9 @@ const SettingsPage = () => {
                                                     name="email"
                                                     value={formData.email}
                                                     onChange={handleChange}
-                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-600 focus:ring-2 focus:ring-[#1db954] outline-none transition"
+                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border focus:border-2 border-gray-600 outline-none"
+                                                    onFocus={(e => e.target.style.borderColor = main)}
+                                                    onBlur={(e => e.target.style.borderColor = '')}
                                                     placeholder="ئیمەیلی نوێ بنووسە"
                                                 />
                                             </div>
@@ -417,9 +440,14 @@ const SettingsPage = () => {
                                                     onClick={changeEmail}
                                                     type="submit"
                                                     disabled={isSubmitDisabled('email')}
-                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors ${isSubmitDisabled('email')
-                                                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                                                        : 'bg-[#1db954] hover:bg-[#1ed760] text-gray-100'
+                                                    style={{
+                                                        backgroundColor: isSubmitDisabled('email') ? 'gray' : secondary,
+                                                    }}
+                                                    onMouseEnter={(e) => { e.target.style.backgroundColor = tertiary }}
+                                                    onMouseLeave={(e) => { e.target.style.backgroundColor = isSubmitDisabled('email') ? 'gray' : secondary }}
+                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 ${isSubmitDisabled('email')
+                                                        ? 'text-gray-600 cursor-not-allowed'
+                                                        : 'text-gray-100'
                                                         }`}
                                                 >
                                                     <Save size={18} />
@@ -432,7 +460,7 @@ const SettingsPage = () => {
                                     {activeTab === 'cover' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3 mb-4">
-                                                <Camera size={24} className="text-[#1db954]" />
+                                                <Camera size={24} className="text-gray-400" />
                                                 <h2 className="text-xl font-medium text-gray-100">وێنەی سەرەکی</h2>
                                             </div>
                                             <p className="text-gray-200 mb-6">وێنەیەک هەڵبژێرە کە دەبێتە وێنەی سەرەکی پڕۆفایلەکەت.</p>
@@ -477,7 +505,12 @@ const SettingsPage = () => {
                                                     onClick={changeprofilepic}
                                                     type="submit"
                                                     disabled={!image}
-                                                    className={`${!image ? "bg-gray-400 text-gray-600 cursor-not-allowed" : "bg-[#1db954] hover:bg-[#1ed760] text-gray-100"} font-medium px-6 py-3 rounded-lg flex items-center gap-2`}
+                                                    style={{
+                                                        backgroundColor: !image ? 'gray' : secondary,
+                                                    }}
+                                                    onMouseEnter={(e) => { e.target.style.backgroundColor = tertiary }}
+                                                    onMouseLeave={(e) => { e.target.style.backgroundColor = !image ? 'gray' : secondary }}
+                                                    className={`${!image ? "bg-gray-400 text-gray-600 cursor-not-allowed" : "text-gray-100"} font-medium px-6 py-3 rounded-lg flex items-center gap-2`}
                                                 >
                                                     <Save size={18} />
                                                     پاشەکەوتکردن
@@ -489,7 +522,7 @@ const SettingsPage = () => {
                                     {activeTab === 'bio' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3 mb-4">
-                                                <FileText size={24} className="text-[#1db954]" />
+                                                <FileText size={24} className="text-gray-400" />
                                                 <h2 className="text-xl font-medium text-gray-100">ژیاننامە</h2>
                                             </div>
                                             <p className="text-gray-200 mb-6">کورتەیەک لەسەر خۆت بنووسە تاکو خەڵک باشتر بتناسن.</p>
@@ -502,7 +535,9 @@ const SettingsPage = () => {
                                                     onChange={handleChange}
                                                     rows="4"
                                                     maxLength={100}
-                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-600 focus:ring-2 focus:ring-[#1db954] outline-none transition"
+                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border focus:border-2 border-gray-600 outline-none"
+                                                    onFocus={(e => e.target.style.borderColor = main)}
+                                                    onBlur={(e => e.target.style.borderColor = '')}
                                                     placeholder="ژیاننامەیەکی کورت بنووسە"
                                                 ></textarea>
                                             </div>
@@ -511,9 +546,14 @@ const SettingsPage = () => {
                                                     onClick={changeBio}
                                                     type="submit"
                                                     disabled={isSubmitDisabled('bio')}
-                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors ${isSubmitDisabled('bio')
-                                                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                                                        : 'bg-[#1db954] hover:bg-[#1ed760] text-gray-100'
+                                                    style={{
+                                                        backgroundColor: isSubmitDisabled('bio') ? 'gray' : secondary,
+                                                    }}
+                                                    onMouseEnter={(e) => { e.target.style.backgroundColor = tertiary }}
+                                                    onMouseLeave={(e) => { e.target.style.backgroundColor = isSubmitDisabled('bio') ? 'gray' : secondary }}
+                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 ${isSubmitDisabled('bio')
+                                                        ? 'text-gray-600 cursor-not-allowed'
+                                                        : 'text-gray-100'
                                                         }`}
                                                 >
                                                     <Save size={18} />
@@ -526,7 +566,7 @@ const SettingsPage = () => {
                                     {activeTab === 'password' && (
                                         <div className="space-y-4">
                                             <div className="flex items-center gap-3 mb-4">
-                                                <Key size={24} className="text-[#1db954]" />
+                                                <Key size={24} className="text-gray-400" />
                                                 <h2 className="text-xl font-medium text-gray-100">گۆڕینی وشەی نهێنی</h2>
                                             </div>
                                             <p className="text-gray-200 mb-6">بۆ پارێزگاری زیاتر، وشەی نهێنیەکی بەهێز بەکاربهێنە کە پێکهاتبێت لە پیت، ژمارە و نیشانەکان.</p>
@@ -538,7 +578,9 @@ const SettingsPage = () => {
                                                     name="currentPassword"
                                                     value={formData.currentPassword}
                                                     onChange={handleChange}
-                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-300 focus:ring-2 focus:ring-[#1db954] outline-none transition"
+                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-600 outline-none focus:border-2"
+                                                    onFocus={(e => e.target.style.borderColor = main)}
+                                                    onBlur={(e => e.target.style.borderColor = '')}
                                                     placeholder="وشەی نهێنی ئێستا"
                                                 />
                                             </div>
@@ -550,8 +592,9 @@ const SettingsPage = () => {
                                                     name="password"
                                                     value={formData.password}
                                                     onChange={handleChange}
-                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-300 focus:ring-2 focus:ring-[#1db954] outline-none transition"
-
+                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-600 outline-none focus:border-2"
+                                                    onFocus={(e => e.target.style.borderColor = main)}
+                                                    onBlur={(e => e.target.style.borderColor = '')}
                                                     placeholder="وشەی نهێنی نوێ"
                                                 />
                                             </div>
@@ -563,8 +606,9 @@ const SettingsPage = () => {
                                                     name="confirmPassword"
                                                     value={formData.confirmPassword}
                                                     onChange={handleChange}
-                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-600 focus:ring-2 focus:ring-[#1db954] outline-none transition"
-
+                                                    className="w-full px-4 py-3 text-gray-100 rounded-lg bg-[#1a1a1a] border border-gray-600 outline-none focus:border-2"
+                                                    onFocus={(e => e.target.style.borderColor = main)}
+                                                    onBlur={(e => e.target.style.borderColor = '')}
                                                     placeholder="دووبارەکردنەوەی وشەی نهێنی"
                                                 />
                                                 {formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword && (
@@ -576,9 +620,14 @@ const SettingsPage = () => {
                                                     onClick={changePassword}
                                                     type="submit"
                                                     disabled={isSubmitDisabled('password')}
-                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors ${isSubmitDisabled('password')
-                                                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                                                        : 'bg-[#1db954] hover:bg-[#1ed760] text-gray-100'
+                                                    style={{
+                                                        backgroundColor: isSubmitDisabled('password') ? 'gray' : secondary,
+                                                    }}
+                                                    onMouseEnter={(e) => { e.target.style.backgroundColor = tertiary }}
+                                                    onMouseLeave={(e) => { e.target.style.backgroundColor = isSubmitDisabled('password') ? 'gray' : secondary }}
+                                                    className={`font-medium px-6 py-3 rounded-lg flex items-center gap-2 transition-colors duration-200 ${isSubmitDisabled('password')
+                                                        ? 'text-gray-600 cursor-not-allowed'
+                                                        : 'text-gray-100'
                                                         }`}
                                                 >
                                                     <Save size={18} />

@@ -35,7 +35,8 @@ const DetailedBookCard = ({ books, author, endpoint }) => {
                             }}
                             onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
                             onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
-                            onClick={() => navigate(`/booksDetail/${book.id}`)} className='text-sm mt-4 text-white py-2 px-2 rounded transition-colors duration-300'>بینینی کتێب</button>
+                            onClick={() => navigate(`/booksDetail/${book.id}`)} 
+                            className='text-sm mt-4 text-white py-2 px-2 rounded transition-colors duration-300'>بینینی کتێب</button>
                         </div>
                     </div>
                 ))}

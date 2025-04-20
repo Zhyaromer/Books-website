@@ -128,12 +128,12 @@ const BookSlider = ({ data }) => {
             <p className="text-white">{selectedBook.description}</p>
 
             <div className="mt-6">
-              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition-colors duration-200 mr-3"
+              <button onClick={() => navigate(`/booksDetail/${selectedBook.id}`)} className="text-white px-6 py-2 rounded-lg shadow transition-colors duration-200 mr-3"
                 style={{
-                  backgroundColor: main
+                  backgroundColor: secondary
                 }} 
-                onMouseLeave={(e) => (e.target.style.backgroundColor = main)}
-                onMouseEnter={(e) => (e.target.style.backgroundColor = secondary)}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
                 >
                 بینینی زیاتر
               </button>

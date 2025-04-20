@@ -8,8 +8,10 @@ import Footer from "../Components/layout/Footer";
 import Pagination from "../Components/my-ui/Pagination";
 import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import { useTheme } from "../context/ThemeContext";
 
 const Profile = () => {
+    const { main, secondary, tertiary } = useTheme();
     const navigate = useNavigate();
     const { isAuthenticated, authLoading } = useCheckAuth();
     useEffect(() => {
@@ -302,7 +304,9 @@ const Profile = () => {
                     <div className="bg-[#1a1a1a] rounded-lg shadow-md p-6 mb-6">
                         <div className="flex flex-row justify-between items-start md:items-center">
                             <div className="flex flex-col md:flex-row md:items-center">
-                                <div className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-200 border-2 border-[#1db954]">
+                                <div
+                                    style={{ borderColor: secondary }}
+                                    className="w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden bg-gray-200 border-2 border-[#1db954]">
                                     <img
                                         src={userData.coverImgURL}
                                         alt={userData.username}
@@ -335,14 +339,16 @@ const Profile = () => {
                     <div className="bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden">
                         <div className="flex items-center justify-center md:justify-start border-b-[1px] border-gray-600">
                             <button
+                                style={activeTab === 'suggestion' ? { color: secondary, borderColor: secondary } : {}}
                                 className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'suggestion'
-                                    ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
+                                    ? 'border-b-[2px]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
                                 onClick={() => { setActiveTab('suggestion'); resetPage() }}
                             >
                                 پێشنیارکراو
                             </button>
                             <button
+                                style={activeTab === 'saved' ? { color: secondary, borderColor: secondary } : {}}
                                 className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'saved'
                                     ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
@@ -351,6 +357,7 @@ const Profile = () => {
                                 لیستی دڵخواز
                             </button>
                             <button
+                                style={activeTab === 'read' ? { color: secondary, borderColor: secondary } : {}}
                                 className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'read'
                                     ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
@@ -359,6 +366,7 @@ const Profile = () => {
                                 خوێندراوەکان
                             </button>
                             <button
+                                style={activeTab === 'comments' ? { color: secondary, borderColor: secondary } : {}}
                                 className={`flex-1 py-3 text-xs md:text-lg font-bold transition-colors duration-300 ${activeTab === 'comments'
                                     ? 'text-[#1db954] border-b-[2px] border-[#1db954]'
                                     : 'text-gray-400 hover:text-gray-200'}`}
@@ -459,17 +467,17 @@ const Profile = () => {
                                                                             <div className="py-1">
                                                                                 <button
                                                                                     onClick={() => handleEdit(review.id)}
-                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-gray-100 hover:bg-[#1db954] justify-end"
+                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-gray-100 hover:text-gray-600 hover:bg-white justify-end"
                                                                                 >
                                                                                     <span>دەستکاری</span>
                                                                                     <Edit2 className="w-4 h-4 mr-2" />
                                                                                 </button>
                                                                                 <button
                                                                                     onClick={() => handleDelete(review.id)}
-                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-[#1db954] hover:text-white justify-end"
+                                                                                    className="flex items-center w-full px-3 py-2 text-sm text-gray-100 hover:text-gray-600 hover:bg-white justify-end"
                                                                                 >
                                                                                     <span>سڕینەوە</span>
-                                                                                    <Trash2 className="w-4 h-4 mr-2" />
+                                                                                    <Trash2 className="w-4 h-4 mr-2 text-red-500" />
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -534,7 +542,7 @@ const Profile = () => {
                                 <h3 className="text-lg font-semibold text-gray-100">دەستکاری هەڵسەنگاندن</h3>
                                 <button
                                     onClick={handleModalClose}
-                                    className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+                                    className="p-1 rounded-full transition-colors"
                                 >
                                     <X className="w-5 h-5 text-gray-200" />
                                 </button>
@@ -556,8 +564,10 @@ const Profile = () => {
                                             onChange={handleInputChange}
                                             rows="5"
                                             placeholder='دەستکاری هەڵسەنگاندن'
-                                            className="resize-none bg-[#1a1a1a] border-[1px] border-gray-600 placeholder:text-gray-400 w-full px-3 py-2 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1db954]"
+                                            className="resize-none bg-[#1a1a1a] border-[1px] focus:border-2 border-gray-600 placeholder:text-gray-400 w-full px-3 py-2 text-gray-100 rounded-lg focus:outline-none"
                                             dir="rtl"
+                                            onFocus={(e) => e.target.style.borderColor = secondary}
+                                            onBlur={(e) => e.target.style.borderColor = 'rgb(107, 114, 128)'}
                                         ></textarea>
                                     </div>
                                 </div>
@@ -572,7 +582,10 @@ const Profile = () => {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 text-sm font-medium text-white bg-[#1db954] rounded-md hover:bg-[#1ed760] flex items-center"
+                                        style={{ backgroundColor: secondary }}
+                                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = tertiary)}
+                                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = secondary)}
+                                        className="px-4 py-2 text-sm font-medium text-white rounded-md flex items-center transition-colors duration-200"
                                     >
                                         <Save className="w-4 h-4 ml-1" />
                                         <span>پاشەکەوتکردن</span>
