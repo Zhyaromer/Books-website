@@ -2,10 +2,15 @@ const genreOptions = [
     { value: "ڕۆمان", label: "ڕۆمان" },
     { value: "شیعر", label: "شیعر" },
     { value: "چیرۆک", label: "چیرۆک" },
+    { value: "چیرۆکی کورت", label: "چیرۆکی کورت" },
     { value: "فانتاسی", label: "فانتاسی" },
     { value: "خەیاڵی", label: "خەیاڵی" },
     { value: "ڕۆمانس", label: "ڕۆمانس" },
+    { value: "خەیاڵی ئەدەبی", label: "خەیاڵی ئەدەبی" },
+    { value: "زانستی خەیاڵی", label: "زانستی خەیاڵی" },
     { value: "ترسناک", label: "ترسناک" },
+    { value: "زمانەوانی", label: "زمانەوانی" },
+    { value: "مێژووی", label: "مێژووی" },
     { value: "نادیار", label: "نادیار" }
 ];
 
