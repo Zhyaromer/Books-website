@@ -45,6 +45,17 @@ const CommentsSection = ({ bookId }) => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [revealedSpoilers, setRevealedSpoilers] = useState({});
 
+  const fetchComments = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(`/user/getallreviews?book_id=${bookId}`);
+      if (response.data) {
+        setComments(response.data);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to load reviews");
+    }
+  }, [bookId]);
+
   const handleEditReview = async (reviewId) => {
     const reviewToEdit = comments.find(review => review.id === reviewId);
 
@@ -69,7 +80,7 @@ const CommentsSection = ({ bookId }) => {
     try {
       const res = await axiosInstance.delete(`/user/removeReview/${delId}`);
       if (res.status === 200) {
-        toast.success(res.data.message);
+        toast.success("هەڵسەنگاندنەکە سڕایەوە");
         setComments((prevComments) => prevComments.filter(comment => comment.id !== delId));
       } else {
         toast.error(res.data.message);
@@ -105,80 +116,90 @@ const CommentsSection = ({ bookId }) => {
   }, [comments]);
 
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await axiosInstance.get(`/user/getallreviews?book_id=${bookId}`);
-        setComments(response.data);
-      } catch (error) {
-        toast.error(error.response?.data?.message || "Something went wrong");
-      }
-    };
-
     fetchComments();
-  }, [bookId]);
+  }, [bookId, fetchComments]);
 
-  const handleAddComment = async () => {
-    if (message.trim() === "") {
-      toast.warning("Please enter a comment");
-      return;
-    }
+const addReviewToUI = (newReview) => {
+  setComments(prevComments => [newReview, ...prevComments]);
+};
+
+const handleAddComment = async () => {
+  if (message.trim() === "") {
+    toast.warning("Please enter a comment");
+    return;
+  }
+
+  if (message.length > 3000 || message.length < 1) {
+    toast.warning("Comment must be between 1 and 3000 characters");
+    return;
+  }
   
-    if (message.length > 3000 || message.length < 1) {
-      toast.warning("Comment must be between 1 and 3000 characters");
-      return;
+  try {
+    if (editMode && selectedReview) {
+      await axiosInstance.patch(
+        `/user/updateReview?review_id=${selectedReview.id}`,
+        {
+          rating,
+          comment: message,
+          hasSpoiler
+        }
+      );
+      
+      setComments(prevComments => 
+        prevComments.map(comment => 
+          comment.id === selectedReview.id 
+            ? { 
+                ...selectedReview,
+                rating, 
+                comment: message, 
+                isSpoiler: hasSpoiler ? 1 : 0 
+              }
+            : comment
+        )
+      );
+      
+      toast.success("هەڵسەنگاندکەت تازەکرایەوە");
+    } else {
+      const response = await axiosInstance.post(
+        `/user/addReview/${bookId}`,
+        {
+          rating,
+          comment: message,
+          hasSpoiler
+        }
+      );
+      
+      const userInfo = await axiosInstance.get('/user/getusernameandpic');
+      const tempReview = {
+        id: response.data.reviewId || Date.now(),
+        rating,
+        comment: message,
+        isSpoiler: hasSpoiler ? 1 : 0,
+        username: userInfo.data.username,
+        coverImgURL: userInfo.data.coverImgURL || '',
+      };
+      
+      addReviewToUI(tempReview);
+
+      setReviewPermissions(prevPermissions => ({
+        ...prevPermissions,
+        [tempReview.id]: true
+      }));
+      
+      toast.success("هەڵسەنگاندنەکەت زیادکرا");
     }
     
-    try {
-      let response;
-      
-      if (editMode && selectedReview) {
-        response = await axiosInstance.patch(
-          `/user/updateReview?review_id=${selectedReview.id}`,
-          {
-            rating,
-            comment: message,
-            hasSpoiler
-          }
-        );
-        
-        setComments(prevComments => 
-          prevComments.map(comment => 
-            comment.id === selectedReview.id 
-              ? {...comment, rating, comment: message, isSpoiler: hasSpoiler ? 1 : 0} 
-              : comment
-          )
-        );
-        
-      } else {
-        response = await axiosInstance.post(
-          `/user/addReview/${bookId}`,
-          {
-            rating,
-            comment: message,
-            hasSpoiler
-          }
-        );
-        
-        if (response.data && response.data.newReview) {
-          setComments(prevComments => [...prevComments, response.data.newReview]);
-        } else {
-          const updatedComments = await axiosInstance.get(`/user/getallreviews?book_id=${bookId}`);
-          setComments(updatedComments.data);
-        }
-      }
-      
-      setIsAddReviewOpen(false);
-      setEditMode(false);
-      setRating(0);
-      setMessage("");
-      setHasSpoiler(false);
-      
-      return true;
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
-      return false;
-    }
-  };
+    setIsAddReviewOpen(false);
+    setEditMode(false);
+    setRating(0);
+    setMessage("");
+    setHasSpoiler(false);
+    setSelectedReview(null);
+    
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Something went wrong");
+  }
+};
 
   const handleRevealSpoiler = (reviewId) => {
     setRevealedSpoilers((prev) => ({ ...prev, [reviewId]: true }));
@@ -240,6 +261,24 @@ const CommentsSection = ({ bookId }) => {
     }
   }, [activeIndex, handleScroll]);
 
+  // This effect will run whenever isAddReviewOpen changes from true to false
+  // It ensures comments are refreshed after the dialog closes
+  useEffect(() => {
+    if (isAddReviewOpen === false) {
+      // This will refresh comments whenever the dialog closes
+      fetchComments();
+    }
+  }, [isAddReviewOpen, fetchComments]);
+
+  const resetAndOpenReviewModal = () => {
+    setEditMode(false);
+    setRating(0);
+    setMessage("");
+    setHasSpoiler(false);
+    setSelectedReview(null);
+    setIsAddReviewOpen(true);
+  };
+
   return (
     <div dir="rtl" className="w-full max-w-7xl mx-auto p-0 md:p-4 font-sans">
       <div className="flex justify-between items-center px-4 md:px-0 mb-6 mt-4 md:mt-0">
@@ -251,13 +290,7 @@ const CommentsSection = ({ bookId }) => {
           onMouseLeave={(e) => (e.target.style.backgroundColor = secondary)}
           onMouseEnter={(e) => (e.target.style.backgroundColor = tertiary)}
           className="text-white text-xs md:text-sm px-1 md:px-2"
-          onClick={() => {
-            setEditMode(false);
-            setRating(0);
-            setMessage("");
-            setHasSpoiler(false);
-            setIsAddReviewOpen(true);
-          }}>
+          onClick={resetAndOpenReviewModal}>
           زیادکردنی هەڵسەنگاندن
         </Button>
       </div>
@@ -370,7 +403,16 @@ const CommentsSection = ({ bookId }) => {
         )}
       </div>
 
-      <Dialog open={isAddReviewOpen} onOpenChange={setIsAddReviewOpen}>
+      <Dialog 
+        open={isAddReviewOpen} 
+        onOpenChange={(open) => {
+          setIsAddReviewOpen(open);
+          if (!open) {
+            // Refresh comments when dialog closes
+            fetchComments();
+          }
+        }}
+      >
         <DialogContent className='bg-[#1a1a1a] border-none'>
           <div className="flex justify-end pt-10 text-right">
             <DialogHeader>

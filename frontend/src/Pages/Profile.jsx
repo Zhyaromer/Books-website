@@ -18,30 +18,61 @@ const Profile = () => {
         if (!authLoading && !isAuthenticated) {
             navigate('/login');
         }
-    }, [isAuthenticated, isAuthenticated, navigate]);
+    }, [isAuthenticated, authLoading, navigate]);
 
     const [activeTab, setActiveTab] = useState('suggestion');
     const [userData, setUserData] = useState([]);
     const [savedBooks, setSavedBooks] = useState([]);
     const [readBooks, setReadBooks] = useState([]);
     const [suggestionBooks, setSuggestionBooks] = useState([]);
-    const [suggestionstotal, setsuggestionstotal] = useState([]);
+    const [suggestionstotal, setsuggestionstotal] = useState(0);
     const [comments, setcomments] = useState([]);
     const [openMenuId, setOpenMenuId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingReview, setEditingReview] = useState(null);
+    
+    // Pagination settings
     const booksPerPage = 12;
     const commentsPerPage = 6;
-    const [currentPage, setCurrentPage] = useState(1);
-    const [booksTotal, setBooksTotal] = useState(0);
-    const [readbooksTotal, setreadbooksTotal] = useState(0);
-    const [commentsTotal, setcommentsTotal] = useState(0);
-    const [totalPages, setTotalPages] = useState(1);
+    
+    // Separate current pages for each tab
+    const [currentPages, setCurrentPages] = useState({
+        suggestion: 1,
+        saved: 1,
+        read: 1,
+        comments: 1
+    });
+    
+    // Separate total counts for each tab
+    const [totals, setTotals] = useState({
+        suggestion: 0,
+        saved: 0,
+        read: 0,
+        comments: 0
+    });
+    
+    // Separate total pages for each tab
+    const [totalPages, setTotalPages] = useState({
+        suggestion: 1,
+        saved: 1,
+        read: 1,
+        comments: 1
+    });
+
     const [editFormData, setEditFormData] = useState({
         comment: '',
         rating: 0,
         hasSpoiler: false
     });
+
+    // Get current page for active tab
+    const getCurrentPage = () => currentPages[activeTab];
+    
+    // Get total pages for active tab
+    const getCurrentTotalPages = () => totalPages[activeTab];
+    
+    // Get total items for active tab
+    const getCurrentTotal = () => totals[activeTab];
 
     useEffect(() => {
         const fetchInfo = async () => {
@@ -50,7 +81,7 @@ const Profile = () => {
                 if (res.status === 200) {
                     setUserData(res.data);
                 } else if (res.status === 401) {
-                    toast.error("unaothorized");
+                    toast.error("unauthorized");
                 } else if (res.status === 404) {
                     toast.error("not found");
                 }
@@ -61,50 +92,51 @@ const Profile = () => {
 
         const fetchsuggestionBooks = async () => {
             try {
-                const res = await axiosInstance.get(`/user/getsuggestions?page=${currentPage}&limit=${booksPerPage}`);
+                const res = await axiosInstance.get(`/user/getsuggestions?page=${currentPages.suggestion}&limit=${booksPerPage}`);
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setSuggestionBooks(res.data.foundBooks);
                     setsuggestionstotal(res.data.total || 0);
-                    setTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                    setTotals(prev => ({...prev, suggestion: res.data.total || 0}));
+                    setTotalPages(prev => ({...prev, suggestion: Math.ceil((res.data.total || 0) / booksPerPage)}));
                 } else {
-                    setSavedBooks([]);
-                    setTotalPages(0);
+                    setSuggestionBooks([]);
+                    setTotalPages(prev => ({...prev, suggestion: 0}));
                 }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Something went wrong");
                 setSuggestionBooks([]);
-                setTotalPages(0);
+                setTotalPages(prev => ({...prev, suggestion: 0}));
             }
         }
 
         const fetchSavedBooks = async () => {
             try {
-                const res = await axiosInstance.get(`/user/getSavedBooks?page=${currentPage}&limit=${booksPerPage}`);
+                const res = await axiosInstance.get(`/user/getSavedBooks?page=${currentPages.saved}&limit=${booksPerPage}`);
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setSavedBooks(res.data.foundBooks);
-                    setBooksTotal(res.data.total || 0);
-                    setTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                    setTotals(prev => ({...prev, saved: res.data.total || 0}));
+                    setTotalPages(prev => ({...prev, saved: Math.ceil((res.data.total || 0) / booksPerPage)}));
                 } else {
                     setSavedBooks([]);
-                    setTotalPages(0);
+                    setTotalPages(prev => ({...prev, saved: 0}));
                 }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Something went wrong");
                 setSavedBooks([]);
-                setTotalPages(0);
+                setTotalPages(prev => ({...prev, saved: 0}));
             }
         }
 
         const fetchReadBooks = async () => {
             try {
-                const res = await axiosInstance.get(`/user/getReadBooks?page=${currentPage}&limit=${booksPerPage}`);
+                const res = await axiosInstance.get(`/user/getReadBooks?page=${currentPages.read}&limit=${booksPerPage}`);
                 if (res.data.foundBooks && Array.isArray(res.data.foundBooks)) {
                     setReadBooks(res.data.foundBooks);
-                    setreadbooksTotal(res.data.total || 0);
-                    setTotalPages(Math.ceil((res.data.total || 0) / booksPerPage));
+                    setTotals(prev => ({...prev, read: res.data.total || 0}));
+                    setTotalPages(prev => ({...prev, read: Math.ceil((res.data.total || 0) / booksPerPage)}));
                 } else {
                     setReadBooks([]);
-                    setTotalPages(0);
+                    setTotalPages(prev => ({...prev, read: 0}));
                 }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Something went wrong");
@@ -113,14 +145,14 @@ const Profile = () => {
 
         const fetchComments = async () => {
             try {
-                const res = await axiosInstance.get(`/user/getUserComments?page=${currentPage}&limit=${commentsPerPage}`);
+                const res = await axiosInstance.get(`/user/getUserComments?page=${currentPages.comments}&limit=${commentsPerPage}`);
                 if (res.data.comments && Array.isArray(res.data.comments)) {
                     setcomments(res.data.comments);
-                    setcommentsTotal(res.data.total || 0);
-                    setTotalPages(Math.ceil((res.data.total || 0) / commentsPerPage));
+                    setTotals(prev => ({...prev, comments: res.data.total || 0}));
+                    setTotalPages(prev => ({...prev, comments: Math.ceil((res.data.total || 0) / commentsPerPage)}));
                 } else {
                     setcomments([]);
-                    setTotalPages(0);
+                    setTotalPages(prev => ({...prev, comments: 0}));
                 }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Something went wrong");
@@ -128,11 +160,25 @@ const Profile = () => {
         }
 
         fetchInfo();
-        fetchsuggestionBooks();
-        fetchSavedBooks();
-        fetchReadBooks();
-        fetchComments();
-    }, [currentPage]);
+        
+        // Fetch data based on active tab
+        switch (activeTab) {
+            case 'suggestion':
+                fetchsuggestionBooks();
+                break;
+            case 'saved':
+                fetchSavedBooks();
+                break;
+            case 'read':
+                fetchReadBooks();
+                break;
+            case 'comments':
+                fetchComments();
+                break;
+            default:
+                fetchsuggestionBooks();
+        }
+    }, [activeTab, currentPages.suggestion, currentPages.saved, currentPages.read, currentPages.comments]);
 
     const toggleMenu = (id, e) => {
         e.stopPropagation();
@@ -156,6 +202,8 @@ const Profile = () => {
         try {
             await axiosInstance.delete(`/user/removeReview/${id}`);
             setcomments(comments.filter(comment => comment.id !== id));
+            setTotals(prev => ({...prev, comments: prev.comments - 1}));
+            setTotalPages(prev => ({...prev, comments: Math.ceil((prev.comments - 1) / commentsPerPage)}));
         } catch (error) {
             toast.error(error.response?.data?.message || "Something went wrong");
         } finally {
@@ -277,7 +325,7 @@ const Profile = () => {
     };
 
     const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
+        setCurrentPages(prev => ({...prev, [activeTab]: newPage}));
         const newParams = new URLSearchParams(location.search);
         newParams.set('page', newPage.toString());
         navigate({
@@ -287,7 +335,7 @@ const Profile = () => {
     };
 
     const resetPage = () => {
-        setCurrentPage(1);
+        setCurrentPages(prev => ({...prev, [activeTab]: 1}));
         const newParams = new URLSearchParams(location.search);
         newParams.delete('page');
         navigate({
@@ -379,15 +427,15 @@ const Profile = () => {
                         <div className="p-6">
                             {activeTab === 'suggestion' && (
                                 <div dir='rtl' className="space-y-6">
-                                    <h3 className="text-lg font-semibold text-gray-100 mb-4">پێشنیارکراو ({suggestionstotal})</h3>
+                                    <h3 className="text-lg font-semibold text-gray-100 mb-4">پێشنیارکراو ({totals.suggestion})</h3>
                                     <div className="flex pb-4 last:border-0 last:pb-0">
                                         <BookCollection data={suggestionBooks} text="" path="/Bookdetails" />
                                     </div>
 
-                                    {suggestionstotal > 12 && (
+                                    {totals.suggestion > booksPerPage && (
                                         <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
+                                            currentPage={getCurrentPage()}
+                                            totalPages={getCurrentTotalPages()}
                                             onPageChange={handlePageChange}
                                         />
                                     )}
@@ -395,15 +443,15 @@ const Profile = () => {
                             )}
                             {activeTab === 'saved' && (
                                 <div dir='rtl' className="space-y-6">
-                                    <h3 className="text-lg font-semibold text-gray-100 mb-4"> لیستی دڵخواز ({booksTotal})</h3>
+                                    <h3 className="text-lg font-semibold text-gray-100 mb-4"> لیستی دڵخواز ({totals.saved})</h3>
                                     <div className="flex pb-4 last:border-0 last:pb-0">
                                         <BookCollection data={savedBooks} text="" path="/Bookdetails" />
                                     </div>
 
-                                    {booksTotal > 12 && (
+                                    {totals.saved > booksPerPage && (
                                         <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
+                                            currentPage={getCurrentPage()}
+                                            totalPages={getCurrentTotalPages()}
                                             onPageChange={handlePageChange}
                                         />
                                     )}
@@ -413,15 +461,15 @@ const Profile = () => {
                             {activeTab === 'read' && (
                                 <div className="space-y-6">
                                     <div dir='rtl' className="space-y-6">
-                                        <h3 className="text-lg font-semibold text-gray-100 mb-4">خوێندراوەکان ({readbooksTotal})</h3>
+                                        <h3 className="text-lg font-semibold text-gray-100 mb-4">خوێندراوەکان ({totals.read})</h3>
                                         <div className="flex pb-4 last:border-0 last:pb-0">
                                             <BookCollection data={readBooks} text="" path="/Bookdetails" />
                                         </div>
                                     </div>
-                                    {readbooksTotal > 12 && (
+                                    {totals.read > booksPerPage && (
                                         <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
+                                            currentPage={getCurrentPage()}
+                                            totalPages={getCurrentTotalPages()}
                                             onPageChange={handlePageChange}
                                         />
                                     )}
@@ -430,7 +478,7 @@ const Profile = () => {
 
                             {activeTab === 'comments' && (
                                 <div dir="rtl" className="w-fulll mx-auto">
-                                    <h3 className="text-lg font-semibold text-gray-100 mb-8">هەڵسەنگاندنەکان {`(${commentsTotal})`}</h3>
+                                    <h3 className="text-lg font-semibold text-gray-100 mb-8">هەڵسەنگاندنەکان {`(${totals.comments})`}</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#1a1a1a]">
                                         {comments.length === 0 ? (
                                             <p className="text-gray-500 text-center py-4">هیچ هەڵسەنگاندنێک نییە</p>
@@ -505,30 +553,30 @@ const Profile = () => {
                                         )}
                                     </div>
 
-                                    {commentsTotal > 6 && (
+                                    {totals.comments > commentsPerPage && (
                                         <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
+                                            currentPage={getCurrentPage()}
+                                            totalPages={getCurrentTotalPages()}
                                             onPageChange={handlePageChange}
                                         />
                                     )}
 
                                     <style>{`
-                            .custom-scrollbar::-webkit-scrollbar {
-                              width: 4px;
-                            }
-                            .custom-scrollbar::-webkit-scrollbar-track {
-                              background: #f1f1f1;
-                              border-radius: 10px;
-                            }
-                            .custom-scrollbar::-webkit-scrollbar-thumb {
-                              background: #888;
-                              border-radius: 10px;
-                            }
-                            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                              background: #555;
-                            }
-                          `}</style>
+                                        .custom-scrollbar::-webkit-scrollbar {
+                                          width: 4px;
+                                        }
+                                        .custom-scrollbar::-webkit-scrollbar-track {
+                                          background: #f1f1f1;
+                                          border-radius: 10px;
+                                        }
+                                        .custom-scrollbar::-webkit-scrollbar-thumb {
+                                          background: #888;
+                                          border-radius: 10px;
+                                        }
+                                        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                                          background: #555;
+                                        }
+                                    `}</style>
                                 </div>
                             )}
                         </div>

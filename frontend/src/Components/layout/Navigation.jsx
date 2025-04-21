@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from "../../context/ThemeContext";
 
 const BookstoreNavigation = () => {
-    const { main, secondary, tertiary } = useTheme();
+    const { secondary} = useTheme();
     const navigate = useNavigate();
     const searchContainerRef = useRef(null);
     const userDropdownRef = useRef(null);
@@ -504,7 +504,7 @@ const BookstoreNavigation = () => {
                                             onClick={handleUserDropdownToggle}
                                             className="h-[36px] w-[36px] text-white rounded-full bg-indigo-600 hover:bg-indigo-500 transition-colors duration-300"
                                         >
-                                            {userIcon ? <img className="rounded-full h-[36px] w-[36px]" src={userIcon} alt="" />
+                                            {userIcon ? <img className="rounded-full h-[36px] w-[36px] object-center" src={userIcon} alt="" />
                                                 :
                                                 userIconText
                                             }
