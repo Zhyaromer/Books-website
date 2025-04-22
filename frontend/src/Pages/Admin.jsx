@@ -1018,7 +1018,7 @@ const AdminDashboard = () => {
                                     <input
                                         type="file"
                                         name="author_cover"
-                                        required
+                                        required={modalMode === 'add'}
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
@@ -1084,7 +1084,7 @@ const AdminDashboard = () => {
                                     <input
                                         type="file"
                                         name="series_cover"
-                                        required
+                                        required={modalMode === 'add'}
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
@@ -1138,7 +1138,7 @@ const AdminDashboard = () => {
                                         onChange={handleChange}
                                         className="mt-1 block w-full"
                                         accept="image/*"
-                                        required
+                                        required={modalMode === 'add'}
                                     />
                                     {(filePreview || formData.cover_image) && (
                                         <div className="mt-2">

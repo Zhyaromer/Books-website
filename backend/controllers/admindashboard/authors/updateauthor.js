@@ -26,7 +26,7 @@ const updateAuthor = async (req, res) => {
         await promiseDb.beginTransaction();
         
         let updatedFields = `name = ?, bio = ?, language = ?, dateOfBirth = ?, country = ?`;
-        let values = [name, bio, language, new Date(dateOfBirth).toISOString().split("T")[0], country];
+        let values = [name, bio.trim(), language, new Date(dateOfBirth).toISOString().split("T")[0], country];
         let oldCoverPath = null;
         
         if (filename) {
